@@ -30,8 +30,12 @@ const DropDownComponent = (props) => {
                     dropdownStyle={props.dropdownStyle}
                     style={props.dropDownContainerStyle}
                     textStyle={{ color: Theme.black }}
-                    dropdowntextStyle={{}}
-                    onSelect={(index, value) => props.onSelect(index, value)}
+                    dropdowntextStyle={{paddingHorizontal:Theme.screenWidth/5}}
+                    dropdownTextHighlightStyle={{color:Theme.blue}}
+                    animated={true}
+                    showsVerticalScrollIndicator={false}
+                    
+                    // onSelect={(index, value) => props.onSelect(index, value)}
                 />
                 <TouchableOpacity onPress={() => dropdown.current.show()}>
                     <Icon
