@@ -38,7 +38,7 @@ const TextComponent = (props) => {
           //   fontFamily: Theme.fontFamily,
         }}
         placeholder={props.placeholder}
-        // placeholderTextColor={Theme.black}
+        placeholderTextColor={'grey'}
         onChangeText={props.onChangeText}
       />
       <Icon

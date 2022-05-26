@@ -6,6 +6,7 @@ import { Images } from '../../Constants/Images';
 import Theme from '../../Utils/Theme';
 import { useFocusEffect } from '@react-navigation/native';
 import { Modal } from 'react-native-paper';
+import Header from '../../Components/Header';
 
 const data = [
     {
@@ -64,17 +65,26 @@ const Home = (props) => {
           }
         }, []),
       );
+      const backPress = async () => {
+        Alert.alert('Logout', 'Do you really want to exit the application?', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              BackHandler.exitApp();
+            },
+          },
+        ]);
+        return true;
+      };
+
     return (
         <View style={styles.container}>
-              <Card elevation={5} style={{alignItems:'center',backgroundColor:'#f0f0f0'
-            }}>
-               
-               <View style={{height:Theme.screenHeight/11,justifyContent:'center'}}>
-               <Text style={{fontSize:Theme.screenHeight/35,
-                color:Theme.black,}}>Home</Text>
-               </View>
-                
-               </Card>
+        <Header   title="Dashboard" backIcon={true} backIconPress={()=>backPress()} />
             <ImageBackground source={Images.homebg} style={styles.bgimageStyle}>
              <View style={{marginTop:Theme.screenHeight/70}}>
                 <View>
@@ -152,12 +162,14 @@ const Home = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        
         // justifyContent: 'center',
         // alignItems: 'center',
-        // backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
     },
     bgimageStyle: {
         flex: 1,
+        marginTop: Theme.screenHeight/98,
         // height: Theme.screenHeight,
         // width: Theme.screenHeight,
         justifyContent: 'center',

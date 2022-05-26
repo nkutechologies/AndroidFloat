@@ -4,12 +4,15 @@ import { View, Text, StyleSheet,Image } from 'react-native';
 import Theme from '../../Utils/Theme';
 import { RadioButton } from 'react-native-paper';
 import { Images } from '../../Constants/Images';
+import Header from '../../Components/Header'
+import ButtonComponent from '../../Components/ButtonComponent';
 // create a component
-const Cleanliness = () => {
+const Cleanliness = (props) => {
     const [checked, setChecked] = useState('first');
     return (
         <View style={styles.container}>
-            <View style={{ width: Theme.screenWidth }}>
+            <Header  backIcon={true} backIconPress={()=>props.navigation.goBack()} title="Float Cleaniless"  />
+            <View style={{ marginTop:Theme.screenHeight/20}}>
                 <View style={styles.radiobuttonView}>
                     <RadioButton
                         value="first"
@@ -30,14 +33,18 @@ const Cleanliness = () => {
                         <Text style={styles.okTextStyle}>Not OK</Text>
                     </View>
                 </View>
-                <View style={{flexDirection:'row',flexWrap:'wrap'}}>
+                <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-evenly',marginTop: Theme.screenHeight/20, }}>
                 <Image source={Images.camera} style={styles.imageStyle} />
                 <Image source={Images.camera} style={styles.imageStyle} />
                 <Image source={Images.camera} style={styles.imageStyle} />
                 <Image source={Images.camera} style={styles.imageStyle} />
                 </View>
-            </View>
 
+            </View>
+            <View style={{position:'absolute',alignSelf:'center',bottom:Theme.screenHeight/20}}>
+            <ButtonComponent text="Submit"  />
+
+            </View>
         </View>
     );
 };
@@ -46,8 +53,6 @@ const Cleanliness = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: Theme.white,
     },
     okTextStyle: {
@@ -61,8 +66,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: Theme.screenWidth / 20
     },
     imageStyle:{
-        height: Theme.screenHeight / 4.5
-        , width: Theme.screenHeight /4.5
+        height: Theme.screenHeight / 6.5
+        , width: Theme.screenHeight /6.5
     }
 });
 

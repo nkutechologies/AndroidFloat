@@ -12,6 +12,7 @@ export default Theme={
     green:'green',
     blue:'#65A1DA',
     screenWidth,
+    grey:'grey',
     screenHeight,
 
 }

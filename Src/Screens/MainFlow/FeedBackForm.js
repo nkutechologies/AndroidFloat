@@ -6,32 +6,40 @@ import { Images } from '../../Constants/Images';
 import { Icon } from 'react-native-elements'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
-
+import Header from '../../Components/Header'
 // create a component
-const FeedBackForm = () => {
+const FeedBackForm = (props) => {
     const [ProfileImage, setProfileImage] = useState('');
     const pickImage = () => {
-        launchImageLibrary(
+        launchCamera(
             {
                 mediaType: 'photo',
                 includeBase64: false,
                 // selectionLimit: 1,
             },
             async response => {
-                setProfileImage(response.assets[0].uri);
-                console.log('ye i pic', ProfileImage);
+                if (response.didCancel) {
+                    console.log("cancel");
+                } else {
+                    setProfileImage(response.assets[0].uri);
+                    console.log('ye i pic', ProfileImage);
+                }
+
             },
         );
     };
     return (
         <View style={styles.container}>
-            <Text style={{fontSize:Theme.screenHeight/30,color:Theme.black,fontWeight:'bold'}}>Upload Form Pic</Text>
+            <Header backIcon={true} title="Submit Form" backIconPress={()=>props.navigation.goBack()} />
+            <View style={[styles.container,{justifyContent:'center',alignItems:'center'}]}>
+
+            <Text style={{ fontSize: Theme.screenHeight / 30, color: Theme.black, fontWeight: 'bold' }}>Upload Form Camera</Text>
             {ProfileImage && ProfileImage != '' ?
                 <Image source={{ uri: ProfileImage }} style={{
                     height: Theme.screenHeight / 1.4
                     , width: Theme.screenHeight / 2.2
-                }} /> 
-               
+                }} />
+
                 :
                 <TouchableOpacity
                     onPress={() => pickImage()}
@@ -39,18 +47,10 @@ const FeedBackForm = () => {
                     <Image source={Images.camera} style={styles.imageStyle} />
                 </TouchableOpacity>
             }
-                   
-            {/* <Icon
-                    name='camera'
-                    type='feather'
-                    color='#517fa4'
-                    size={Theme.screenHeight / 3}
-                    onPress={() => pickImage()}
-                /> */}
-                     <ButtonComponent
-                    text="Submit"
-                    // onPress={() => props.navigation.navigate('Home')}
-                />
+            <ButtonComponent
+                text="Submit"
+            />
+            </View>
         </View>
     );
 };
@@ -59,9 +59,8 @@ const FeedBackForm = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor:Theme.white,
+
+        // backgroundColor: Theme.white,
     },
     cameralogo: {
         backgroundColor: Theme.blue

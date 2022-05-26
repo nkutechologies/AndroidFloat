@@ -16,16 +16,18 @@ const Login = (props) => {
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Image source={Images.loginlogo} style={styles.logo} />
-              <View style={{paddingHorizontal:Theme.screenWidth/20}}>
+              <View style={{paddingHorizontal:Theme.screenWidth/14}}>
               <View style={styles.loginTextView}>
-                    <Text style={styles.loginTextStyle}>Login</Text>
+                    <Text style={styles.loginTextStyle}>Welcome back,</Text>
+                    <Text style={[styles.loginTextStyle,{fontSize:Theme.screenHeight/50,color:Theme.grey,fontWeight:'400',letterSpacing:2}]}>Continue to Login</Text>
+
                     <Text>Enter your email and password</Text>
                 </View>
                 <View style={styles.inputView}>
                     <TextComponent
                         Title={'User Code'}
                         source="mail"
-                        placeholder="Enter your email"
+                        placeholder="BA-1"
                         value={username}
                         onChangeText={(username) => setUserName(username)}
                     />
@@ -44,13 +46,13 @@ const Login = (props) => {
                     />
                 </View>
               </View>
-                {/* <TouchableOpacity onPress={() => props.navigation.navigate('ResetPassword')}>
-                    <Text style={styles.forgotText}>Forgot Password?</Text>
-                </TouchableOpacity> */}
+              <View style={{marginVertical:Theme.screenHeight/30}}>
+
                 <ButtonComponent
-                    text="Sign In"
+                    text="Login"
                     onPress={() => props.navigation.navigate('Home')}
                 />
+                </View>
                 {/* <View style={styles.lastTextView}>
                     <Text style={{ fontSize: Theme.screenHeight / 55 }}>Don't have an account?</Text>
                     <TouchableOpacity onPress={() => props.navigation.navigate('Signup')}>
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
     },
     loginTextStyle: {
         color: Theme.black,
-        fontSize: Theme.screenHeight /33,
+        fontSize: Theme.screenHeight /30,
         fontWeight: 'bold'
     },
     inputView: {

@@ -1,12 +1,13 @@
 //import liraries
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Theme from '../../Utils/Theme';
 import { Images } from '../../Constants/Images';
-import { Icon } from 'react-native-elements'
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
-// create a component
+import Header from '../../Components/Header'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
 const SelectImage = (props) => {
     const [ProfileImage, setProfileImage] = useState('');
     const pickImage = () => {
@@ -14,7 +15,7 @@ const SelectImage = (props) => {
             {
                 mediaType: 'photo',
                 includeBase64: false,
-                // selectionLimit: 1,
+                selectionLimit: 1,
             },
             async response => {
                 setProfileImage(response.assets[0].uri);
@@ -24,32 +25,35 @@ const SelectImage = (props) => {
     };
     return (
         <View style={styles.container}>
+            <Header backIcon={true} title="Uplaod Image" rightIcon="settings" />
             {ProfileImage && ProfileImage != '' ?
-                <Image source={{ uri: ProfileImage }} style={{
-                    height: Theme.screenHeight / 1.4
-                    , width: Theme.screenHeight / 2.2
-                }} /> 
-               
+                <View>
+                    <TouchableOpacity style={{ alignSelf: 'flex-end',marginRight:Theme.screenWidth/30,marginVertical:Theme.screenHeight/40 }}>
+                    <AntDesign name="close" onPress={() => setProfileImage("")} size={Theme.screenHeight / 40}  color={Theme.black} />
+                    </TouchableOpacity>
+                    <Image source={{ uri: ProfileImage }} resizeMode="cover" style={{
+                        height: Theme.screenHeight / 1.9
+                        , width: Theme.screenWidth / 1
+                    }} />
+                </View>
                 :
-                <TouchableOpacity
-                    onPress={() => pickImage()}
-                >
-                    <Image source={Images.camera} style={styles.imageStyle} />
-                </TouchableOpacity>
+                <View style={{ justifyContent: 'center', flex: 1 }}>
+
+                    <TouchableOpacity
+                        onPress={() => pickImage()}>
+                        <Image source={Images.camera} style={styles.imageStyle} />
+                    </TouchableOpacity>
+                </View>
             }
-                   
-            {/* <Icon
-                    name='camera'
-                    type='feather'
-                    color='#517fa4'
-                    size={Theme.screenHeight / 3}
-                    onPress={() => pickImage()}
-                /> */}
-                     <ButtonComponent
+            <View style={{ position: 'absolute', bottom: 30, alignSelf: 'center' }}>
+                <ButtonComponent
                     text="Submit"
-                    // onPress={() => props.navigation.navigate('Home')}
+
+
                 />
-                 
+            </View>
+
+
         </View>
     );
 };
@@ -58,16 +62,16 @@ const SelectImage = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+
         backgroundColor: Theme.white,
     },
     cameralogo: {
         backgroundColor: Theme.blue
     },
     imageStyle: {
-        height: Theme.screenHeight / 2.5
-        , width: Theme.screenHeight / 2.5
+        alignSelf: 'center',
+        height: Theme.screenHeight / 4.5
+        , width: Theme.screenHeight / 4.5
     }
 });
 
