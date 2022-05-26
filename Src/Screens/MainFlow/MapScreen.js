@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Theme from '../../Utils/Theme';
 import Geolocation from 'react-native-geolocation-service';
+import Header from '../../Components/Header';
 
 const MapScreen = (props) => {
 
@@ -76,6 +77,8 @@ const MapScreen = (props) => {
                     coordinate={{ latitude: lat, longitude: lng }}
                 />
             </MapView>
+            <Header backIcon={true} title="Location" backIconPress={()=>props.navigation.goBack()}  />
+
             <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
                 <ButtonComponent text="Continue" onPress={()=> props.navigation.navigate('SelectImage')} />
             </View>

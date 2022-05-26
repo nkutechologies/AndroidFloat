@@ -25,7 +25,7 @@ const SelectImage = (props) => {
     };
     return (
         <View style={styles.container}>
-            <Header backIcon={true} title="Uplaod Image" rightIcon="settings" />
+            <Header backIcon={true} title="Uplaod Image" backIconPress={()=>props.navigation.goBack()} rightIcon="settings" />
             {ProfileImage && ProfileImage != '' ?
                 <View>
                     <TouchableOpacity style={{ alignSelf: 'flex-end',marginRight:Theme.screenWidth/30,marginVertical:Theme.screenHeight/40 }}>

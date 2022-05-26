@@ -5,17 +5,8 @@ import Theme from '../../Utils/Theme';
 import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
 import ButtonComponent from '../../Components/ButtonComponent';
-<<<<<<< Updated upstream
-import Header from '../../Components/Header'
 
-
-=======
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import ModalDropdown from 'react-native-modal-dropdown';
-import { useLinkProps } from '@react-navigation/native';
 import Header from '../../Components/Header';
->>>>>>> Stashed changes
 // create a component
 const ConsumerInter = (props) => {
     const [Vendor, setVendor] = useState();
@@ -29,11 +20,7 @@ const ConsumerInter = (props) => {
         <View style={styles.container}>
             <Header  backIcon={true} title="Consumer Data Form" backIconPress={()=>props.navigation.goBack()} />
             <ScrollView showsVerticalScrollIndicator={false}>
-<<<<<<< Updated upstream
-              
-=======
-            <Header  backIcon={true} backIconPress={()=>props.navigation.goBack()} title="Consumer Form"  />
->>>>>>> Stashed changes
+           
                 {/* <View style={{
       backgroundColor: '#171717',
       flex: 1,
@@ -59,13 +46,8 @@ const ConsumerInter = (props) => {
                 <View style={{ paddingHorizontal: Theme.screenWidth / 20, marginVertical: Theme.screenHeight / 30 }}>
                     <View style={styles.inputView}>
                         <DropDownComponent
-<<<<<<< Updated upstream
-                            Title={'Territory'}
-                            options={['Ahmad', 'Goraya']}
-=======
                             Title={'Territor'}
                             options={['Ahmad', 'Goraya','hghgg','jkjkj','l',]}
->>>>>>> Stashed changes
                             defaultValue={'please Select'}
                             dropdownStyle={styles.dropdownStyle}
                             IconName={'angle-down'}

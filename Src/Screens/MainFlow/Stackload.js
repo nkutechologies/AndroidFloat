@@ -59,7 +59,7 @@ const Stackload = (props) => {
 
     return (
         <View style={styles.container}>
-            <Header title="Stock" backIcon={true} backIconPress={() => props.naivigation.goBack()} />
+            <Header title="Stock" backIcon={true} backIconPress={() => props.navigation.goBack()} />
             <View style={{marginTop:Theme.screenHeight/50}}>
             <View style={{flexDirection:'row',justifyContent:'space-evenly',backgroundColor:Theme.blue}}>
                      <View style={styles.boxes}>
