@@ -1,37 +1,129 @@
-//import liraries
-import React, { Component ,useState} from 'react';
-import { View, Alert, Text, BackHandler, StyleSheet, ImageBackground, FlatList, Image } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
-import { Images } from '../../Constants/Images';
+import React, { Component, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, } from 'react-native';
 import Theme from '../../Utils/Theme';
+import Header from '../../Components/Header'
+const Stackload = (props) => {
 
-// create a component
-const Stackload = () => {
+
+    const data = [
+        {
+        id: 0,
+        brand: 'GT',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+    {
+        id:1,
+        brand: 'CC',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+    {
+        id: 2,
+        brand: 'CC2B',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+    {
+        id: 3,
+        brand: 'GC',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+    {
+        id: 4,
+        brand: 'CC2B',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+    {
+        id: 5,
+        brand: 'GC',
+        opening:3000,
+        sale:100,
+        balance:2020,
+        load:2000,
+    },
+ 
+    ]
+
     return (
         <View style={styles.container}>
-               <Card elevation={5} style={{alignItems:'center',backgroundColor:'#f0f0f0'
-            }}>
-               
-               <View style={{height:Theme.screenHeight/11,justifyContent:'center'}}>
-               <Text style={{fontSize:Theme.screenHeight/35,
-                color:Theme.black,}}>Stack Load</Text>
-               </View>
-                
-               </Card>
-            <Text>Stackload</Text>
-        </View>
+            <Header title="Stock" backIcon={true} backIconPress={() => props.naivigation.goBack()} />
+            <View style={{marginTop:Theme.screenHeight/50}}>
+            <View style={{flexDirection:'row',justifyContent:'space-evenly',backgroundColor:Theme.blue}}>
+                     <View style={styles.boxes}>
+                       <Text style={styles.title}>Brand</Text>
+                       </View>
+                       <View style={styles.boxes}>
+                       <Text style={styles.title}>Opening</Text>
+                       </View>
+                       <View style={styles.boxes}>
+                       <Text style={styles.title}>Load Stock</Text>
+                       </View>
+                       <View style={styles.boxes}>
+                       <Text style={styles.title}>Sale</Text>
+                       </View>
+                       <View style={styles.boxes}>
+                       <Text style={styles.title}>Balance</Text>
+                       </View>
+                   </View>
+                   </View>
+                 <FlatList
+                 refreshing={true}
+                 data={data}
+                 showsHorizontalScrollIndicator={false}
+                //  numColumns={1}
+                 
+                 keyExtractor={item => item.id}
+                 renderItem={({item,index}) => (
+                 <View style={index % 2 == 0? {flexDirection:'row',justifyContent:'space-around'}:{flexDirection:'row',justifyContent:'space-around',backgroundColor:Theme.lightPink}}>
+                     <Text style={[styles.data,{fontWeight:'700'}]} >{item.brand}</Text>
+                     <Text style={styles.data} >{item.opening}</Text>
+                     <Text style={styles.data} >{item.load}</Text>
+                     <Text style={styles.data} >{item.sale}</Text>
+                     <Text style={styles.data} >{item.balance}</Text>
+
+                 </View>
+                    )}
+                />
+            </View>
     );
 };
 
-// define your styles
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        backgroundColor:Theme.white,
+        backgroundColor: Theme.white,
     },
+    title:{
+        color:Theme.black,
+        fontWeight:'bold',
+        fontSize:Theme.screenHeight/60
+    },
+    boxes:{
+        padding:Theme.screenHeight/60,backgroundColor:Theme.blue,
+        
+    },
+    data:{
+        width:Theme.screenWidth/6,
+        textAlign:'center',
+        fontSize:Theme.screenHeight/70,
+        color:Theme.black,
+        padding:Theme.screenHeight/80
+        // marginLeft:Theme.screenWidth/90
+    }
 });
 
-//make this component available to the app
 export default Stackload;

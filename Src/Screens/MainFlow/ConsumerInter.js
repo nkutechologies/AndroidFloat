@@ -5,12 +5,11 @@ import Theme from '../../Utils/Theme';
 import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
 import ButtonComponent from '../../Components/ButtonComponent';
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
-import ModalDropdown from 'react-native-modal-dropdown';
-import { useLinkProps } from '@react-navigation/native';
+import Header from '../../Components/Header'
+
+
 // create a component
-const ConsumerInter = () => {
+const ConsumerInter = (props) => {
     const [Vendor, setVendor] = useState();
     const [name, setName] = useState();
     const [CNIC, setCNIC] = useState();
@@ -20,19 +19,9 @@ const ConsumerInter = () => {
     const [see, setSee] = useState(true)
     return (
         <View style={styles.container}>
+            <Header  backIcon={true} title="Consumer Data Form" backIconPress={()=>props.navigation.goBack()} />
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Card elevation={5} style={{
-                    alignItems: 'center', backgroundColor: '#f0f0f0'
-                }}>
-
-                    <View style={{ height: Theme.screenHeight / 11, justifyContent: 'center' }}>
-                        <Text style={{
-                            fontSize: Theme.screenHeight / 35,
-                            color: Theme.black,
-                        }}>Consumer Data Form</Text>
-                    </View>
-
-                </Card>
+              
                 {/* <View style={{
       backgroundColor: '#171717',
       flex: 1,
@@ -58,7 +47,7 @@ const ConsumerInter = () => {
                 <View style={{ paddingHorizontal: Theme.screenWidth / 20, marginVertical: Theme.screenHeight / 30 }}>
                     <View style={styles.inputView}>
                         <DropDownComponent
-                            Title={'Territor'}
+                            Title={'Territory'}
                             options={['Ahmad', 'Goraya']}
                             defaultValue={'please Select'}
                             dropdownStyle={styles.dropdownStyle}
@@ -78,7 +67,7 @@ const ConsumerInter = () => {
                     </View>
                     <View style={styles.passwordView}>
                         <DropDownComponent
-                            Title={'Down'}
+                            Title={'Town'}
                             options={['Ahmad', 'Goraya']}
                             defaultValue={'please Select'}
                             IconName={'angle-down'}
