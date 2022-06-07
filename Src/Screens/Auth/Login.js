@@ -20,8 +20,6 @@ const Login = (props) => {
               <View style={styles.loginTextView}>
                     <Text style={styles.loginTextStyle}>Welcome back,</Text>
                     <Text style={[styles.loginTextStyle,{fontSize:Theme.screenHeight/50,color:Theme.grey,fontWeight:'400',letterSpacing:2}]}>Continue to Login</Text>
-
-                    <Text>Enter your email and password</Text>
                 </View>
                 <View style={styles.inputView}>
                     <TextComponent

@@ -7,6 +7,7 @@ import { Icon } from 'react-native-elements'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Header from '../../Components/Header'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 // create a component
 const FeedBackForm = (props) => {
     const [ProfileImage, setProfileImage] = useState('');
@@ -33,13 +34,17 @@ const FeedBackForm = (props) => {
             <Header backIcon={true} title="Submit Form" backIconPress={()=>props.navigation.goBack()} />
             <View style={[styles.container,{justifyContent:'center',alignItems:'center'}]}>
 
-            <Text style={{ fontSize: Theme.screenHeight / 30, color: Theme.black, fontWeight: 'bold' }}>Upload Form Camera</Text>
+            {/* <Text style={{ fontSize: Theme.screenHeight / 30, color: Theme.black, fontWeight: 'bold' }}>Upload Form Camera</Text> */}
             {ProfileImage && ProfileImage != '' ?
-                <Image source={{ uri: ProfileImage }} style={{
-                    height: Theme.screenHeight / 1.4
-                    , width: Theme.screenHeight / 2.2
-                }} />
-
+                <View>
+                    <TouchableOpacity style={{ alignSelf: 'flex-end',marginRight:Theme.screenWidth/30,marginVertical:Theme.screenHeight/40, }}>
+                    <AntDesign name="close" onPress={() => setProfileImage("")} size={Theme.screenHeight / 40}  color={Theme.black} />
+                    </TouchableOpacity>
+                    <Image source={{ uri: ProfileImage }} resizeMode="cover" style={{
+                        height: Theme.screenHeight / 1.7
+                        , width: Theme.screenWidth / 1
+                    }} />
+                </View>
                 :
                 <TouchableOpacity
                     onPress={() => pickImage()}

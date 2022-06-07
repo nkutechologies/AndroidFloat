@@ -31,7 +31,7 @@ const DropDownComponent = (props) => {
                     dropdownStyle={props.dropdownStyle}
                     style={props.dropDownContainerStyle}
                     textStyle={{ color: Theme.black,fontSize:Theme.screenHeight/60 }}
-                    dropdownTextStyle={{fontSize:Theme.screenHeight/50}}
+                    dropdownTextStyle={{fontSize:Theme.screenHeight/50,paddingHorizontal:20}}
                     dropdownTextHighlightStyle={{color:Theme.blue}}
                     animated={true}
                     showsVerticalScrollIndicator={false}

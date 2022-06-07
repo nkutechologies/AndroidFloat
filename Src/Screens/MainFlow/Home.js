@@ -85,11 +85,12 @@ const Home = (props) => {
     return (
         <View style={styles.container}>
         <Header   title="Dashboard" backIcon={true} backIconPress={()=>backPress()} />
+        
             <ImageBackground source={Images.homebg} style={styles.bgimageStyle}>
              <View style={{marginTop:Theme.screenHeight/70}}>
                 <View>
                     <Card elevation={5} style={styles.cardViewStyle}
-                     onPress={()=>props.navigation.navigate('MapScreen')}
+                     onPress={()=>props.navigation.navigate('Foodlist')}
                      >
                         <View style={styles.cardFirstView}>
                             <Image source={Images.dummy} style={styles.imageStyle} />

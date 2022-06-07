@@ -3,7 +3,7 @@ import React, { Component, useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Theme from '../../Utils/Theme';
 import { Images } from '../../Constants/Images';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Header from '../../Components/Header'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -11,11 +11,11 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 const SelectImage = (props) => {
     const [ProfileImage, setProfileImage] = useState('');
     const pickImage = () => {
-        launchImageLibrary(
+        launchCamera(
             {
                 mediaType: 'photo',
                 includeBase64: false,
-                selectionLimit: 1,
+                // selectionLimit: 1,
             },
             async response => {
                 setProfileImage(response.assets[0].uri);
@@ -32,7 +32,7 @@ const SelectImage = (props) => {
                     <AntDesign name="close" onPress={() => setProfileImage("")} size={Theme.screenHeight / 40}  color={Theme.black} />
                     </TouchableOpacity>
                     <Image source={{ uri: ProfileImage }} resizeMode="cover" style={{
-                        height: Theme.screenHeight / 1.9
+                        height: Theme.screenHeight / 1.7
                         , width: Theme.screenWidth / 1
                     }} />
                 </View>

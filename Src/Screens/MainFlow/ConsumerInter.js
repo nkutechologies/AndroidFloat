@@ -20,33 +20,11 @@ const ConsumerInter = (props) => {
         <View style={styles.container}>
             <Header  backIcon={true} title="Consumer Data Form" backIconPress={()=>props.navigation.goBack()} />
             <ScrollView showsVerticalScrollIndicator={false}>
-           
-                {/* <View style={{
-      backgroundColor: '#171717',
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 15
-    }}>
-      <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-
-        // theme="DARK"
-        // multiple={true}
-        mode="BADGE"
-        badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-      />
-    </View> */}
 
                 <View style={{ paddingHorizontal: Theme.screenWidth / 20, marginVertical: Theme.screenHeight / 30 }}>
                     <View style={styles.inputView}>
                         <DropDownComponent
-                            Title={'Territor'}
+                            Title={'Territory'}
                             options={['Ahmad', 'Goraya','hghgg','jkjkj','l',]}
                             defaultValue={'please Select'}
                             dropdownStyle={styles.dropdownStyle}
@@ -89,6 +67,7 @@ const ConsumerInter = (props) => {
                             Title={'CNIC'}
                             placeholder="Enter your cnic"
                             value={CNIC}
+                            keyboardType={'numeric'}
                             onChangeText={(password) => setCNIC(password)}
                         />
                     </View>
@@ -97,6 +76,7 @@ const ConsumerInter = (props) => {
                             Title={'Cell No'}
                             placeholder="Enter your number"
                             value={cellNo}
+                            keyboardType={'numeric'}
                             onChangeText={(password) => setcellNo(password)}
 
                         />
@@ -106,6 +86,7 @@ const ConsumerInter = (props) => {
                             Title={'Age'}
                             placeholder="Enter your age"
                             value={age}
+                            keyboardType={'numeric'}
                             onChangeText={(password) => setage(password)}
 
                         />
@@ -143,7 +124,7 @@ const ConsumerInter = (props) => {
                     </View>
                     <View style={styles.passwordView}>
                     <DropDownComponent
-                            Title={'Productive Status'}
+                            Title={'Call Status'}
                             options={['Ahmad', 'Goraya']}
                             defaultValue={'please Select'}
                             IconName={'chevron-down'}

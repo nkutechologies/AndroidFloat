@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "553288027806",
+    "project_id": "androidfloat",
+    "storage_bucket": "androidfloat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553288027806:android:6bc97639a67a2ffbafb58f",
+        "android_client_info": {
+          "package_name": "com.androidfloat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553288027806-colket0u86kc4ilqi9nnmhq67h2la5b6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI2zz0qyMJUlwVgRqAekrn2H0reJxPRvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553288027806-colket0u86kc4ilqi9nnmhq67h2la5b6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

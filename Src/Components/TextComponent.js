@@ -12,6 +12,7 @@ const TextComponent = (props) => {
     fontSize:Theme.screenHeight/50,fontWeight:'bold'}}>{props.Title}</Text>
     <View
       style={{
+        // flex:1,
         backgroundColor: '#fff',
         flexDirection: 'row',
         // elevation: 5,
@@ -19,6 +20,7 @@ const TextComponent = (props) => {
         alignItems: 'center',
         borderRadius: 10,
         // paddingLeft: 4,
+        // backgroundColor:'pink'
       }}>
       <TextInput
         value={props.value}
@@ -27,9 +29,9 @@ const TextComponent = (props) => {
         style={{
           flex: 1,
           height: Theme.screenHeight / 18,
-          fontSize: Theme.screenWidth / 18,
+          // fontSize: Theme.screenWidth / 18,
           // backgroundColor: '#383838',
-          borderColor: 'pink',
+          // backgroundColor: 'pink',
           // borderWidth: 1,
           // paddingLeft: 50,
           fontSize: Theme.screenHeight/60,
