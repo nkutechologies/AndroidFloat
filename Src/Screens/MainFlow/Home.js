@@ -137,7 +137,7 @@ const Home = props => {
             <Card
               elevation={5}
               style={styles.cardViewStyle}
-              onPress={() => props.navigation.navigate('Foodlist')}>
+              onPress={() => props.navigation.navigate('MapScreen')}>
               <View style={styles.cardFirstView}>
                 <Image source={Images.dummy} style={styles.imageStyle} />
                 <View style={styles.textViewStyle}>

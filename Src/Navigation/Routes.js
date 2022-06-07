@@ -11,7 +11,6 @@ import Cleanliness from '../Screens/MainFlow/Cleanliness';
 import FeedBackForm from '../Screens/MainFlow/FeedBackForm';
 import ConsumerInter from '../Screens/MainFlow/ConsumerInter';
 import Stackload from '../Screens/MainFlow/Stackload';
-import Foodlist from '../Screens/MainFlow/Foodlist';
 
 const Stack = createNativeStackNavigator();
 function Routes() {
@@ -37,7 +36,6 @@ function Routes() {
         <Stack.Screen name="FeedBackForm" component={FeedBackForm} />
         <Stack.Screen name="ConsumerInter" component={ConsumerInter} />
         <Stack.Screen name="Stackload" component={Stackload} />
-        <Stack.Screen name="Foodlist" component={Foodlist} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -12,7 +12,7 @@ import Theme from '../Utils/Theme';
 
 const ButtonComponent = ({onPress, text, isGreen, font, isLoading}) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{alignItems: 'center'}}>
       <View
         style={
           isGreen ? {...styles.btn, backgroundColor: Theme.primary} : styles.btn
@@ -22,7 +22,14 @@ const ButtonComponent = ({onPress, text, isGreen, font, isLoading}) => {
         ) : (
           <Text
             numberOfLines={1}
-            style={font ? {...styles.btnText, fontSize: 15} : styles.btnText}>
+            style={
+              font
+                ? {
+                    ...styles.btnText,
+                    fontSize: 15,
+                  }
+                : styles.btnText
+            }>
             {text}
           </Text>
         )}
@@ -33,22 +40,20 @@ const ButtonComponent = ({onPress, text, isGreen, font, isLoading}) => {
 
 const styles = StyleSheet.create({
   btn: {
-    // justifyContent: 'center',
+    width: Theme.screenWidth / 1.2,
     borderRadius: 10,
     marginTop: Theme.screenHeight / 50,
     alignItems: 'center',
     backgroundColor: Theme.blue,
+    justifyContent: 'center',
     paddingVertical: Theme.screenHeight / 80,
-    // paddingHorizontal: 4,
-    width: Theme.screenWidth / 1.2,
     alignSelf: 'center',
-    // flexDirection: 'row',
   },
   btnText: {
+    width: '90%',
     color: Theme.white,
     fontSize: Theme.screenHeight / 40,
-    paddingHorizontal: Theme.screenWidth / 2.8,
-    // fontFamily: Theme.fontFamilySemiBold,
+    textAlign: 'center',
   },
 });
 
