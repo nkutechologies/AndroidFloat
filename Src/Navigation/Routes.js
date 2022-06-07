@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Splash from '../Screens/Auth/Splash';
 import Login from '../Screens/Auth/Login';
 import Signup from '../Screens/Auth/Signup';
@@ -17,9 +17,10 @@ const Stack = createNativeStackNavigator();
 function Routes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        headerShown: false
-      }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
         <Stack.Screen
           name="Splash"
           component={Splash}
@@ -27,48 +28,16 @@ function Routes() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-
-        />
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-        />
-        <Stack.Screen
-          name="Home"
-          component={Home}
-        />
-          <Stack.Screen
-          name="SelectImage"
-          component={SelectImage}
-        />
-        <Stack.Screen
-          name="MapScreen"
-          component={MapScreen}
-        />
-        <Stack.Screen
-          name="Cleanliness"
-          component={Cleanliness}
-        />
-        <Stack.Screen
-          name="FeedBackForm"
-          component={FeedBackForm}
-        />
-        <Stack.Screen
-          name="ConsumerInter"
-          component={ConsumerInter}
-        />
-        <Stack.Screen
-          name="Stackload"
-          component={Stackload}
-        />
-        <Stack.Screen
-          name="Foodlist"
-          component={Foodlist}
-        />
-      
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="SelectImage" component={SelectImage} />
+        <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="Cleanliness" component={Cleanliness} />
+        <Stack.Screen name="FeedBackForm" component={FeedBackForm} />
+        <Stack.Screen name="ConsumerInter" component={ConsumerInter} />
+        <Stack.Screen name="Stackload" component={Stackload} />
+        <Stack.Screen name="Foodlist" component={Foodlist} />
       </Stack.Navigator>
     </NavigationContainer>
   );
