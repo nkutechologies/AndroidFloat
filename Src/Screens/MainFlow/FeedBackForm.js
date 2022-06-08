@@ -53,11 +53,8 @@ const FeedBackForm = props => {
           console.log('ye i pic', response);
           const file = response.assets[0];
           FileUplaod.upload(file)
-            // .then(r => r.json())
-            // .then(data => {
-            //   console.log('scuess response', data);
-            // });
-          // setProfileImage(response.assets[0].uri);
+            // .then(data => console.log('data respnse', data))
+            // .catch(err => console.log(err));
         }
       },
     );
