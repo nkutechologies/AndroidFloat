@@ -22,8 +22,8 @@ import firestore from '@react-native-firebase/firestore';
 
 // create a component
 const Login = props => {
-  const [username, setUserName] = useState('Ali@gmail.com');
-  const [password, setPassword] = useState('12345678');
+  const [username, setUserName] = useState('GSI1SP');
+  const [password, setPassword] = useState('GSI1SP');
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
@@ -33,7 +33,7 @@ const Login = props => {
     } else {
       setLoading(true);
       await auth()
-        .signInWithEmailAndPassword(username, password)
+        .signInWithEmailAndPassword(username + '@gmail.com', password)
         .then(async res => {
           console.log('auth user response', res);
           Users.getSingleUser(res.user.uid)
@@ -71,8 +71,7 @@ const Login = props => {
                   fontWeight: '400',
                   letterSpacing: 2,
                 },
-              ]}
-            >
+              ]}>
               Continue to Login
             </Text>
           </View>

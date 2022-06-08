@@ -17,6 +17,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {Modal} from 'react-native-paper';
 import Header from '../../Components/Header';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const data = [
   {
@@ -49,7 +50,7 @@ const data = [
 const Home = props => {
   useFocusEffect(
     React.useCallback(() => {
-      getUser();
+      // getUser();
       const onBackPress = async () => {
         Alert.alert('Logout', 'Do you really want to exit the application?', [
           {
@@ -90,11 +91,16 @@ const Home = props => {
     return true;
   };
 
-  const getUser = () => {
-    const usersCollection = firestore()
-      .collection('user')
-      .doc('NLgFQzKD9IaXRXOFy92U3OLYl1t2')
-      .set({terrirtoy: 3, name: 'ALi', place: 'newkjasenjkfnjkasnfjk place', instagramId: 1});
+  const getUser = async () => {
+    const a = await AsyncStorage.getItem('AuthData');
+    const user = JSON.parse(a);
+    console.log(user);
+    const usersCollection = firestore().collection('user').doc(user.id).set({
+      terrirtoy: 3,
+      name: 'ALi',
+      place: 'newkjasenjkfnjkasnfjk place',
+      instagramId: 1,
+    });
 
     // const usersCollection = firestore()
     //   .collection('user')

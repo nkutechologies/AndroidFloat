@@ -7,7 +7,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Header from '../../Components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Attendance} from '../Api/FirebaseCalls';
+import {Users} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 const SelectImage = props => {
@@ -42,7 +42,7 @@ const SelectImage = props => {
   const markAttendance = () => {
     setLoading(true);
     const newData = {...data, id: user.id, image: 'nj'};
-    Attendance.markAttendance(newData)
+    Users.markAttendance(newData)
       .then(resp => {
         console.log('Respoonse making attendance data: ', resp);
         Toast.show('Attendance Marked');
