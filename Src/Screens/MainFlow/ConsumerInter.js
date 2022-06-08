@@ -84,9 +84,7 @@ const ConsumerInter = props => {
         .then(resp => {
           console.log('Respoonse Form Submit ', resp);
         })
-        .catch(err =>
-          console.log('this is error Form submit', err),
-        )
+        .catch(err => console.log('this is error Form submit', err))
         .finally(() => setButtonLoading(false));
     } else {
       Toast.show('Please Fill All The Details');
@@ -179,7 +177,13 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Current Brand'}
-                  options={allBrands}
+                  options={[
+                    'GSI',
+                    'Classic',
+                    'Capstan',
+                    'Morven',
+                    'Gold Flake',
+                  ]}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}

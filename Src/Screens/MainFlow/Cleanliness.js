@@ -84,11 +84,12 @@ const Cleanliness = props => {
 
   const getUserData = async () => {
     let a = await AsyncStorage.getItem('AuthData');
+    const data = JSON.parse(a);
     setUserData(JSON.parse(a));
-    getUserFloat();
+    getUserFloat(data.FloatId);
   };
-  const getUserFloat = () => {
-    Float.getUserFloat(userData?.FloatId)
+  const getUserFloat = id => {
+    Float.getUserFloat(id)
       .then(resp => {
         console.log('Respoonse getting user floa data: ', resp);
       })
@@ -99,7 +100,8 @@ const Cleanliness = props => {
   const SetFloatData = () => {
     const data = {
       images: ['www,google.com', 'www.google.com'],
-      status: 'NotOk',
+      status: checked == 'first' ? 'Ok' : 'NotOk',
+      floatId: userData?.FloatId,
     };
     Float.setFloatCleanliness(userData?.FloatId, data)
       .then(resp => {

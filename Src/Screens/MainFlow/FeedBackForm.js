@@ -27,7 +27,7 @@ const FeedBackForm = props => {
   const submitFeedbackForm = () => {
     setLoading(true);
     const data = {
-      id: userData?.FloatId,
+      floatId: userData?.FloatId,
       image: 'www.google.com',
     };
     Float.submitFloatForm(userData?.FloatId, data)
