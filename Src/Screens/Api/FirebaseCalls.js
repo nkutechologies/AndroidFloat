@@ -66,6 +66,7 @@ export const FileUplaod = {
       headers: {
         'Content-Type': undefined,
       },
+      
     })
       // fetch(
       //   'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure',
