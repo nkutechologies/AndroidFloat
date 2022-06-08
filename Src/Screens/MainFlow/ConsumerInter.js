@@ -83,6 +83,7 @@ const ConsumerInter = props => {
       ConsumerForm.setConsumerDetails(userData.id, d.substring(0, 10), Vendor)
         .then(resp => {
           console.log('Respoonse Form Submit ', resp);
+          props.navigation.navigate('Home');
         })
         .catch(err => console.log('this is error Form submit', err))
         .finally(() => setButtonLoading(false));

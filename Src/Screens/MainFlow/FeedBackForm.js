@@ -9,7 +9,7 @@ import ButtonComponent from '../../Components/ButtonComponent';
 import Header from '../../Components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Float} from '../Api/FirebaseCalls';
+import {Float, FileUplaod} from '../Api/FirebaseCalls';
 // create a component
 const FeedBackForm = props => {
   const [ProfileImage, setProfileImage] = useState('');
@@ -28,11 +28,12 @@ const FeedBackForm = props => {
     setLoading(true);
     const data = {
       floatId: userData?.FloatId,
-      image: 'www.google.com',
+      image: 'www.google.com/users',
     };
     Float.submitFloatForm(userData?.FloatId, data)
       .then(resp => {
         console.log('Respoonse submiting floa data: ', resp);
+        props.navigation.navigate('Home');
       })
       .catch(err => console.log('this is error submitn float data', err))
       .finally(() => setLoading(false));
@@ -49,8 +50,14 @@ const FeedBackForm = props => {
         if (response.didCancel) {
           console.log('cancel');
         } else {
-          setProfileImage(response.assets[0].uri);
-          console.log('ye i pic', ProfileImage);
+          console.log('ye i pic', response);
+          const file = response.assets[0];
+          FileUplaod.upload(file)
+            // .then(r => r.json())
+            // .then(data => {
+            //   console.log('scuess response', data);
+            // });
+          // setProfileImage(response.assets[0].uri);
         }
       },
     );

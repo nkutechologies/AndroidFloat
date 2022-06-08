@@ -1,5 +1,6 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import axios from 'axios';
 //collection == add
 //documnt == set
 export const Users = {
@@ -49,4 +50,36 @@ export const ConsumerForm = {
       .doc(`${userId}`)
       .collection(`${date}`)
       .add(data),
+};
+
+export const FileUplaod = {
+  upload: data => {
+    const fdata = new FormData();
+    // fdata.append('filename', data.fileName);
+    fdata.append('filepath', data.uri);
+    // fdata.append('filetype', data.type);
+    console.log(fdata);
+    axios({
+      method: 'post',
+      url: 'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure',
+      data: fdata,
+      headers: {
+        'Content-Type': undefined,
+      },
+    })
+      // fetch(
+      //   'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure',
+      //   {
+      //     method: 'POST',
+      //     headers: {
+      //       Accept:
+      //         'application/json, application/xml, text/plain, text/html, *.*',
+      //       'Content-Type': undefined,
+      //     },
+      //     body: data,
+      //   },
+      // )
+      .then(r => console.log('respnse', r))
+      .catch(err => console.log(err));
+  },
 };

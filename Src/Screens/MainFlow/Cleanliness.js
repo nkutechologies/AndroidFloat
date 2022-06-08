@@ -18,6 +18,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Float} from '../Api/FirebaseCalls';
+
 // create a component
 const Cleanliness = props => {
   const [checked, setChecked] = useState('first');
@@ -103,11 +104,13 @@ const Cleanliness = props => {
       status: checked == 'first' ? 'Ok' : 'NotOk',
       floatId: userData?.FloatId,
     };
+    console.log(userData, data);
     Float.setFloatCleanliness(userData?.FloatId, data)
       .then(resp => {
-        console.log('Respoonse getting user floa data: ', resp);
+        console.log('Respoonse setting data: ', resp);
+        props.navigation.navigate('Home');
       })
-      .catch(err => console.log('this is error getting user float data', err))
+      .catch(err => console.log('this is error setting user float data', err))
       .finally(() => setLoading(false));
   };
   return (
