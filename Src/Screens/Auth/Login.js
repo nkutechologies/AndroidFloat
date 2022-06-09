@@ -59,8 +59,8 @@ const Login = props => {
   const SignIn = async () => {
     var name = 'LHR B';
     const data = {
-      id: name,
-      name: 2,
+      id: 2,
+      name: name,
     };
     await firestore().collection('Territory').doc(name).set(data);
   };
