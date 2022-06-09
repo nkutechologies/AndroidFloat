@@ -55,17 +55,32 @@ export const ConsumerForm = {
 export const FileUplaod = {
   upload: data => {
     const fdata = new FormData();
-    fdata.append('filepath', data.uri);
+    fdata.append('uri', data.uri);
+    fdata.append('name', data.fileName);
+    fdata.append('type', data.type);
     axios
       .post(
         'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure',
         fdata,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data; charset=utf-8',
+            // 'Accept':''
+            'Access-Control-Allow-Origin': '*',
+            accept: 'application/json',
           },
         },
       )
-      .then(resp => console.log(resp));
+      .then(resp => console.log(resp))
+      .catch(err => console.log(err));
+    // fetch({
+    //   url:"https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure",
+    //   method: 'post',
+    //   data: fdata,
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data; charset=utf-8',
+    //     accept: 'application/json',
+    //   },
+    // }).then(res => console.log(res));
   },
 };

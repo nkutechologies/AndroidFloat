@@ -27,34 +27,44 @@ const Login = props => {
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
-  const SignIn = async () => {
-    if (username == '' || password == '') {
-      Toast.show('Please Enter Details First');
-    } else {
-      setLoading(true);
-      await auth()
-        .signInWithEmailAndPassword(username + '@gmail.com', password)
-        .then(async res => {
-          console.log('auth user response', res);
-          Users.getSingleUser(res.user.uid)
-            .then(async documentSnapshot => {
-              console.log('User data: ', documentSnapshot._data);
-              if (documentSnapshot.exists) {
-                await AsyncStorage.setItem(
-                  'AuthData',
-                  JSON.stringify(documentSnapshot._data),
-                );
-                props.navigation.navigate('Home');
-              } else {
-                Toast.show('Details Not Added yet');
-              }
-            })
-            .catch(err => console.log('this is error fetching data', err))
-            .finally(() => setLoading(false));
-        })
-        .catch(err => console.log('error in signup', err));
+  // const SignIn = async () => {
+  //   if (username == '' || password == '') {
+  //     Toast.show('Please Enter Details First');
+  //   } else {
+  //     setLoading(true);
+  //     await auth()
+  //       .signInWithEmailAndPassword(username + '@gmail.com', password)
+  //       .then(async res => {
+  //         console.log('auth user response', res);
+  //         Users.getSingleUser(res.user.uid)
+  //           .then(async documentSnapshot => {
+  //             console.log('User data: ', documentSnapshot._data);
+  //             if (documentSnapshot.exists) {
+  //               await AsyncStorage.setItem(
+  //                 'AuthData',
+  //                 JSON.stringify(documentSnapshot._data),
+  //               );
+  //               props.navigation.navigate('Home');
+  //             } else {
+  //               Toast.show('Details Not Added yet');
+  //             }
+  //           })
+  //           .catch(err => console.log('this is error fetching data', err))
+  //           .finally(() => setLoading(false));
+  //       })
+  //       .catch(err => console.log('error in signup', err));
+  //   }
+  // };
+
+  const SignIn= async=>{
+    const data = {
+      FloatId:3,
+      id: '33jrXPgX55TClkjU0HF3swZaM822',
+      name:'BA GSI Float 1',
+      role :'BA GSI Float 1'
     }
-  };
+    await firestore().collection('user').doc('33jrXPgX55TClkjU0HF3swZaM822').set(data)
+  }
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>

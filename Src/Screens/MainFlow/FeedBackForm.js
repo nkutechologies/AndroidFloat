@@ -28,7 +28,7 @@ const FeedBackForm = props => {
     setLoading(true);
     const data = {
       floatId: userData?.FloatId,
-      image: 'www.google.com/users',
+      image: 'www.google.com/usershbjh',
     };
     Float.submitFloatForm(userData?.FloatId, data)
       .then(resp => {
@@ -52,9 +52,9 @@ const FeedBackForm = props => {
         } else {
           console.log('ye i pic', response);
           const file = response.assets[0];
-          FileUplaod.upload(file)
-            // .then(data => console.log('data respnse', data))
-            // .catch(err => console.log(err));
+          FileUplaod.upload(file);
+          // .then(data => console.log('data respnse', data))
+          // .catch(err => console.log(err));
         }
       },
     );
