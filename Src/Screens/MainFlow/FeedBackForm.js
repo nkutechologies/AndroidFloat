@@ -28,7 +28,7 @@ const FeedBackForm = props => {
     setLoading(true);
     const data = {
       floatId: userData?.FloatId,
-      image: 'www.google.com/usershbjh',
+      image: 'wwwjh',
     };
     Float.submitFloatForm(userData?.FloatId, data)
       .then(resp => {
@@ -50,11 +50,8 @@ const FeedBackForm = props => {
         if (response.didCancel) {
           console.log('cancel');
         } else {
-          console.log('ye i pic', response);
           const file = response.assets[0];
           FileUplaod.upload(file);
-          // .then(data => console.log('data respnse', data))
-          // .catch(err => console.log(err));
         }
       },
     );
