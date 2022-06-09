@@ -56,17 +56,14 @@ const Login = props => {
   //   }
   // };
 
-  
-
-  const SignIn= async=>{
+  const SignIn = async () => {
+    var name = 'LHR B';
     const data = {
-      FloatId:3,
-      id: '33jrXPgX55TClkjU0HF3swZaM822',
-      name:'BA GSI Float 1',
-      role :'BA GSI Float 1'
-    }
-    await firestore().collection('user').doc('33jrXPgX55TClkjU0HF3swZaM822').set(data)
-  }
+      id: name,
+      name: 2,
+    };
+    await firestore().collection('Territory').doc(name).set(data);
+  };
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
