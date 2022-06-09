@@ -57,13 +57,7 @@ const Login = props => {
   // };
 
   const SignIn = async () => {
-    // var name = 'LHR B';
-    // const data = {
-    //   id: 2,
-    //   name: name,
-    // };
-    const nameOfTerr = 'LHR B';
-    const arr = ['Thokar', 'Qainchi', 'Kahna'];
+    
     const a = await firestore().collection('Territory').doc(nameOfTerr).get();
     let res = a._data;
     const b = await firestore()
@@ -73,6 +67,8 @@ const Login = props => {
 
     console.log('log are here', a._data);
   };
+
+  
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
