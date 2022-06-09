@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   LogBox,
+  ActivityIndicator,
 } from 'react-native';
 import Theme from '../../Utils/Theme';
 import {RadioButton} from 'react-native-paper';
@@ -18,6 +19,8 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Float} from '../Api/FirebaseCalls';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 // create a component
 const Cleanliness = props => {
@@ -28,6 +31,7 @@ const Cleanliness = props => {
   const [ProfileImage3, setProfileImage3] = useState('');
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(false);
 
   useEffect(() => {
     getUserData();
@@ -41,8 +45,8 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        setProfileImage(response.assets[0].uri);
-        console.log('ye i pic', ProfileImage);
+        const file = response.assets[0];
+        uploadImage(file, 'imageOne');
       },
     );
   };
@@ -54,7 +58,8 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        setProfileImage1(response.assets[0].uri);
+        const file = response.assets[0];
+        uploadImage(file, 'imageTwo');
       },
     );
   };
@@ -66,7 +71,8 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        setProfileImage2(response.assets[0].uri);
+        const file = response.assets[0];
+        uploadImage(file, 'imageThree');
       },
     );
   };
@@ -78,9 +84,51 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        setProfileImage3(response.assets[0].uri);
+        const file = response.assets[0];
+        uploadImage(file, 'imageFour');
       },
     );
+  };
+
+  const uploadImage = async (file, check) => {
+    setLoading(true);
+    Toast.show('Please Wait Image Is Being Loaded');
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file.uri,
+      type: 'image/jpeg',
+      name: 'imagename.jpg',
+    });
+    await axios({
+      url: 'http://goldcup.pk:8078/api/FileUpload/UploadFileOnAzure',
+      method: 'POST',
+      data: formData,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(function (response) {
+        console.log('response :', response);
+        switch (check) {
+          case 'imageOne':
+            setProfileImage(response?.data?.fileUrl);
+            break;
+          case 'imageTwo':
+            setProfileImage1(response?.data?.fileUrl);
+            break;
+          case 'imageThree':
+            setProfileImage2(response?.data?.fileUrl);
+            break;
+          case 'imageFour':
+            setProfileImage3(response?.data?.fileUrl);
+            break;
+        }
+      })
+      .catch(function (error) {
+        console.log('error from image :');
+      })
+      .finally(() => setLoading(false));
   };
 
   const getUserData = async () => {
@@ -99,19 +147,29 @@ const Cleanliness = props => {
   };
 
   const SetFloatData = () => {
-    const data = {
-      images: ['www,google.com', 'www.google.com'],
-      status: checked == 'first' ? 'Ok' : 'NotOk',
-      floatId: userData?.FloatId,
-    };
-    console.log(userData, data);
-    Float.setFloatCleanliness(userData?.FloatId, data)
-      .then(resp => {
-        console.log('Respoonse setting data: ', resp);
-        props.navigation.navigate('Home');
-      })
-      .catch(err => console.log('this is error setting user float data', err))
-      .finally(() => setLoading(false));
+    if (
+      ProfileImage3 != '' &&
+      ProfileImage1 != '' &&
+      ProfileImage2 != '' &&
+      ProfileImage3 != ''
+    ) {
+      setLoading2(true);
+      const data = {
+        images: [ProfileImage, ProfileImage1, ProfileImage2, ProfileImage3],
+        status: checked == 'first' ? 'Ok' : 'NotOk',
+        floatId: userData?.FloatId,
+      };
+      console.log(userData, data);
+      Float.setFloatCleanliness(userData?.FloatId, data)
+        .then(resp => {
+          console.log('Respoonse setting data: ', resp);
+          props.navigation.navigate('Home');
+        })
+        .catch(err => console.log('this is error setting user float data', err))
+        .finally(() => setLoading2(false));
+    } else {
+      Toast.show('Please Add All Images');
+    }
   };
   return (
     <View style={styles.container}>
@@ -121,7 +179,16 @@ const Cleanliness = props => {
         backIconPress={() => props.navigation.goBack()}
         title="Float Cleaniless"
       />
-      {loading ? null : (
+      {loading ? (
+        <View
+          style={{
+            height: Theme.screenHeight / 1.2,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <ActivityIndicator size={'small'} color={Theme.blue} />
+        </View>
+      ) : (
         <>
           <View style={{marginTop: Theme.screenHeight / 20}}>
             <View style={styles.radiobuttonView}>
@@ -253,7 +320,11 @@ const Cleanliness = props => {
               alignSelf: 'center',
               bottom: Theme.screenHeight / 20,
             }}>
-            <ButtonComponent text="Submit" onPress={() => SetFloatData()} />
+            <ButtonComponent
+              text="Submit"
+              isLoading={loading2}
+              onPress={() => SetFloatData()}
+            />
           </View>
         </>
       )}

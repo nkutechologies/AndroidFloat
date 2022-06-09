@@ -27,48 +27,82 @@ const Login = props => {
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
-  // const SignIn = async () => {
-  //   if (username == '' || password == '') {
-  //     Toast.show('Please Enter Details First');
-  //   } else {
-  //     setLoading(true);
-  //     await auth()
-  //       .signInWithEmailAndPassword(username + '@gmail.com', password)
-  //       .then(async res => {
-  //         console.log('auth user response', res);
-  //         Users.getSingleUser(res.user.uid)
-  //           .then(async documentSnapshot => {
-  //             console.log('User data: ', documentSnapshot._data);
-  //             if (documentSnapshot.exists) {
-  //               await AsyncStorage.setItem(
-  //                 'AuthData',
-  //                 JSON.stringify(documentSnapshot._data),
-  //               );
-  //               props.navigation.navigate('Home');
-  //             } else {
-  //               Toast.show('Details Not Added yet');
-  //             }
-  //           })
-  //           .catch(err => console.log('this is error fetching data', err))
-  //           .finally(() => setLoading(false));
-  //       })
-  //       .catch(err => console.log('error in signup', err));
-  //   }
-  // };
-
   const SignIn = async () => {
-    
-    const a = await firestore().collection('Territory').doc(nameOfTerr).get();
-    let res = a._data;
-    const b = await firestore()
-      .collection('Territory')
-      .doc(nameOfTerr)
-      .set({...res, arr});
-
-    console.log('log are here', a._data);
+    if (username == '' || password == '') {
+      Toast.show('Please Enter Details First');
+    } else {
+      setLoading(true);
+      await auth()
+        .signInWithEmailAndPassword(username + '@gmail.com', password)
+        .then(async res => {
+          console.log('auth user response', res);
+          Users.getSingleUser(res.user.uid)
+            .then(async documentSnapshot => {
+              console.log('User data: ', documentSnapshot._data);
+              if (documentSnapshot.exists) {
+                await AsyncStorage.setItem(
+                  'AuthData',
+                  JSON.stringify(documentSnapshot._data),
+                );
+                props.navigation.navigate('Home');
+              } else {
+                Toast.show('Details Not Added yet');
+              }
+            })
+            .catch(err => console.log('this is error fetching data', err))
+            .finally(() => setLoading(false));
+        })
+        .catch(err => {
+          if (err.code == 'auth/user-not-found') {
+            Toast.show('User Not Registered');
+          } else if (err.code == 'auth/wrong-password') {
+            Toast.show('Incorrect Password');
+          } else {
+            Toast.show('Unknown Error');
+          }
+          console.log('error in signup', err.code);
+        })
+        .finally(() => setLoading(false));
+    }
   };
 
-  
+  const SignIna = async () => {
+    await firestore()
+      .collection('FloatTerritoryJunction')
+      .where('TerritoryId', '==', "MCH")
+      .get()
+      .then(res => {
+        console.log(res);
+      });
+
+    // setLoading(true);
+    // let allTerr;
+    // await firestore()
+    //   .collection('Territory')
+    //   .get()
+    //   .then(res => {
+    //     allTerr = res._docs;
+    //   });
+    // console.log('all territories response', allTerr);
+    // await firestore()
+    //   .collection('Float')
+    //   .get()
+    //   .then(res => {
+    //     console.log(res);
+    //     res._docs.map(floats => {
+    //       allTerr.map(async terr => {
+    //         await firestore()
+    //           .collection('FloatTerritoryJunction')
+    //           .doc()
+    //           .set({TerritoryId: terr._data.name, floatId: floats._data.id})
+    //           .then(res => {
+    //             setLoading(false);
+    //           });
+    //       });
+    //     });
+    //   });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>

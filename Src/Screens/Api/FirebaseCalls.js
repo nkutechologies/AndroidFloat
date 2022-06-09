@@ -11,20 +11,33 @@ export const Users = {
       .collection('Attendance')
       .doc(`${data.id}`)
       .collection(data.date)
-      .add(data),
+      .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
 export const Float = {
   getUserFloat: async floatId =>
     await firestore().collection('Float').doc(`${floatId}`).get(),
   setFloatCleanliness: async (floatId, data) =>
-    await firestore().collection('Cleanliness').doc(`${floatId}`).set(data),
-  submitFloatForm: async (floatId, data) =>
-    await firestore().collection('Feedback').doc(`${floatId}`).set(data),
+    await firestore()
+      .collection('Cleanliness')
+      .doc(`${floatId}`)
+      .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+  submitFloatForm: async (floatId, data, date) =>
+    await firestore()
+      .collection('Feedback')
+      .doc(`${floatId}`)
+      .collection(`${date}`)
+      .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
 
 export const Territory = {
   getTerritory: async id =>
     await firestore().collection('Territory').doc(id).get(),
+
+  getFloatAllTerritories: async floatId =>
+    await firestore()
+      .collection('FloatTerritoryJunction')
+      .where('floatId', '==', floatId)
+      .get()
 };
 export const Brands = {
   getAllBrands: async () => await firestore().collection('Brands').get(),
@@ -49,37 +62,5 @@ export const ConsumerForm = {
       .collection('ConsumerDataForm')
       .doc(`${userId}`)
       .collection(`${date}`)
-      .add(data),
-};
-
-export const FileUplaod = {
-  upload: async data => {
-    const fdata = new FormData();
-    fdata.append('fileName', data.uri);
-    // fdata.append('name', data.fileName);
-    // fdata.append('type', data.type);
-    console.log(fdata);
-    await axios
-      .post(
-        'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure',
-        fdata,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data; charset=utf-8',
-            accept: 'application/json',
-          },
-        },
-      )
-      .then(resp => console.log('this is resp', resp))
-      .catch(err => console.log('this is error',err));
-    // fetch({
-    //   url:"https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnAzure",
-    //   method: 'post',
-    //   data: fdata,
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data; charset=utf-8',
-    //     accept: 'application/json',
-    //   },
-    // }).then(res => console.log(res));
-  },
+      .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };

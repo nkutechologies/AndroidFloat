@@ -9,13 +9,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ConsumerForm, Float, Territory, Brands} from '../Api/FirebaseCalls';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
+import firestore from '@react-native-firebase/firestore';
+
 // create a component
 const ConsumerInter = props => {
   const [Vendor, setVendor] = useState({});
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState();
-  const [loading, setLoading] = useState(true);
-  const [userTerritory, setUserTerritory] = useState();
+  const [loading, setLoading] = useState(false);
+  const [userTown, setUserTown] = useState(['Loading Please Wait']);
+  const [allTerritories, setAllTerritories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
 
   useEffect(() => {
@@ -27,7 +30,7 @@ const ConsumerInter = props => {
     const data = JSON.parse(a);
     console.log('Response of user data', data);
     setUserData(JSON.parse(a));
-    getUserFloat(data.FloatId);
+    getUserAllTerritories(data.FloatId);
   };
 
   const getAllBrands = () => {
@@ -42,21 +45,26 @@ const ConsumerInter = props => {
       .finally(() => null);
   };
 
-  const getUserFloat = floatId => {
-    Float.getUserFloat(floatId)
+  const getUserAllTerritories = async floatId => {
+    console.log(floatId);
+    Territory.getFloatAllTerritories(floatId)
       .then(resp => {
-        console.log('Respoonse getting user floa data: ', resp._data);
-        getUserTerritory(resp._data.territoryId);
+        console.log('Respoonse getting user terretories data: ', resp._docs);
+        const a = [];
+        resp._docs.map(item => {
+          a.push(item._data.TerritoryId);
+        });
+        setAllTerritories(a);
       })
       .catch(err => console.log('this is error getting user float data', err))
       .finally(() => null);
   };
 
-  const getUserTerritory = id => {
+  const getUserTowns = id => {
     Territory.getTerritory(id)
       .then(resp => {
-        console.log('Respoonse getting user territory data: ', resp._data);
-        setUserTerritory(resp._data);
+        console.log('Respoonse getting user territory data: ', resp);
+        setUserTown(resp._data.arr);
       })
       .catch(err =>
         console.log('this is error getting user territroy data', err),
@@ -109,20 +117,25 @@ const ConsumerInter = props => {
               <View style={styles.inputView}>
                 <DropDownComponent
                   Title={'Territory'}
-                  options={[userTerritory.name]}
-                  defaultValue={userTerritory.name}
+                  options={
+                    allTerritories.length > 0
+                      ? allTerritories.sort()
+                      : ['Loading Wait']
+                  }
+                  defaultValue={Vendor.territoryName}
                   dropdownStyle={styles.dropdownStyle}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
                   onSelect={(index, value) => {
                     setVendor({...Vendor, territoryName: value});
+                    getUserTowns(value);
                   }}
                 />
               </View>
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Town'}
-                  options={userTerritory.town}
+                  options={userTown}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
