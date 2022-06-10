@@ -33,6 +33,7 @@ const Stackload = props => {
       .catch(err => console.log('error getting stock load', err))
       .finally(() => setLoading(false));
   };
+  const userCheck = userData.role.includes('Supervisor');
 
   return (
     <View style={styles.container}>
@@ -40,9 +41,9 @@ const Stackload = props => {
         title="Stock"
         backIcon={true}
         backIconPress={() => props.navigation.goBack()}
-        rightIcon={"pluscircleo"}
+        rightIcon={userCheck ? 'pluscircleo' : ''}
         type={'antdesign'}
-        rightIconPress={()=>props.navigation.navigate('AddStock')}
+        rightIconPress={() => props.navigation.navigate('AddStock')}
       />
       <View style={{marginTop: Theme.screenHeight / 50}}>
         <View

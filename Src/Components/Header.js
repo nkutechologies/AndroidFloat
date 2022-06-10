@@ -4,9 +4,16 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Card} from 'react-native-paper';
 import Theme from '../Utils/Theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import {Icon} from 'react-native-elements';
 // create a component
-const Header = ({title, rightIcon, backIcon, backIconPress}) => {
+const Header = ({
+  title,
+  rightIcon,
+  backIcon,
+  backIconPress,
+  rightIconPress,
+  type,
+}) => {
   return (
     <View
       style={{
@@ -39,8 +46,10 @@ const Header = ({title, rightIcon, backIcon, backIconPress}) => {
           {title}
         </Text>
         {!rightIcon == '' ? (
-          <Ionicons
+          <Icon
             name={rightIcon}
+            type={type}
+            onPress={rightIconPress}
             size={Theme.screenHeight / 40}
             color={Theme.black}
           />
@@ -51,7 +60,6 @@ const Header = ({title, rightIcon, backIcon, backIconPress}) => {
     </View>
   );
 };
-
 // define your styles
 const styles = StyleSheet.create({
   container: {
@@ -59,6 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgrey',
   },
 });
-
 //make this component available to the app
 export default Header;

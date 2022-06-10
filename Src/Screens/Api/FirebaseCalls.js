@@ -13,6 +13,7 @@ export const Users = {
       .collection(data.date)
       .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
+//Flaots
 export const Float = {
   getUserFloat: async floatId =>
     await firestore().collection('Float').doc(`${floatId}`).get(),
@@ -28,7 +29,7 @@ export const Float = {
       .collection(`${date}`)
       .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
-
+//Territories
 export const Territory = {
   getTerritory: async id =>
     await firestore().collection('Territory').doc(id).get(),
@@ -39,6 +40,7 @@ export const Territory = {
       .where('floatId', '==', floatId)
       .get(),
 };
+//Brands
 export const Brands = {
   getAllBrands: async () => await firestore().collection('Brands').get(),
 };
@@ -50,24 +52,33 @@ const data = {
   sale: 200,
   balance: 2800,
 };
+//StockLoad
 export const StockLoad = {
   getStock: async () => await firestore().collection('StockLoad').get(),
-  // .doc('Classic')
-  // .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
-  // .collection('Users')
-  // .doc('UserId')
-  // .collection('date')
-  // .get(),
+  setStock: async (brand, userId, date, data) =>
+    await firestore()
+      .collection('StockLoad')
+      .doc(`${brand}`)
+      .collection('Users')
+      .doc(`${userId}`)
+      .collection(`${date}`)
+      .doc()
+      .set(data),
+  getUserStock: async (brand, userId) =>
+    await firestore()
+      .collection('StockLoad')
+      .doc(`${brand}`)
+      .collection('Users')
+      .doc(`${userId}`)
+      .get(),
 
-  setStock: async () =>
-    await firestore().collection('StockLoad').doc('GSI').set({
-      Balance: 2000,
-      brand: 'GSI',
-      id: 3,
-      load: 2000,
-      opening: 3000,
-      sale: 100,
-    }),
+  updateUserTotalSales: async (brand, userId) =>
+    await firestore()
+      .collection('StockLoad')
+      .doc(`${brand}`)
+      .collection('Users')
+      .doc(`${userId}`)
+      .update({Total: firestore.FieldValue.increment(1)}),
 };
 
 export const ConsumerForm = {
