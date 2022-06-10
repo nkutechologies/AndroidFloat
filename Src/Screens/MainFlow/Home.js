@@ -18,7 +18,7 @@ import {Modal} from 'react-native-paper';
 import Header from '../../Components/Header';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Toast from 'react-native-simple-toast';
 const data = [
   {
     id: 0,
@@ -48,9 +48,10 @@ const data = [
 
 // create a component
 const Home = props => {
+  const [userData, setUserData] = useState();
   useFocusEffect(
     React.useCallback(() => {
-      // getUser();
+      getUser();
       const onBackPress = async () => {
         Alert.alert('Logout', 'Do you really want to exit the application?', [
           {
@@ -93,40 +94,7 @@ const Home = props => {
 
   const getUser = async () => {
     const a = await AsyncStorage.getItem('AuthData');
-    const user = JSON.parse(a);
-    console.log(user);
-    const usersCollection = firestore().collection('user').doc(user.id).set({
-      terrirtoy: 3,
-      name: 'ALi',
-      place: 'newkjasenjkfnjkasnfjk place',
-      instagramId: 1,
-    });
-
-    // const usersCollection = firestore()
-    //   .collection('user')
-    //   .doc('NLgFQzKD9IaXRXOFy92U3OLYl1t2')
-    //   .get()
-    //   .then(documentSnapshot => {
-    //getting single user
-    //     if (documentSnapshot.exists) {
-    //       console.log('User data: ', documentSnapshot.data());
-    //     }
-    //getting all users
-    // documentSnapshot.forEach(doc => {
-    //   const data = doc.data();
-    //   console.log('this is id against this ', doc.id, snapshot);
-    // });
-    //   })
-    //   .catch(err => {
-    //     console.log('Error getting documents', err);
-    //   });
-    //   .then(querySnapshot =>
-    //     querySnapshot.docs.map(doc => {
-    //       console.log('LOG 1', doc.data());
-    //       return doc.data();
-    //     }),
-    //   )
-    //   .catch(err => console.log(err));
+    setUserData(JSON.parse(a));
   };
 
   return (
@@ -185,7 +153,14 @@ const Home = props => {
             <Card
               elevation={10}
               style={styles.cardViewStyle}
-              onPress={() => props.navigation.navigate('FeedBackForm')}>
+              onPress={() => {
+                const userCheck = userData.role.includes('Supervisor');
+                if (userCheck) {
+                  props.navigation.navigate('FeedBackForm');
+                } else {
+                  Toast.show('Not Allowed');
+                }
+              }}>
               <View style={styles.cardFirstView}>
                 <Image source={Images.dummy} style={styles.imageStyle} />
                 <View style={styles.textViewStyle}>
@@ -199,7 +174,14 @@ const Home = props => {
             <Card
               elevation={10}
               style={styles.cardViewStyle}
-              onPress={() => props.navigation.navigate('ConsumerInter')}>
+              onPress={() => {
+                const userCheck = userData.role.includes('Supervisor');
+                if (userCheck) {
+                  props.navigation.navigate('ConsumerInter');
+                } else {
+                  Toast.show('Not Allowed');
+                }
+              }}>
               <View style={styles.cardFirstView}>
                 <Image source={Images.dummy} style={styles.imageStyle} />
                 <View style={styles.textViewStyle}>

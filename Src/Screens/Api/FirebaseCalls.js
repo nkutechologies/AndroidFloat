@@ -37,14 +37,28 @@ export const Territory = {
     await firestore()
       .collection('FloatTerritoryJunction')
       .where('floatId', '==', floatId)
-      .get()
+      .get(),
 };
 export const Brands = {
   getAllBrands: async () => await firestore().collection('Brands').get(),
 };
 
+const data = {
+  opening: 2000,
+  brandId: 1,
+  stockLoad: 1000,
+  sale: 200,
+  balance: 2800,
+};
 export const StockLoad = {
   getStock: async () => await firestore().collection('StockLoad').get(),
+  // .doc('Classic')
+  // .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+  // .collection('Users')
+  // .doc('UserId')
+  // .collection('date')
+  // .get(),
+
   setStock: async () =>
     await firestore().collection('StockLoad').doc('GSI').set({
       Balance: 2000,

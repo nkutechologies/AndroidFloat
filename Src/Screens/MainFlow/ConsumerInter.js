@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 
 // create a component
 const ConsumerInter = props => {
-  const [Vendor, setVendor] = useState({});
+  const [Vendor, setVendor] = useState({address: '', CNIC: ''});
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
@@ -72,10 +72,28 @@ const ConsumerInter = props => {
       .finally(() => setLoading(false));
   };
 
+  const setAllDataToDb = async () => {
+    const [submitForm, updateStock] = Promise.all([
+      submitDataForm(),
+      updateStockData(),
+    ]);
+
+    console.log(submitForm, updateStock);
+  };
+
+  const updateStockData = async () => {
+    if (Vendor.callStatus == 'Productive') {
+      const a = new Date();
+      const d = a.toISOString();
+      ConsumerForm.setConsumerDetails(userData.id, d.substring(0, 10), Vendor);
+    } else {
+      null;
+    }
+  };
   const submitDataForm = () => {
     if (
-      Vendor.CNIC &&
-      Vendor.address &&
+      // Vendor.CNIC &&
+      // Vendor.address &&
       Vendor.age &&
       Vendor.callStatus &&
       Vendor.cellNo &&
@@ -91,7 +109,8 @@ const ConsumerInter = props => {
       ConsumerForm.setConsumerDetails(userData.id, d.substring(0, 10), Vendor)
         .then(resp => {
           console.log('Respoonse Form Submit ', resp);
-          props.navigation.navigate('Home');
+          return resp;
+          // props.navigation.navigate('Home');
         })
         .catch(err => console.log('this is error Form submit', err))
         .finally(() => setButtonLoading(false));
@@ -223,7 +242,7 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Call Status'}
-                  options={['True', 'False']}
+                  options={['Productive', 'Intercept']}
                   defaultValue={'please Select'}
                   IconName={'chevron-down'}
                   IconType={'feather'}

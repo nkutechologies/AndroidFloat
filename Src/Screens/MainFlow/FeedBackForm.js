@@ -41,13 +41,15 @@ const FeedBackForm = props => {
       setLoading(true);
       const data = {
         floatId: userData?.FloatId,
-        image: ProfileImage,
+        image: `www.baseUrl.com/${ProfileImage.fileName}`,
       };
       const a = new Date();
       const d = a.toISOString();
+      
       Float.submitFloatForm(userData?.FloatId, data, d.substring(0, 10))
         .then(resp => {
           console.log('Respoonse submiting floa data: ', resp);
+          // UploadFile();
           props.navigation.navigate('Home');
         })
         .catch(err => console.log('this is error submitn float data', err))
@@ -55,6 +57,28 @@ const FeedBackForm = props => {
     }
   };
 
+  const UploadFile = (file) => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file.uri,
+      type: file.type,
+      name: file.fileName,
+    });
+    axios({
+      url: 'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnGdrive',
+      method: 'POST',
+      data: formData,
+      headers:{"Accept":"application/json, text/plain, /","Content-Type": "multipart/form-data"}
+
+    })
+      .then(function (response) {
+        console.log('response :', response);
+      })
+      .catch(function (error) {
+        console.log('error from image :',error);
+      })
+      .finally(() => setLoading2(false));
+  };
   const pickImage = () => {
     launchCamera(
       {
@@ -63,35 +87,11 @@ const FeedBackForm = props => {
         // selectionLimit: 1,
       },
       async response => {
+        // console.log('response',response);
         if (response.didCancel) {
-          console.log('cancel');
         } else {
-          setLoading2(true);
-          Toast.show('Please Wait Image Is Being Loaded');
-          const file = response.assets[0];
-          const formData = new FormData();
-          formData.append('file', {
-            uri: file.uri,
-            type: 'image/jpeg',
-            name: 'imagename.jpg',
-          });
-          await axios({
-            url: 'http://goldcup.pk:8078/api/FileUpload/UploadFileOnAzure',
-            method: 'POST',
-            data: formData,
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-            .then(function (response) {
-              console.log('response :', response);
-              setProfileImage(response?.data?.fileUrl);
-            })
-            .catch(function (error) {
-              console.log('error from image :');
-            })
-            .finally(() => setLoading2(false));
+          UploadFile(response.assets[0])
+          setProfileImage(response.assets[0]);
         }
       },
     );
@@ -135,7 +135,7 @@ const FeedBackForm = props => {
                 />
               </TouchableOpacity>
               <Image
-                source={{uri: ProfileImage}}
+                source={{uri: ProfileImage.uri}}
                 resizeMode="cover"
                 style={{
                   height: Theme.screenHeight / 1.7,

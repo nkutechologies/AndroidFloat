@@ -3,20 +3,30 @@ import {View, Text, StyleSheet, FlatList} from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
 import {StockLoad} from '../Api/FirebaseCalls';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-simple-toast';
+
 const Stackload = props => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [userData, setUserData] = useState();
 
   useEffect(() => {
+    getUserData();
     getStockData();
   }, []);
+  const getUserData = async () => {
+    let a = await AsyncStorage.getItem('AuthData');
+    setUserData(JSON.parse(a));
+  };
+  console.log(userData);
 
   const getStockData = () => {
     setLoading(true);
     // StockLoad.setStock()
     StockLoad.getStock()
       .then(res => {
-        console.log('response getting stock load', res._docs);
+        console.log('response getting stock load', res);
         const stockDetails = res._docs.map(item => item._data);
         setData(stockDetails);
       })
@@ -75,12 +85,12 @@ const Stackload = props => {
                     }
               }>
               <Text style={[styles.data, {fontWeight: '700'}]}>
-                {item.brand}
+                {item.brandName}
               </Text>
               <Text style={styles.data}>{item.opening}</Text>
-              <Text style={styles.data}>{item.load}</Text>
+              <Text style={styles.data}>{item.stockLoad}</Text>
               <Text style={styles.data}>{item.sale}</Text>
-              <Text style={styles.data}>{item.Balance}</Text>
+              <Text style={styles.data}>{item.balance}</Text>
             </View>
           )}
         />
