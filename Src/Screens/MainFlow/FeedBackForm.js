@@ -98,6 +98,7 @@ const FeedBackForm = props => {
   };
   return (
     <View style={styles.container}>
+      {console.log('ye aya user data',userData)}
       <Header
         backIcon={true}
         title="Submit Form"
