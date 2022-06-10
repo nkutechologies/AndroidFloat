@@ -4,9 +4,11 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 import Theme from '../Utils/Theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Icon } from 'react-native-elements';
+
 
 // create a component
-const Header = ({title,rightIcon,backIcon,backIconPress}) => {
+const Header = ({title,rightIcon,backIcon,backIconPress,rightIconPress,type}) => {
     return (
           <View  style={{backgroundColor:Theme.white,padding:Theme.screenHeight/60,elevation:10}}>
               <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
@@ -17,7 +19,7 @@ const Header = ({title,rightIcon,backIcon,backIconPress}) => {
                   )}
               <Text style={{color:Theme.black,fontWeight:'700',fontSize:Theme.screenHeight/40}}>{title}</Text>
               {!rightIcon=="" ?(
-              <Ionicons name={rightIcon}  size={Theme.screenHeight/40} color={Theme.black}/>
+              <Icon name={rightIcon} type={type} onPress={rightIconPress} size={Theme.screenHeight/40} color={Theme.black}/>
               ):(
 <View></View>
               )}

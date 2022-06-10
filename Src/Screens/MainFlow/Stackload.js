@@ -30,6 +30,9 @@ const Stackload = props => {
         title="Stock"
         backIcon={true}
         backIconPress={() => props.navigation.goBack()}
+        rightIcon={"pluscircleo"}
+        type={'antdesign'}
+        rightIconPress={()=>props.navigation.navigate('AddStock')}
       />
       <View style={{marginTop: Theme.screenHeight / 50}}>
         <View
