@@ -66,7 +66,7 @@ const Login = props => {
     }
   };
 
-  const SignIna = async () => {
+  const SignInas = async () => {
     await firestore()
       .collection('FloatTerritoryJunction')
       .where('TerritoryId', '==', "MCH")
