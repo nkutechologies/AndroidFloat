@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,12 +8,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Theme from '../../Utils/Theme';
-import {Images} from '../../Constants/Images';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { Images } from '../../Constants/Images';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Header from '../../Components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Users} from '../Api/FirebaseCalls';
+import { Users } from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import axios from 'axios';
@@ -23,9 +23,9 @@ const SelectImage = props => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
-
-  const {data} = props.route.params;
-  console.log(data);
+console.log('ye aya user',user)
+  const { data } = props.route.params;
+  console.log('ye aya data',data);
   useEffect(() => {
     getUserDetails();
   }, []);
@@ -35,43 +35,88 @@ const SelectImage = props => {
     setUser(JSON.parse(data));
   };
 
+  // const pickImage = () => {
+  //   launchCamera(
+  //     {
+  //       mediaType: 'photo',
+  //       includeBase64: false,
+  //       // selectionLimit: 1,
+  //     },
+  //     async response => {
+  //       if (response.didCancel) {
+  //         console.log('cancel');
+  //       } else {
+  //         setLoading2(true);
+
+  //         Toast.show('Please Wait Image Is Being Loaded');
+  //         const file = response.assets[0];
+  //         const formData = new FormData();
+  //         formData.append('file', {
+  //           uri: file.uri,
+  //           type: 'image/jpeg',
+  //           name: 'imagename.jpg',
+  //         });
+  //         formData.append('date', data.date);
+  //         formData.append('latitude',data.latitude);
+  //         formData.append('latitude',data.latitude);
+  //         await axios({
+  //           url: 'https://blazorwithfirestore-server.conveyor.cloud/api/Attendence/Post',
+  //           method: 'POST',
+  //           data: formData,
+  //           headers: {
+  //             Accept: 'application/json',
+  //             'Content-Type': 'multipart/form-data',
+  //           },
+  //         })
+  //           .then(function (response) {
+  //             console.log('response :', response);
+  //             setProfileImage(response?.data?.fileUrl);
+  //           })
+  //           .catch(function (error) {
+  //             console.log('error from image :');
+  //           })
+  //           .finally(() => setLoading2(false));
+  //       }
+  //     },
+  //   );
+  // };
+  const UploadFile = () => {
+    const formData = new FormData();
+    formData.append('image', {
+      uri: ProfileImage.uri,
+      type: ProfileImage.type,
+      name: ProfileImage.fileName,
+    });
+    formData.append('id', user.id);
+    formData.append('date', data.date);
+    formData.append('latitude', data.latitude);
+    formData.append('longitude', data.longitude);
+    console.log('ye aya form data',formData);
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post('http://goldcup.pk:8078/api/Attendence/Post', formData, headers)
+      .then(function (response) {
+        console.log('response :', response);
+      })
+      .catch(function (error) {
+        console.log('error from image :', error);
+      })
+      .finally(() => setLoading2(false));
+  };
   const pickImage = () => {
     launchCamera(
       {
         mediaType: 'photo',
         includeBase64: false,
-        // selectionLimit: 1,
       },
       async response => {
         if (response.didCancel) {
-          console.log('cancel');
         } else {
-          setLoading2(true);
-          Toast.show('Please Wait Image Is Being Loaded');
-          const file = response.assets[0];
-          const formData = new FormData();
-          formData.append('file', {
-            uri: file.uri,
-            type: 'image/jpeg',
-            name: 'imagename.jpg',
-          });
-          await axios({
-            url: 'http://goldcup.pk:8078/api/FileUpload/UploadFileOnAzure',
-            method: 'POST',
-            data: formData,
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-            .then(function (response) {
-              console.log('response :', response);
-              setProfileImage(response?.data?.fileUrl);
-            })
-            .catch(function (error) {
-              console.log('error from image :');
-            })
-            .finally(() => setLoading2(false));
+          setProfileImage(response.assets[0].uri);
         }
       },
     );
@@ -82,7 +127,7 @@ const SelectImage = props => {
       Toast.show('Please Add Image First');
     } else {
       setLoading(true);
-      const newData = {...data, id: user.id, image: ProfileImage};
+      const newData = { ...data, id: user.id, image: ProfileImage };
       Users.markAttendance(newData)
         .then(resp => {
           console.log('Respoonse making attendance data: ', resp);
@@ -95,6 +140,7 @@ const SelectImage = props => {
   };
   return (
     <View style={styles.container}>
+      {console.log('ye i image', ProfileImage)}
       <Header
         backIcon={true}
         title="Uplaod Image"
@@ -128,7 +174,7 @@ const SelectImage = props => {
                 />
               </TouchableOpacity>
               <Image
-                source={{uri: ProfileImage}}
+                source={{ uri: ProfileImage }}
                 resizeMode="cover"
                 style={{
                   height: Theme.screenHeight / 1.7,
@@ -137,14 +183,14 @@ const SelectImage = props => {
               />
             </View>
           ) : (
-            <View style={{justifyContent: 'center', flex: 1}}>
+            <View style={{ justifyContent: 'center', flex: 1 }}>
               <TouchableOpacity onPress={() => pickImage()}>
                 <Image source={Images.camera} style={styles.imageStyle} />
               </TouchableOpacity>
             </View>
           )}
-          <View style={{position: 'absolute', bottom: 30, alignSelf: 'center'}}>
-            <ButtonComponent text="Submit" onPress={() => markAttendance()} />
+          <View style={{ position: 'absolute', bottom: 30, alignSelf: 'center' }}>
+            <ButtonComponent text="Submit" onPress={() => UploadFile()} />
           </View>
         </>
       )}
