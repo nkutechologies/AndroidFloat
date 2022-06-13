@@ -40,7 +40,7 @@ const SelectImage = props => {
     formData.append('id', user.id);
     formData.append('date', data.date);
     formData.append('longitude', data.longitude);
-    formData.append('lattitude', data.latitude);
+    formData.append('latitude', data.latitude);
     formData.append('image', {
       uri: ProfileImage.uri,
       type: ProfileImage.type,
