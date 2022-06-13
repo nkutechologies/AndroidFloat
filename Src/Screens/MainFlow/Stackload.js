@@ -7,8 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 
 let userCheck = false;
-let classic = {stockLoad: 0, sale: 0};
-let GSI = {stockLoad: 0, sale: 0};
+let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
+let GSI = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
 
 const Stackload = props => {
   const [loading, setLoading] = useState(false);
@@ -38,20 +38,38 @@ const Stackload = props => {
         console.log('response getting stock load', res);
         const saleDetails = res._docs.map(item => item._data);
         saleDetails.map(item => {
+          // console.log('these are the two items', parseInt(item.loadStock),saleDetails);
           if (item.brand == 'Classic') {
-            classic = {
-              ...classic,
-              brand: item.brand,
-              stockLoad: classic.stockLoad + item.stockLoad,
-            };
+            if (c == item.date) {
+              classic = {
+                ...classic,
+                brand: item.brand,
+                loadStock: classic.loadStock + parseInt(item.stockLoad),
+              };
+            } else {
+              classic = {
+                ...classic,
+                brand: item.brand,
+                prevStock: classic.prevStock + parseInt(item.stockLoad),
+              };
+            }
           } else if (item.brand == 'GSI') {
-            GSI = {
-              ...GSI,
-              brand: item.brand,
-              stockLoad: GSI.stockLoad + item.stockLoad,
-            };
+            if (c == item.date) {
+              GSI = {
+                ...GSI,
+                brand: item.brand,
+                loadStock: classic.loadStock + parseInt(item.stockLoad),
+              };
+            } else {
+              GSI = {
+                ...GSI,
+                brand: item.brand,
+                prevStock: classic.prevStock + parseInt(item.stockLoad),
+              };
+            }
           }
         });
+        // console.log('final logging systedm', classic, GSI);
         setData(saleDetails);
       })
       .catch(err => console.log('error getting stock load', err))
@@ -63,20 +81,38 @@ const Stackload = props => {
       const consumeDetail = res._docs.map(item => item._data);
       console.log('response getting consume data', consumeDetail);
       consumeDetail.map(item => {
-        if (item.targetBrand == 'Classic') {
-          classic = {
-            ...classic,
-            brand: 'Classic',
-            sale: classic.sale + 1,
-          };
-        } else if (item.targetBrand == 'GSI') {
-          GSI = {
-            ...GSI,
-            brand: 'GSI',
-            sale: GSI.sale + 1,
-          };
+        if (item.callStatus == 'Productive') {
+          if (item.targetBrand == 'Classic') {
+            if (item.date == c) {
+              classic = {
+                ...classic,
+                brand: 'Classic',
+                sale: classic.sale + 1,
+              };
+            } else {
+              classic = {
+                ...classic,
+                brand: 'Classic',
+                prevSale: classic.prevSale + 1,
+              };
+            }
+          } else if (item.targetBrand == 'GSI') {
+            if (item.date == c) {
+              GSI = {
+                ...GSI,
+                brand: 'GSI',
+                sale: GSI.sale + 1,
+              };
+            } else {
+              GSI = {
+                ...GSI,
+                brand: 'GSI',
+                prevSale: GSI.prevSale + 1,
+              };
+            }
+          }
+          // console.log('this comes classic', classic, GSI);
         }
-        console.log('this comes classic', classic, GSI);
         setData([GSI, classic]);
       });
     });
@@ -117,6 +153,7 @@ const Stackload = props => {
           </View>
         </View>
       </View>
+      {console.log('final data', data)}
       {loading ? null : (
         <FlatList
           refreshing={true}
@@ -139,10 +176,12 @@ const Stackload = props => {
               <Text style={[styles.data, {fontWeight: '700'}]}>
                 {item.brand}
               </Text>
-              <Text style={styles.data}>{item.opening}</Text>
-              <Text style={styles.data}>{item.stockLoad}</Text>
-              <Text style={styles.data}>{item.sale}</Text>
-              <Text style={styles.data}>{item.balance}</Text>
+              <Text style={styles.data}>{item.prevStock}</Text>
+              <Text style={styles.data}>{item.loadStock}</Text>
+              <Text style={styles.data}>{item.sale + item.prevSale}</Text>
+              <Text style={styles.data}>
+                {item.loadStock + item.prevStock - (item.sale + item.prevSale)}
+              </Text>
             </View>
           )}
         />
