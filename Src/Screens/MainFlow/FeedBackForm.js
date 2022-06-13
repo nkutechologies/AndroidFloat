@@ -38,44 +38,34 @@ const FeedBackForm = props => {
     if (ProfileImage == '') {
       Toast.show('Please Add Image First');
     } else {
-      setLoading(true);
-      const data = {
-        floatId: userData?.FloatId,
-        image: `www.baseUrl.com/${ProfileImage.fileName}`,
-      };
-      const a = new Date();
-      const d = a.toISOString();
-      
-      Float.submitFloatForm(userData?.FloatId, data, d.substring(0, 10))
-        .then(resp => {
-          console.log('Respoonse submiting floa data: ', resp);
-          // UploadFile();
-          props.navigation.navigate('Home');
-        })
-        .catch(err => console.log('this is error submitn float data', err))
-        .finally(() => setLoading(false));
+      UploadFile();
     }
   };
 
-  const UploadFile = (file) => {
+  const UploadFile = () => {
+    const a = new Date();
+    const d = a.toISOString();
     const formData = new FormData();
     formData.append('file', {
-      uri: file.uri,
-      type: file.type,
-      name: file.fileName,
+      uri: ProfileImage.uri,
+      type: ProfileImage.type,
+      name: ProfileImage.fileName,
     });
+    formData.append('date', d.substring(0, 10));
     axios({
-      url: 'https://azurefileuploadingapi.conveyor.cloud/api/FileUpload/UploadFileOnGdrive',
+      url: 'https://blazorwithfirestore-server.conveyor.cloud/api/FeedBack/Post',
       method: 'POST',
       data: formData,
-      headers:{"Accept":"application/json, text/plain, /","Content-Type": "multipart/form-data"}
-
+      headers: {
+        Accept: 'application/json, text/plain, /',
+        'Content-Type': 'multipart/form-data',
+      },
     })
       .then(function (response) {
         console.log('response :', response);
       })
       .catch(function (error) {
-        console.log('error from image :',error);
+        console.log('error from image :', error);
       })
       .finally(() => setLoading2(false));
   };
@@ -84,13 +74,10 @@ const FeedBackForm = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
-        // selectionLimit: 1,
       },
       async response => {
-        // console.log('response',response);
         if (response.didCancel) {
         } else {
-          UploadFile(response.assets[0])
           setProfileImage(response.assets[0]);
         }
       },
@@ -98,7 +85,7 @@ const FeedBackForm = props => {
   };
   return (
     <View style={styles.container}>
-      {console.log('ye aya user data',userData)}
+      {console.log('ye aya user data', userData)}
       <Header
         backIcon={true}
         title="Submit Form"

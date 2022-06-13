@@ -34,8 +34,8 @@ const Stackload = props => {
     userCheck = b.role.includes('Supervisor');
   };
 
-  const getStockData = () => {
-    StockLoad.getStock()
+  const getStockData = async () => {
+    await StockLoad.getStock()
       .then(res => {
         console.log('response getting stock load', res);
         const saleDetails = res._docs.map(item => item._data);
@@ -71,8 +71,6 @@ const Stackload = props => {
             }
           }
         });
-
-        setData(saleDetails);
       })
       .catch(err => console.log('error getting stock load', err))
       .finally(() => null);
