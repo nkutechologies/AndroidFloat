@@ -31,6 +31,7 @@ const FeedBackForm = props => {
   }, []);
   const getUserData = async () => {
     let a = await AsyncStorage.getItem('AuthData');
+    console.log(a);
     setUserData(JSON.parse(a));
   };
 
@@ -39,6 +40,7 @@ const FeedBackForm = props => {
       Toast.show('Please Add Image First');
     } else {
       UploadFile();
+      props.navigation.navigate('Home');
     }
   };
 
@@ -52,15 +54,14 @@ const FeedBackForm = props => {
       name: ProfileImage.fileName,
     });
     formData.append('date', d.substring(0, 10));
-    axios({
-      url: 'https://blazorwithfirestore-server.conveyor.cloud/api/FeedBack/Post',
-      method: 'POST',
-      data: formData,
+    formData.append('floatId', userData?.FloatId);
+    const headers = {
       headers: {
-        Accept: 'application/json, text/plain, /',
         'Content-Type': 'multipart/form-data',
       },
-    })
+    };
+    axios
+      .post('http://goldcup.pk:8078/api/FeedBack/Post', formData, headers)
       .then(function (response) {
         console.log('response :', response);
       })
@@ -69,6 +70,7 @@ const FeedBackForm = props => {
       })
       .finally(() => setLoading2(false));
   };
+
   const pickImage = () => {
     launchCamera(
       {
@@ -85,7 +87,6 @@ const FeedBackForm = props => {
   };
   return (
     <View style={styles.container}>
-      {console.log('ye aya user data', userData)}
       <Header
         backIcon={true}
         title="Submit Form"
