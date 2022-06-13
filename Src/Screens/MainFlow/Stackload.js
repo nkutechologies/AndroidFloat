@@ -6,10 +6,6 @@ import {StockLoad, ConsumerForm} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 
-let userCheck = false;
-let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
-let GSI = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
-
 const Stackload = props => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -19,8 +15,14 @@ const Stackload = props => {
     getUserData();
     getStockData();
     ConsumerData();
+    return () => {
+      getStockData();
+      ConsumerData();
+    };
   }, []);
-
+  let userCheck = false;
+  let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
+  let GSI = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
   const a = new Date();
   const b = a.toISOString();
   const c = b.substring(0, 10);
@@ -40,6 +42,7 @@ const Stackload = props => {
         saleDetails.map(item => {
           // console.log('these are the two items', parseInt(item.loadStock),saleDetails);
           if (item.brand == 'Classic') {
+            console.log(classic.loadStock);
             if (c == item.date) {
               classic = {
                 ...classic,
