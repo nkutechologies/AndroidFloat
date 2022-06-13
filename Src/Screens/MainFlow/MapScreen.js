@@ -95,8 +95,8 @@ const MapScreen = props => {
         region={{
           latitude: lat,
           longitude: lng,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: 0.0100,
+          longitudeDelta: 0.0100,
         }}>
         <Marker
           pinColor={'red'}

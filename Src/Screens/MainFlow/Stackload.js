@@ -124,7 +124,7 @@ const Stackload = props => {
       <Header
         title="Stock"
         backIcon={true}
-        rightIcon={true}
+        // rightIcon={true}
         backIconPress={() => props.navigation.goBack()}
         rightIcon={roleCheck ? 'pluscircleo' : ''}
         type={'antdesign'}
