@@ -45,8 +45,7 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        const file = response.assets[0];
-        uploadImage(file, 'imageOne');
+        setProfileImage(response.assets[0]);
       },
     );
   };
@@ -58,8 +57,7 @@ const Cleanliness = props => {
         // selectionLimit: 1,
       },
       async response => {
-        const file = response.assets[0];
-        uploadImage(file, 'imageTwo');
+        setProfileImage1(response.assets[0]);
       },
     );
   };
@@ -68,11 +66,9 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
-        // selectionLimit: 1,
       },
       async response => {
-        const file = response.assets[0];
-        uploadImage(file, 'imageThree');
+        setProfileImage2(response.assets[0]);
       },
     );
   };
@@ -81,54 +77,11 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
-        // selectionLimit: 1,
       },
       async response => {
-        const file = response.assets[0];
-        uploadImage(file, 'imageFour');
+        setProfileImage3(response.assets[0]);
       },
     );
-  };
-
-  const uploadImage = async (file, check) => {
-    setLoading(true);
-    Toast.show('Please Wait Image Is Being Loaded');
-    const formData = new FormData();
-    formData.append('file', {
-      uri: file.uri,
-      type: 'image/jpeg',
-      name: 'imagename.jpg',
-    });
-    await axios({
-      url: 'http://goldcup.pk:8078/api/FileUpload/UploadFileOnAzure',
-      method: 'POST',
-      data: formData,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then(function (response) {
-        console.log('response :', response);
-        switch (check) {
-          case 'imageOne':
-            setProfileImage(response?.data?.fileUrl);
-            break;
-          case 'imageTwo':
-            setProfileImage1(response?.data?.fileUrl);
-            break;
-          case 'imageThree':
-            setProfileImage2(response?.data?.fileUrl);
-            break;
-          case 'imageFour':
-            setProfileImage3(response?.data?.fileUrl);
-            break;
-        }
-      })
-      .catch(function (error) {
-        console.log('error from image :');
-      })
-      .finally(() => setLoading(false));
   };
 
   const getUserData = async () => {
@@ -146,6 +99,52 @@ const Cleanliness = props => {
       .finally(() => setLoading(false));
   };
 
+  const UploadData = () => {
+    const a = new Date();
+    const d = a.toISOString();
+    const formData = new FormData();
+    formData.append('file1', {
+      uri: ProfileImage.uri,
+      type: ProfileImage.type,
+      name: ProfileImage.fileName,
+    });
+    formData.append('file2', {
+      uri: ProfileImage1.uri,
+      type: ProfileImage1.type,
+      name: ProfileImage1.fileName,
+    });
+    formData.append('file3', {
+      uri: ProfileImage2.uri,
+      type: ProfileImage2.type,
+      name: ProfileImage2.fileName,
+    });
+    formData.append('file4', {
+      uri: ProfileImage3.uri,
+      type: ProfileImage3.type,
+      name: ProfileImage3.fileName,
+    });
+    formData.append('date', d.substring(0, 10));
+    formData.append('floatId', userData?.FloatId);
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post(
+        'http://goldcup.pk:8078/api/CleanlinessFileUpload/Post',
+        formData,
+        headers,
+      )
+      .then(function (response) {
+        console.log('response :', response);
+      })
+      .catch(function (error) {
+        console.log('error from image :', error);
+      })
+      .finally(() => setLoading2(false));
+  };
+
   const SetFloatData = () => {
     if (
       ProfileImage3 != '' &&
@@ -153,20 +152,8 @@ const Cleanliness = props => {
       ProfileImage2 != '' &&
       ProfileImage3 != ''
     ) {
-      setLoading2(true);
-      const data = {
-        images: [ProfileImage, ProfileImage1, ProfileImage2, ProfileImage3],
-        status: checked == 'first' ? 'Ok' : 'NotOk',
-        floatId: userData?.FloatId,
-      };
-      console.log(userData, data);
-      Float.setFloatCleanliness(userData?.FloatId, data)
-        .then(resp => {
-          console.log('Respoonse setting data: ', resp);
-          props.navigation.navigate('Home');
-        })
-        .catch(err => console.log('this is error setting user float data', err))
-        .finally(() => setLoading2(false));
+      UploadData();
+      props.navigation.navigate('Home');
     } else {
       Toast.show('Please Add All Images');
     }
@@ -223,7 +210,7 @@ const Cleanliness = props => {
               {ProfileImage && ProfileImage != '' ? (
                 <View>
                   <ImageBackground
-                    source={{uri: ProfileImage}}
+                    source={{uri: ProfileImage.uri}}
                     resizeMode="cover"
                     style={styles.bgimageStyle}>
                     <TouchableOpacity style={styles.crossViewStyle}>
@@ -246,7 +233,7 @@ const Cleanliness = props => {
               {ProfileImage1 && ProfileImage1 != '' ? (
                 <View>
                   <ImageBackground
-                    source={{uri: ProfileImage1}}
+                    source={{uri: ProfileImage1.uri}}
                     resizeMode="cover"
                     style={styles.bgimageStyle}>
                     <TouchableOpacity style={styles.crossViewStyle}>
@@ -269,7 +256,7 @@ const Cleanliness = props => {
               {ProfileImage2 && ProfileImage2 != '' ? (
                 <View>
                   <ImageBackground
-                    source={{uri: ProfileImage2}}
+                    source={{uri: ProfileImage2.uri}}
                     resizeMode="cover"
                     style={styles.bgimageStyle}>
                     <TouchableOpacity style={styles.crossViewStyle}>
@@ -292,7 +279,7 @@ const Cleanliness = props => {
               {ProfileImage3 && ProfileImage3 != '' ? (
                 <View>
                   <ImageBackground
-                    source={{uri: ProfileImage3}}
+                    source={{uri: ProfileImage3.uri}}
                     resizeMode="cover"
                     style={styles.bgimageStyle}>
                     <TouchableOpacity style={styles.crossViewStyle}>
