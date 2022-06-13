@@ -42,7 +42,6 @@ const Stackload = props => {
         saleDetails.map(item => {
           // console.log('these are the two items', parseInt(item.loadStock),saleDetails);
           if (item.brand == 'Classic') {
-            console.log(classic.loadStock);
             if (c == item.date) {
               classic = {
                 ...classic,
@@ -72,7 +71,7 @@ const Stackload = props => {
             }
           }
         });
-        // console.log('final logging systedm', classic, GSI);
+
         setData(saleDetails);
       })
       .catch(err => console.log('error getting stock load', err))
@@ -114,7 +113,6 @@ const Stackload = props => {
               };
             }
           }
-          // console.log('this comes classic', classic, GSI);
         }
         setData([GSI, classic]);
       });
@@ -156,7 +154,7 @@ const Stackload = props => {
           </View>
         </View>
       </View>
-      {console.log('final data', data)}
+
       {loading ? null : (
         <FlatList
           refreshing={true}
