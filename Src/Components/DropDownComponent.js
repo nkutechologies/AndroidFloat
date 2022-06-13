@@ -1,5 +1,5 @@
 import React, {Component, useState, useRef} from 'react';
-import {View, Text, TextInput, Image, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, Image, TouchableOpacity, Pressable} from 'react-native';
 import Theme from '../Utils/Theme';
 import {Icon} from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,7 +20,7 @@ const DropDownComponent = props => {
         }}>
         {props.Title}
       </Text>
-      <View
+      <Pressable onPress={() => dropdown.current.show()}
         style={{
           backgroundColor: '#fff',
           flexDirection: 'row',
@@ -28,6 +28,7 @@ const DropDownComponent = props => {
           // borderRadius: 10,
           justifyContent: 'space-between',
           paddingHorizontal: Theme.screenWidth / 90,
+          // backgroundColor:'red'
         }}>
         <ModalDropdown
           ref={dropdown}
@@ -49,7 +50,7 @@ const DropDownComponent = props => {
         <TouchableOpacity onPress={() => dropdown.current.show()}>
           <Icon name={'chevron-down'} type={'feather'} />
         </TouchableOpacity>
-      </View>
+      </Pressable>
     </View>
   );
 };
