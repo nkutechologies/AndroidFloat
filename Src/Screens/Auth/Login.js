@@ -22,8 +22,8 @@ import firestore from '@react-native-firebase/firestore';
 
 // create a component
 const Login = props => {
-  const [username, setUserName] = useState('GSI2SP');
-  const [password, setPassword] = useState('GSI2SP');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
@@ -69,7 +69,7 @@ const Login = props => {
   const SignInas = async () => {
     await firestore()
       .collection('FloatTerritoryJunction')
-      .where('TerritoryId', '==', "MCH")
+      .where('TerritoryId', '==', 'MCH')
       .get()
       .then(res => {
         console.log(res);

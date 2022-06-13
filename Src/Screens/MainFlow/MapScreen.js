@@ -98,7 +98,10 @@ const MapScreen = props => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}>
-        <Marker pinColor={'red'} coordinate={{latitude: lat, longitude: lng}} />
+        <Marker
+          pinColor={'red'}
+          coordinate={{latitude: lat, longitude: lng}}
+        />
       </MapView>
       <Header
         backIcon={true}

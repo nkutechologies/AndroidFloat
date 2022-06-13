@@ -10,6 +10,7 @@ const Stackload = props => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [userData, setUserData] = useState();
+  const [roleCheck, setRoleCheck] = useState(false);
 
   useEffect(() => {
     getUserData();
@@ -32,6 +33,7 @@ const Stackload = props => {
     const b = JSON.parse(a);
     setUserData(b);
     userCheck = b.role.includes('Supervisor');
+    setRoleCheck(userCheck);
   };
 
   const getStockData = async () => {
@@ -124,7 +126,7 @@ const Stackload = props => {
         backIcon={true}
         rightIcon={true}
         backIconPress={() => props.navigation.goBack()}
-        rightIcon={userCheck ? 'pluscircleo' : ''}
+        rightIcon={roleCheck ? 'pluscircleo' : ''}
         type={'antdesign'}
         rightIconPress={() => props.navigation.navigate('AddStock')}
       />

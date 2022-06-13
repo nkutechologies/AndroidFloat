@@ -36,32 +36,36 @@ const SelectImage = props => {
   };
 
   const UploadFile = () => {
-    const formData = new FormData();
-    formData.append('id', user.id);
-    formData.append('date', data.date);
-    formData.append('longitude', data.longitude);
-    formData.append('lattitude', data.latitude);
-    formData.append('image', {
-      uri: ProfileImage.uri,
-      type: ProfileImage.type,
-      name: ProfileImage.fileName,
-    });
-    console.log('ye aya form data', formData);
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    axios
-      .post('http://goldcup.pk:8078/api/Attendence/Post', formData, headers)
-      .then(function (response) {
-        console.log('response :', response);
-        // Toast.show(response.data);
-      })
-      .catch(function (error) {
-        console.log('error from image :', error);
-      })
-      .finally(() => setLoading2(false));
+    if (ProfileImage != '') {
+      const formData = new FormData();
+      formData.append('id', user.id);
+      formData.append('date', data.date);
+      formData.append('longitude', data.longitude);
+      formData.append('latitude', data.latitude);
+      formData.append('image', {
+        uri: ProfileImage.uri,
+        type: ProfileImage.type,
+        name: ProfileImage.fileName,
+      });
+      console.log('ye aya form data', formData);
+      const headers = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+      axios
+        .post('http://goldcup.pk:8078/api/Attendence/Post', formData, headers)
+        .then(function (response) {
+          console.log('response :', response);
+          // Toast.show(response.data);
+        })
+        .catch(function (error) {
+          console.log('error from image :', error);
+        })
+        .finally(() => setLoading2(false));
+    } else {
+      Toast.show('Please Add Image First');
+    }
   };
   const pickImage = () => {
     launchCamera(
