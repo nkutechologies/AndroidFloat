@@ -63,7 +63,7 @@ const Stackload = props => {
       const consumeDetail = res._docs.map(item => item._data);
       console.log('response getting consume data', consumeDetail);
       consumeDetail.map(item => {
-        if (item.targetBrand == 'Classic') {
+        if (item.targetBrand == 'Classic') {  
           classic = {
             ...classic,
             brand: 'Classic',
