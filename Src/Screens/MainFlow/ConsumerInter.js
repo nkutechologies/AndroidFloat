@@ -6,7 +6,7 @@ import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
 import ButtonComponent from '../../Components/ButtonComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ConsumerForm, StockLoad, Territory, Brands} from '../Api/FirebaseCalls';
+import {ConsumerForm, Territory, Brands} from '../Api/FirebaseCalls';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import firestore from '@react-native-firebase/firestore';
@@ -73,68 +73,6 @@ const ConsumerInter = props => {
       .finally(() => setLoading(false));
   };
 
-  const setAllDataToDb = async () => {
-    const {submitForm, updateStock, updateUserTotalSale} = Promise.all([
-      submitDataForm(),
-      updateStockData(),
-      updateTotalSale(),
-    ]);
-  };
-
-  const updateTotalSale = async () => {
-    if (
-      Vendor.callStatus == 'Productive' &&
-      Vendor.age &&
-      Vendor.callStatus &&
-      Vendor.cellNo &&
-      Vendor.currentBrand &&
-      Vendor.name &&
-      Vendor.targetBrand &&
-      Vendor.territoryName &&
-      Vendor.town
-    ) {
-      StockLoad.updateUserTotalSales(Vendor.targetBrand, userData.id)
-        .then(resp => {
-          console.log('Respoonse Form Update User Stock ', resp);
-        })
-        .catch(err => console.log('this is error from Update User Stock', err));
-    } else {
-      null;
-    }
-  };
-
-  const updateStockData = async () => {
-    if (
-      Vendor.callStatus == 'Productive' &&
-      Vendor.age &&
-      Vendor.callStatus &&
-      Vendor.cellNo &&
-      Vendor.currentBrand &&
-      Vendor.name &&
-      Vendor.targetBrand &&
-      Vendor.territoryName &&
-      Vendor.town
-    ) {
-      setButtonLoading(true);
-      const a = new Date();
-      const d = a.toISOString();
-      StockLoad.setStock(
-        Vendor.targetBrand,
-        userData.id,
-        d.substring(0, 10),
-        Vendor,
-      )
-        .then(resp => {
-          console.log('Respoonse Form Update Stock ', resp);
-          // props.navigation.navigate('Home');
-        })
-        .catch(err => console.log('this is error Form submit', err))
-        .finally(() => setButtonLoading(false));
-      // StockLoad.setStock(userData.id, d.substring(0, 10), Vendor);
-    } else {
-      null;
-    }
-  };
   const submitDataForm = () => {
     if (
       // Vendor.CNIC &&
@@ -151,10 +89,14 @@ const ConsumerInter = props => {
       setButtonLoading(true);
       const a = new Date();
       const d = a.toISOString();
-      ConsumerForm.setConsumerDetails(userData.id, d.substring(0, 10), Vendor)
+      ConsumerForm.setConsumerDetails({
+        ...Vendor,
+        userID: userData.id,
+        date: d.substring(0, 10),
+      })
         .then(resp => {
           console.log('Respoonse Form Submit ', resp);
-          return resp;
+          props.navigation.navigate('Home');
         })
         .catch(err => console.log('this is error Form submit', err))
         .finally(() => setButtonLoading(false));
@@ -300,7 +242,8 @@ const ConsumerInter = props => {
               </View>
               <ButtonComponent
                 text="Submit"
-                onPress={() => updateTotalSale()}
+                isLoading={buttonLoading}
+                onPress={() => submitDataForm()}
               />
             </>
           )}

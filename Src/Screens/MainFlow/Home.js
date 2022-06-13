@@ -19,6 +19,7 @@ import Header from '../../Components/Header';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+
 const data = [
   {
     id: 0,
@@ -52,6 +53,7 @@ const Home = props => {
   useFocusEffect(
     React.useCallback(() => {
       getUser();
+
       const onBackPress = async () => {
         Alert.alert('Logout', 'Do you really want to exit the application?', [
           {

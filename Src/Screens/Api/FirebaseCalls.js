@@ -1,6 +1,7 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import axios from 'axios';
+
 //collection == add
 //documnt == set
 export const Users = {
@@ -22,6 +23,7 @@ export const Float = {
       .collection('Cleanliness')
       .doc(`${floatId}`)
       .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+      
   submitFloatForm: async (floatId, data, date) =>
     await firestore()
       .collection('Feedback')
@@ -43,49 +45,26 @@ export const Territory = {
 //Brands
 export const Brands = {
   getAllBrands: async () => await firestore().collection('Brands').get(),
-};
-
-const data = {
-  opening: 2000,
-  brandId: 1,
-  stockLoad: 1000,
-  sale: 200,
-  balance: 2800,
+  getOneBrand: async id =>
+    await firestore().collection('Brands').doc(`${id}`).get(),
 };
 //StockLoad
 export const StockLoad = {
   getStock: async () => await firestore().collection('StockLoad').get(),
-  setStock: async (brand, userId, date, data) =>
+  setStock: async data =>
     await firestore()
       .collection('StockLoad')
-      .doc(`${brand}`)
-      .collection('Users')
-      .doc(`${userId}`)
-      .collection(`${date}`)
       .doc()
-      .set(data),
-  getUserStock: async (brand, userId) =>
-    await firestore()
-      .collection('StockLoad')
-      .doc(`${brand}`)
-      .collection('Users')
-      .doc(`${userId}`)
-      .get(),
-
-  updateUserTotalSales: async (brand, userId) =>
-    await firestore()
-      .collection('StockLoad')
-      .doc(`${brand}`)
-      .collection('Users')
-      .doc(`${userId}`)
-      .update({Total: firestore.FieldValue.increment(1)}),
+      .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
-
+//consumer form
 export const ConsumerForm = {
-  setConsumerDetails: async (userId, date, data) =>
+  setConsumerDetails: async data =>
     await firestore()
       .collection('ConsumerDataForm')
-      .doc(`${userId}`)
-      .collection(`${date}`)
-      .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+      .doc()
+      .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+
+  getConsumerData: async () =>
+    await firestore().collection('ConsumerDataForm').get(),
 };

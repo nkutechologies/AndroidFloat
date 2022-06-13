@@ -1,5 +1,5 @@
 //import liraries
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,66 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Header from '../../Components/Header';
-import TextComponent from '../../Components/TextComponent';
 import Theme from '../../Utils/Theme';
+import {StockLoad, Brands, Float} from '../Api/FirebaseCalls';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-simple-toast';
 // create a component
 const AddStock = props => {
-  const [stock, setstock] = useState();
+  const [stock, setstock] = useState('');
+  const [userData, setUserData] = useState();
+  const [userBrandData, setUserBrandData] = useState();
+  useEffect(() => {
+    getUserData();
+  }, []);
+  const getUserData = async () => {
+    let a = await AsyncStorage.getItem('AuthData');
+    let b = JSON.parse(a);
+    setUserData(b);
+    console.log(b);
+    getUserFloatData(b.FloatId);
+  };
+  const getUserFloatData = id => {
+    Float.getUserFloat(id)
+      .then(resp => {
+        console.log('Respoonse getting user floa data: ', resp);
+        getUserBrand(resp._data.brandId);
+      })
+      .catch(err => console.log('this is error getting user float data', err))
+      .finally(() => null);
+  };
+
+  const getUserBrand = id => {
+    Brands.getOneBrand(id)
+      .then(resp => {
+        console.log('Respoonse getting user brand data: ', resp);
+        setUserBrandData(resp._data);
+      })
+      .catch(err => console.log('this is error getting user brand data', err))
+      .finally(() => null);
+  };
+  const setStockData = () => {
+    if (stock == '') {
+      Toast.show('Please Enter Stock Details First');
+    } else {
+      const a = new Date();
+      const b = a.toISOString();
+      const c = b.substring(0, 10);
+      const data = {
+        userId: userData.id,
+        stockLoad: stock,
+        date: c,
+        brand: userBrandData.name,
+      };
+      StockLoad.setStock(data)
+        .then(res => {
+          console.log('response getting stock load', res);
+          props.navigation.navigate('Home');
+        })
+        .catch(err => console.log('error getting stock load', err))
+        .finally(() => null);
+    }
+  };
   return (
     <View style={styles.container}>
       <Header
@@ -33,9 +88,11 @@ const AddStock = props => {
           }}
           placeholder={'Please Enter New Stock Amount Here'}
           placeholderTextColor={'grey'}
-          onChangeText={text => setstock({text})}
+          onChangeText={text => setstock(text)}
         />
-        <TouchableOpacity style={styles.buttonView}>
+        <TouchableOpacity
+          style={styles.buttonView}
+          onPress={() => setStockData()}>
           <Text style={styles.btnTextStyle}>add</Text>
         </TouchableOpacity>
       </View>

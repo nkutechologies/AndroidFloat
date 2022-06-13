@@ -2,9 +2,13 @@ import React, {Component, useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
-import {StockLoad} from '../Api/FirebaseCalls';
+import {StockLoad, ConsumerForm} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+
+let userCheck = false;
+let classic = {stockLoad: 0, sale: 0};
+let GSI = {stockLoad: 0, sale: 0};
 
 const Stackload = props => {
   const [loading, setLoading] = useState(false);
@@ -14,26 +18,69 @@ const Stackload = props => {
   useEffect(() => {
     getUserData();
     getStockData();
+    ConsumerData();
   }, []);
+
+  const a = new Date();
+  const b = a.toISOString();
+  const c = b.substring(0, 10);
+
   const getUserData = async () => {
     let a = await AsyncStorage.getItem('AuthData');
-    setUserData(JSON.parse(a));
+    const b = JSON.parse(a);
+    setUserData(b);
+    userCheck = b.role.includes('Supervisor');
   };
-  console.log(userData);
 
   const getStockData = () => {
-    setLoading(true);
-    // StockLoad.setStock()
     StockLoad.getStock()
       .then(res => {
         console.log('response getting stock load', res);
-        const stockDetails = res._docs.map(item => item._data);
-        setData(stockDetails);
+        const saleDetails = res._docs.map(item => item._data);
+        saleDetails.map(item => {
+          if (item.brand == 'Classic') {
+            classic = {
+              ...classic,
+              brand: item.brand,
+              stockLoad: classic.stockLoad + item.stockLoad,
+            };
+          } else if (item.brand == 'GSI') {
+            GSI = {
+              ...GSI,
+              brand: item.brand,
+              stockLoad: GSI.stockLoad + item.stockLoad,
+            };
+          }
+        });
+        setData(saleDetails);
       })
       .catch(err => console.log('error getting stock load', err))
-      .finally(() => setLoading(false));
+      .finally(() => null);
   };
-  const userCheck = userData.role.includes('Supervisor');
+
+  const ConsumerData = () => {
+    ConsumerForm.getConsumerData().then(res => {
+      const consumeDetail = res._docs.map(item => item._data);
+      console.log('response getting consume data', consumeDetail);
+      consumeDetail.map(item => {
+        if (item.targetBrand == 'Classic') {
+          classic = {
+            ...classic,
+            brand: 'Classic',
+            sale: classic.sale + 1,
+          };
+        } else if (item.targetBrand == 'GSI') {
+          GSI = {
+            ...GSI,
+            brand: 'GSI',
+            sale: GSI.sale + 1,
+          };
+        }
+        console.log('this comes classic', classic, GSI);
+        setData([GSI, classic]);
+      });
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -89,7 +136,7 @@ const Stackload = props => {
                     }
               }>
               <Text style={[styles.data, {fontWeight: '700'}]}>
-                {item.brandName}
+                {item.brand}
               </Text>
               <Text style={styles.data}>{item.opening}</Text>
               <Text style={styles.data}>{item.stockLoad}</Text>
