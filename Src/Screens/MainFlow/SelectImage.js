@@ -88,7 +88,7 @@ const SelectImage = props => {
         backIcon={true}
         title="Uplaod Image"
         backIconPress={() => props.navigation.goBack()}
-        rightIcon="settings"
+        // rightIcon="settings"
       />
       {loading2 ? (
         <View

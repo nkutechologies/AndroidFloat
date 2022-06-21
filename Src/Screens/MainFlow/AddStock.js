@@ -13,6 +13,9 @@ import {StockLoad, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 // create a component
+const a = new Date();
+const b = a.toISOString();
+const c = b.substring(0, 10);
 const AddStock = props => {
   const [stock, setstock] = useState('');
   const [userData, setUserData] = useState();
@@ -50,9 +53,6 @@ const AddStock = props => {
     if (stock == '') {
       Toast.show('Please Enter Stock Details First');
     } else {
-      const a = new Date();
-      const b = a.toISOString();
-      const c = b.substring(0, 10);
       const data = {
         userId: userData.id,
         stockLoad: stock,
@@ -68,24 +68,29 @@ const AddStock = props => {
         .finally(() => null);
     }
   };
+
   return (
     <View style={styles.container}>
       <Header
-        title="AddStock"
+        title="Add Stock"
         backIcon={true}
         backIconPress={() => props.navigation.goBack()}
+        rightIcon={userBrandData ? 'pen' : ''}
+        type={'font-awesome-5'}
+        rightIconPress={() =>
+          props.navigation.navigate('EditStock', {
+            brand: userBrandData,
+            date: c,
+            user: userData,
+          })
+        }
       />
       <View style={styles.mainView}>
+        <Text style={styles.brandName}>{userBrandData?.name}</Text>
         <TextInput
           value={stock}
           keyboardType={'numeric'}
-          style={{
-            height: Theme.screenHeight / 15,
-            fontSize: Theme.screenHeight / 60,
-            color: Theme.black,
-            borderRadius: 10,
-            alignItems: 'center',
-          }}
+          style={styles.inputField}
           placeholder={'Please Enter New Stock Amount Here'}
           placeholderTextColor={'grey'}
           onChangeText={text => setstock(text)}
@@ -116,10 +121,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Theme.screenHeight / 10,
     width: Theme.screenWidth / 1.3,
-
+    paddingVertical: Theme.screenHeight / 30,
     alignSelf: 'center',
     elevation: 5,
   },
+  brandName: {color: Theme.black, fontSize: 18, fontWeight: 'bold'},
   buttonView: {
     marginTop: Theme.screenHeight / 25,
     backgroundColor: Theme.blue,
@@ -134,6 +140,16 @@ const styles = StyleSheet.create({
     // marginVertical: Theme.screenHeight / 90,
     // marginHorizontal: Theme.screenWidth / 20,
     color: Theme.white,
+  },
+  inputField: {
+    height: Theme.screenHeight / 15,
+    fontSize: Theme.screenHeight / 60,
+    color: Theme.black,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    marginTop: 10,
+    padding: 10,
   },
 });
 

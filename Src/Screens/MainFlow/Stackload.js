@@ -16,11 +16,9 @@ const Stackload = props => {
     getUserData();
     getStockData();
     ConsumerData();
-    return () => {
-      getStockData();
-      ConsumerData();
-    };
+    return () => data;
   }, []);
+
   let userCheck = false;
   let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
   let GSI = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
@@ -59,16 +57,17 @@ const Stackload = props => {
             }
           } else if (item.brand == 'GSI') {
             if (c == item.date) {
+              console.log('====>>>', item);
               GSI = {
                 ...GSI,
                 brand: item.brand,
-                loadStock: classic.loadStock + parseInt(item.stockLoad),
+                loadStock: GSI.loadStock + parseInt(item.stockLoad),
               };
             } else {
               GSI = {
                 ...GSI,
                 brand: item.brand,
-                prevStock: classic.prevStock + parseInt(item.stockLoad),
+                prevStock: GSI.prevStock + parseInt(item.stockLoad),
               };
             }
           }

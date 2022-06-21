@@ -20,7 +20,6 @@ const ConsumerInter = props => {
   const [userTown, setUserTown] = useState(['Loading Please Wait']);
   const [allTerritories, setAllTerritories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
-  const [userTotalSale, setUserTotalSale] = useState(0);
 
   useEffect(() => {
     getUserData();

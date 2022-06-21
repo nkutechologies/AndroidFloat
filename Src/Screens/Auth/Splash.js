@@ -1,27 +1,33 @@
 //import liraries
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {View, Text, StyleSheet, ImageBackground, Image} from 'react-native';
 import Theme from '../../Utils/Theme';
 import {Images} from '../../Constants/Images';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
 // create a component
-
 const Splash = props => {
-  setTimeout(() => {
-    props.navigation.navigate('Login');
-  }, 2200);
+  useEffect(() => {
+    GetData();
+  }, []);
+  const GetData = async () => {
+    let a = await AsyncStorage.getItem('AuthData');
+    setTimeout(() => {
+      if (a != null) {
+        props.navigation.navigate('Home');
+      } else {
+        props.navigation.navigate('Login');
+      }
+    }, 1000);
+  };
   return (
     <View style={styles.container}>
       {/* <ImageBackground source={Images.splashlogo} style={styles.bgimageStyle}> */}
       <LottieView
-        source={require('../../Components/loader/loader19.json')}
+        source={require('../../Components/loader/truck.json')}
         autoPlay
         loop
-        style={{
-          height: Theme.screenHeight / 1,
-          width: Theme.screenWidth / 1,
-        }}></LottieView>
+        style={styles.bgimageStyle}></LottieView>
 
       <Image source={Images.loginlogo} style={styles.logo} />
       {/* </ImageBackground> */}
@@ -37,10 +43,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bgimageStyle: {
-    height: '100%',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: Theme.screenHeight / 3.5,
+    width: Theme.screenWidth / 3.5,
   },
   floatTextStyle: {
     color: 'white',
@@ -48,6 +52,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
+    bottom: Theme.screenHeight / 5.5,
     height: Theme.screenHeight / 3,
     width: Theme.screenHeight / 3,
   },

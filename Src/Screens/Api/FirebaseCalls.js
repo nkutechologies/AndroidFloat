@@ -23,7 +23,7 @@ export const Float = {
       .collection('Cleanliness')
       .doc(`${floatId}`)
       .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
-      
+
   submitFloatForm: async (floatId, data, date) =>
     await firestore()
       .collection('Feedback')
@@ -56,6 +56,14 @@ export const StockLoad = {
       .collection('StockLoad')
       .doc()
       .set({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
+  getSpecificStock: async (id, date) =>
+    await firestore()
+      .collection('StockLoad')
+      .where('userId', '==', id)
+      .where('date', '==', date)
+      .get(),
+  updateSpecificStock: async (docID, data) =>
+    await firestore().collection('StockLoad').doc(docID).update(data),
 };
 //consumer form
 export const ConsumerForm = {
@@ -67,4 +75,9 @@ export const ConsumerForm = {
 
   getConsumerData: async () =>
     await firestore().collection('ConsumerDataForm').get(),
+  getUserConsumerData: async id =>
+    await firestore()
+      .collection('ConsumerDataForm')
+      .where('userID', '==', id)
+      .get(),
 };

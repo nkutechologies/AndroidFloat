@@ -12,6 +12,8 @@ import FeedBackForm from '../Screens/MainFlow/FeedBackForm';
 import ConsumerInter from '../Screens/MainFlow/ConsumerInter';
 import Stackload from '../Screens/MainFlow/Stackload';
 import AddStock from '../Screens/MainFlow/AddStock';
+import Summary from '../Screens/MainFlow/Summary';
+import EditStock from '../Screens/MainFlow/EditStock';
 
 const Stack = createNativeStackNavigator();
 function Routes() {
@@ -38,6 +40,8 @@ function Routes() {
         <Stack.Screen name="ConsumerInter" component={ConsumerInter} />
         <Stack.Screen name="Stackload" component={Stackload} />
         <Stack.Screen name="AddStock" component={AddStock} />
+        <Stack.Screen name="Summary" component={Summary} />
+        <Stack.Screen name="EditStock" component={EditStock} />
       </Stack.Navigator>
     </NavigationContainer>
   );

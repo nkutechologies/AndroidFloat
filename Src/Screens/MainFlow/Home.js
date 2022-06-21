@@ -105,8 +105,13 @@ const Home = props => {
         title="Dashboard"
         backIcon={true}
         backIconPress={() => backPress()}
+        rightIcon={'exit-outline'}
+        type={'ionicon'}
+        rightIconPress={async () => {
+          await AsyncStorage.removeItem('AuthData'),
+            props.navigation.replace('Login');
+        }}
       />
-
       <ImageBackground source={Images.homebg} style={styles.bgimageStyle}>
         <View style={{marginTop: Theme.screenHeight / 70}}>
           <View>
@@ -195,6 +200,20 @@ const Home = props => {
               </View>
             </Card>
           </View>
+          <View>
+            <Card
+              elevation={10}
+              style={styles.cardViewStyle}
+              onPress={() => props.navigation.navigate('Summary')}>
+              <View style={styles.cardFirstView}>
+                <Image source={Images.dummy} style={styles.imageStyle} />
+                <View style={styles.textViewStyle}>
+                  <Text style={styles.nameTextStyle}>Previous Summary</Text>
+                </View>
+                <Image source={Images.fwdArrow} style={styles.logo} />
+              </View>
+            </Card>
+          </View>
         </View>
       </ImageBackground>
     </View>
@@ -240,7 +259,7 @@ const styles = StyleSheet.create({
   cardViewStyle: {
     flexDirection: 'row',
     borderRadius: 20,
-    marginVertical: Theme.screenHeight / 85,
+    marginVertical: Theme.screenHeight / 150,
     padding: Theme.screenHeight / 99,
   },
   cardFirstView: {flexDirection: 'row', borderRadius: 20, alignItems: 'center'},
