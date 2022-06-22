@@ -59,7 +59,7 @@ const Login = props => {
           if (err.code == 'auth/user-not-found') {
             Toast.show('User Not Registered');
           } else if (err.code == 'auth/wrong-password') {
-            Toast.show('Incorrect Password');
+            Toast.show('Incorrect Username Or Password');
           } else {
             Toast.show('Unknown Error');
           }

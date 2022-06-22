@@ -107,10 +107,22 @@ const Home = props => {
         backIconPress={() => backPress()}
         rightIcon={'exit-outline'}
         type={'ionicon'}
-        rightIconPress={async () => {
-          await AsyncStorage.removeItem('AuthData'),
-            props.navigation.replace('Login');
-        }}
+        rightIconPress={() =>
+          Alert.alert('Logout', 'Do you really want to Logout?', [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: async () => {
+                await AsyncStorage.removeItem('AuthData'),
+                  props.navigation.replace('Login');
+              },
+            },
+          ])
+        }
       />
       <ImageBackground source={Images.homebg} style={styles.bgimageStyle}>
         <View style={{marginTop: Theme.screenHeight / 70}}>

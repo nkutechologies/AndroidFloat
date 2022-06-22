@@ -4,9 +4,11 @@ import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
 import {StockLoad, ConsumerForm} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 
 const Stackload = props => {
+  const isFocused = useIsFocused();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [userData, setUserData] = useState();
@@ -17,7 +19,7 @@ const Stackload = props => {
     getStockData();
     ConsumerData();
     return () => data;
-  }, []);
+  }, [isFocused]);
 
   let userCheck = false;
   let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
@@ -57,7 +59,6 @@ const Stackload = props => {
             }
           } else if (item.brand == 'GSI') {
             if (c == item.date) {
-              console.log('====>>>', item);
               GSI = {
                 ...GSI,
                 brand: item.brand,

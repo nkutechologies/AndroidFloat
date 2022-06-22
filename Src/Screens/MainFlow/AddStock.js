@@ -62,7 +62,7 @@ const AddStock = props => {
       StockLoad.setStock(data)
         .then(res => {
           console.log('response getting stock load', res);
-          props.navigation.navigate('Home');
+          props.navigation.navigate('Stackload');
         })
         .catch(err => console.log('error getting stock load', err))
         .finally(() => null);
@@ -74,7 +74,7 @@ const AddStock = props => {
       <Header
         title="Add Stock"
         backIcon={true}
-        backIconPress={() => props.navigation.goBack()}
+        backIconPress={() => props.navigation.navigate('Stackload')}
         rightIcon={userBrandData ? 'pen' : ''}
         type={'font-awesome-5'}
         rightIconPress={() =>

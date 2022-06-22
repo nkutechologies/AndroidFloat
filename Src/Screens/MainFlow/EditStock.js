@@ -19,7 +19,7 @@ export default function EditStock(props) {
   const {user, brand, date} = props.route.params;
   useEffect(() => {
     getStockData();
-    return () => data;
+    return data;
   }, []);
 
   const getStockData = () => {
@@ -36,7 +36,7 @@ export default function EditStock(props) {
     StockLoad.updateSpecificStock(docId, item._data)
       .then(resp => {
         console.log('Respoonse getting user specific data: ', resp);
-        props.navigation.goBack();
+        props.navigation.navigate('Stackload');
       })
       .catch(err => console.log('this is error getting user float data', err))
       .finally(() => null);
@@ -44,9 +44,9 @@ export default function EditStock(props) {
   return (
     <View style={styles.container}>
       <Header
-        title={`Edit ${brand?.name} Stock`}
+        title={`Edit ${brand.name} Stock`}
         backIcon={true}
-        backIconPress={() => props.navigation.navigate('Home')}
+        backIconPress={() => props.navigation.goBack()}
       />
       <View style={styles.tableHeadingView}>
         <Text style={styles.time}>Time</Text>
