@@ -16,6 +16,7 @@ import Toast from 'react-native-simple-toast';
 const a = new Date();
 const b = a.toISOString();
 const c = b.substring(0, 10);
+
 const AddStock = props => {
   const [stock, setstock] = useState('');
   const [userData, setUserData] = useState();

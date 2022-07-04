@@ -64,6 +64,11 @@ export const StockLoad = {
       .get(),
   updateSpecificStock: async (docID, data) =>
     await firestore().collection('StockLoad').doc(docID).update(data),
+  getBrandStock: async brandName =>
+    await firestore()
+      .collection('StockLoad')
+      .where('brand', '==', brandName)
+      .get(),
 };
 //consumer form
 export const ConsumerForm = {
@@ -79,5 +84,10 @@ export const ConsumerForm = {
     await firestore()
       .collection('ConsumerDataForm')
       .where('userID', '==', id)
+      .get(),
+  getBrandConsumerData: async brandName =>
+    await firestore()
+      .collection('ConsumerDataForm')
+      .where('currentBrand', '==', brandName)
       .get(),
 };

@@ -125,6 +125,9 @@ const Cleanliness = props => {
     });
     formData.append('date', d.substring(0, 10));
     formData.append('floatId', userData?.FloatId);
+    formData.append('PreviewUrl', `['']`);
+    formData.append('DownloadUrl', `['']`);
+    formData.append('Status', checked == 'first' ? 'Ok' : 'Not Ok');
     const headers = {
       headers: {
         'Content-Type': 'multipart/form-data',

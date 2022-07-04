@@ -19,7 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-
+import LottieView from 'lottie-react-native';
 // create a component
 const Login = props => {
   const [username, setUserName] = useState('GSI1SP');
@@ -109,7 +109,12 @@ const Login = props => {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Image source={Images.loginlogo} style={styles.logo} />
+        {/* <Image source={Images.loginlogo} style={styles.logo} /> */}
+        <LottieView
+          source={require('../../Components/loader/truck.json')}
+          autoPlay
+          loop
+          style={styles.logo}></LottieView>
         <View style={{paddingHorizontal: Theme.screenWidth / 14}}>
           <View style={styles.loginTextView}>
             <Text style={styles.loginTextStyle}>Welcome back,</Text>
@@ -179,6 +184,7 @@ const styles = StyleSheet.create({
     height: Theme.screenHeight / 4,
     width: Theme.screenHeight / 3,
     alignSelf: 'center',
+    marginVertical: Theme.screenHeight / 20,
     // backgroundColor:'pink'
   },
   loginTextView: {

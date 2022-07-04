@@ -1,6 +1,6 @@
 //import liraries
 import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, ToastAndroid} from 'react-native';
 import Theme from '../../Utils/Theme';
 import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 
 // create a component
 const ConsumerInter = props => {
-  const [Vendor, setVendor] = useState({address: '', CNIC: ''});
+  const [Vendor, setVendor] = useState({address: '', CNIC: '', cellNo: '+92'});
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
@@ -164,7 +164,28 @@ const ConsumerInter = props => {
                   placeholder="Enter your cnic"
                   value={Vendor.CNIC}
                   keyboardType={'numeric'}
-                  onChangeText={text => setVendor({...Vendor, CNIC: text})}
+                  onChangeText={text => {
+                    if (text.length > Vendor.CNIC.length) {
+                      if (text.length < 5) {
+                        setVendor({...Vendor, CNIC: text});
+                      } else if (text.length == 5) {
+                        setVendor({...Vendor, CNIC: text + '-'});
+                      } else if (text.length > 6 && text.length < 13) {
+                        setVendor({...Vendor, CNIC: text});
+                      } else if (text.length == 13) {
+                        setVendor({...Vendor, CNIC: text + '-'});
+                      } else if (text.length == 15) {
+                        setVendor({...Vendor, CNIC: text});
+                      } else if (text.length >= 16) {
+                        ToastAndroid.show(
+                          'NIC cannot be greater than 13 digits',
+                          ToastAndroid.SHORT,
+                        );
+                      }
+                    } else {
+                      setVendor({...Vendor, CNIC: text});
+                    }
+                  }}
                 />
               </View>
               <View style={styles.passwordView}>
@@ -173,7 +194,26 @@ const ConsumerInter = props => {
                   placeholder="Enter your number"
                   value={Vendor.cellNo}
                   keyboardType={'numeric'}
-                  onChangeText={text => setVendor({...Vendor, cellNo: text})}
+                  onChangeText={text => {
+                    if (text.length > Vendor.cellNo.length) {
+                      if (text.length < 6) {
+                        setVendor({...Vendor, cellNo: text});
+                      } else if (text.length == 6) {
+                        setVendor({...Vendor, cellNo: text + '-'});
+                      } else if (text.length > 7 && text.length < 15) {
+                        setVendor({...Vendor, cellNo: text});
+                      } else if (text.length >= 15) {
+                        ToastAndroid.show(
+                          'NIC cannot be greater than 13 digits',
+                          ToastAndroid.SHORT,
+                        );
+                      }
+                    } else {
+                      if (text.length > 2) {
+                        setVendor({...Vendor, cellNo: text});
+                      }
+                    }
+                  }}
                 />
               </View>
               <View style={styles.passwordView}>
@@ -196,13 +236,7 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Current Brand'}
-                  options={[
-                    'GSI',
-                    'Classic',
-                    'Capstan',
-                    'Morven',
-                    'Gold Flake',
-                  ]}
+                  options={allBrands}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
@@ -215,7 +249,7 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Target Brand'}
-                  options={allBrands}
+                  options={['Capstan', 'Morven', 'Gold Flake']}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
