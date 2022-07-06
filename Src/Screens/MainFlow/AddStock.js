@@ -12,6 +12,7 @@ import Theme from '../../Utils/Theme';
 import {StockLoad, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+import {ActivityIndicator} from 'react-native-paper';
 // create a component
 const a = new Date();
 const b = a.toISOString();
@@ -19,12 +20,14 @@ const c = b.substring(0, 10);
 
 const AddStock = props => {
   const [stock, setstock] = useState('');
+  const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState();
   const [userBrandData, setUserBrandData] = useState();
   useEffect(() => {
     getUserData();
   }, []);
   const getUserData = async () => {
+    setLoading(true);
     let a = await AsyncStorage.getItem('AuthData');
     let b = JSON.parse(a);
     setUserData(b);
@@ -48,7 +51,7 @@ const AddStock = props => {
         setUserBrandData(resp._data);
       })
       .catch(err => console.log('this is error getting user brand data', err))
-      .finally(() => null);
+      .finally(() => setLoading(false));
   };
   const setStockData = () => {
     if (stock == '') {
@@ -63,6 +66,7 @@ const AddStock = props => {
       StockLoad.setStock(data)
         .then(res => {
           console.log('response getting stock load', res);
+          Toast.show('Stock Addedd Successfully!');
           props.navigation.navigate('Stackload');
         })
         .catch(err => console.log('error getting stock load', err))
@@ -86,22 +90,28 @@ const AddStock = props => {
           })
         }
       />
-      <View style={styles.mainView}>
-        <Text style={styles.brandName}>{userBrandData?.name}</Text>
-        <TextInput
-          value={stock}
-          keyboardType={'numeric'}
-          style={styles.inputField}
-          placeholder={'Please Enter New Stock Amount Here'}
-          placeholderTextColor={'grey'}
-          onChangeText={text => setstock(text)}
-        />
-        <TouchableOpacity
-          style={styles.buttonView}
-          onPress={() => setStockData()}>
-          <Text style={styles.btnTextStyle}>add</Text>
-        </TouchableOpacity>
-      </View>
+      {loading ? (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={Theme.blue} size={'small'} />
+        </View>
+      ) : (
+        <View style={styles.mainView}>
+          <Text style={styles.brandName}>{userBrandData?.name}</Text>
+          <TextInput
+            value={stock}
+            keyboardType={'numeric'}
+            style={styles.inputField}
+            placeholder={'Please Enter New Stock Amount Here'}
+            placeholderTextColor={'grey'}
+            onChangeText={text => setstock(text)}
+          />
+          <TouchableOpacity
+            style={styles.buttonView}
+            onPress={() => setStockData()}>
+            <Text style={styles.btnTextStyle}>add</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

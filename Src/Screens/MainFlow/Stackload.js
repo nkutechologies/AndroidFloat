@@ -1,15 +1,16 @@
 import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
 import {StockLoad, ConsumerForm, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
+import {ActivityIndicator} from 'react-native-paper';
 
 const Stackload = props => {
   const isFocused = useIsFocused();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [userData, setUserData] = useState();
   // const [userBrand, setUserBrand] = useState();
@@ -32,6 +33,7 @@ const Stackload = props => {
   const c = b.substring(0, 10);
 
   const getUserData = async () => {
+    setLoading(true);
     let a = await AsyncStorage.getItem('AuthData');
     const b = JSON.parse(a);
     setUserData(b);
@@ -98,6 +100,9 @@ const Stackload = props => {
       })
       .catch(err => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -252,7 +257,11 @@ const Stackload = props => {
         </View>
       </View>
 
-      {loading ? null : (
+      {loading ? (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={Theme.blue} size={'small'} />
+        </View>
+      ) : (
         <FlatList
           refreshing={true}
           data={data}
@@ -277,10 +286,13 @@ const Stackload = props => {
               <Text style={styles.data}>{item.prevStock}</Text>
               <Text style={styles.data}>{item.loadStock}</Text>
               <Text style={styles.data}>{item.sale + item.prevSale}</Text>
-              <Text style={styles.data}>
-                {item.loadStock + item.prevStock - (item.sale + item.prevSale)}
-                {/* {(total.totalBuffLitre *5)+(total.totalCowLitre*10)} */}
-              </Text>
+              <ScrollView horizontal={true} style={{flexGrow: 0.55}}>
+                <Text style={styles.newData}>
+                  {item.loadStock +
+                    item.prevStock -
+                    (item.sale + item.prevSale)}
+                </Text>
+              </ScrollView>
             </View>
           )}
         />
@@ -305,6 +317,13 @@ const styles = StyleSheet.create({
   },
   data: {
     width: Theme.screenWidth / 6,
+    textAlign: 'center',
+    fontSize: Theme.screenHeight / 70,
+    color: Theme.black,
+    padding: Theme.screenHeight / 80,
+    // marginLeft:Theme.screenWidth/90
+  },
+  newData: {
     textAlign: 'center',
     fontSize: Theme.screenHeight / 70,
     color: Theme.black,

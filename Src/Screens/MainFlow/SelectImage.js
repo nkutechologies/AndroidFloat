@@ -136,7 +136,9 @@ const SelectImage = props => {
             <ButtonComponent
               text="Submit"
               onPress={() => {
-                UploadFile(), props.navigation.navigate('Home');
+                UploadFile(),
+                  props.navigation.navigate('Home'),
+                  Toast.show('Attendance Marked Successfully');
               }}
             />
           </View>

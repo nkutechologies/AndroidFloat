@@ -128,6 +128,7 @@ const Cleanliness = props => {
     formData.append('PreviewUrl', `['']`);
     formData.append('DownloadUrl', `['']`);
     formData.append('Status', checked == 'first' ? 'Ok' : 'Not Ok');
+    console.log(formData);
     const headers = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -157,6 +158,7 @@ const Cleanliness = props => {
     ) {
       UploadData();
       props.navigation.navigate('Home');
+      Toast.show("Data Updated!")
     } else {
       Toast.show('Please Add All Images');
     }

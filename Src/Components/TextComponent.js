@@ -7,7 +7,7 @@ import {useLinkProps} from '@react-navigation/native';
 
 const TextComponent = props => {
   return (
-    <View style={{borderBottomWidth: 0.3}}>
+    <View style={{borderBottomWidth: 1, borderBottomColor: Theme.grey}}>
       <Text
         style={{
           color: Theme.black,
@@ -34,8 +34,8 @@ const TextComponent = props => {
           keyboardType={props.keyboardType}
           secureTextEntry={props.secureTextEntry}
           style={{
-            flex: 1,
             height: Theme.screenHeight / 18,
+            width: Theme.screenWidth / 1,
             // fontSize: Theme.screenHeight / 40,
             // backgroundColor: '#383838',
             // backgroundColor: 'pink',

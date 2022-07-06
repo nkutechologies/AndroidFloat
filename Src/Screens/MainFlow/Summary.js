@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import DatePicker from 'react-native-date-picker';
+import {ActivityIndicator} from 'react-native-paper';
 
 // create a component
 const monthNames = [
@@ -39,12 +40,15 @@ const Summary = props => {
   });
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getUserData();
     return () => data;
   }, [date]);
+
   const getUserData = async () => {
+    setLoading(true);
     setData({
       monthIntercepts: 0,
       monthProductive: 0,
@@ -56,44 +60,49 @@ const Summary = props => {
     const dt = date.toISOString();
     const today = dt.substring(0, 10);
     console.log('called with date', dt);
-    ConsumerForm.getUserConsumerData(data.id).then(res => {
-      console.log('res getting consumer data ', res);
-      if (res._docs.length < 1) {
-        Toast.show('No record Found');
-      } else {
-        res._docs.map(item => {
-          if (
-            item?._data?.callStatus == 'Productive' &&
-            item?._data?.date == today
-          ) {
-            setData(prev => {
-              return {...prev, todayProductive: prev.todayProductive + 1};
-            });
-          } else if (
-            item?._data?.callStatus == 'Intercept' &&
-            item?._data?.date == today
-          ) {
-            setData(prev => {
-              return {...prev, todayIntercepts: prev.todayIntercepts + 1};
-            });
-          } else if (
-            item?._data?.callStatus == 'Productive' &&
-            item?._data?.date.split('-')[1] == today.split('-')[1]
-          ) {
-            setData(prev => {
-              return {...prev, monthProductive: prev.monthProductive + 1};
-            });
-          } else if (
-            item?._data?.callStatus == 'Intercept' &&
-            item?._data?.date.split('-')[1] == today.split('-')[1]
-          ) {
-            setData(prev => {
-              return {...prev, monthIntercepts: prev.monthIntercepts + 1};
-            });
-          }
-        });
-      }
-    });
+    ConsumerForm.getUserConsumerData(data.id)
+      .then(res => {
+        console.log('res getting consumer data ', res);
+        if (res._docs.length < 1) {
+          Toast.show('No record Found');
+        } else {
+          res._docs.map(item => {
+            if (
+              item?._data?.callStatus == 'Productive' &&
+              item?._data?.date == today
+            ) {
+              setData(prev => {
+                return {...prev, todayProductive: prev.todayProductive + 1};
+              });
+            } else if (
+              item?._data?.callStatus == 'Intercept' &&
+              item?._data?.date == today
+            ) {
+              setData(prev => {
+                return {...prev, todayIntercepts: prev.todayIntercepts + 1};
+              });
+            } else if (
+              item?._data?.callStatus == 'Productive' &&
+              item?._data?.date.split('-')[1] == today.split('-')[1]
+            ) {
+              setData(prev => {
+                return {...prev, monthProductive: prev.monthProductive + 1};
+              });
+            } else if (
+              item?._data?.callStatus == 'Intercept' &&
+              item?._data?.date.split('-')[1] == today.split('-')[1]
+            ) {
+              setData(prev => {
+                return {...prev, monthIntercepts: prev.monthIntercepts + 1};
+              });
+            }
+          });
+        }
+      })
+      .catch(err => console.log(err))
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -125,50 +134,64 @@ const Summary = props => {
             <Text style={styles.heading}>Summary Of Consumer Interactions</Text>
           </View>
           {/* Monthly Record*/}
-          <View style={styles.dateView}>
-            <View style={styles.dateSelectedView}>
-              <Text style={styles.date}>Monthly</Text>
-              <Text style={styles.date}>{monthNames[date.getMonth()]}</Text>
+          {loading ? (
+            <View
+              style={{
+                height: Theme.screenHeight / 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator color={Theme.blue} size={'small'} />
             </View>
-            <View style={styles.mainView}>
-              <View style={styles.containerView}>
-                <Text style={styles.heading}>Intercepts</Text>
-                <Text style={{color: Theme.black}}>
-                  {data.monthIntercepts + data.todayIntercepts}/100
-                </Text>
+          ) : (
+            <>
+              <View style={styles.dateView}>
+                <View style={styles.dateSelectedView}>
+                  <Text style={styles.date}>Monthly</Text>
+                  <Text style={styles.date}>{monthNames[date.getMonth()]}</Text>
+                </View>
+
+                <View style={styles.mainView}>
+                  <View style={styles.containerView}>
+                    <Text style={styles.heading}>Intercepts</Text>
+                    <Text style={{color: Theme.black}}>
+                      {data.monthIntercepts + data.todayIntercepts}/100
+                    </Text>
+                  </View>
+                  <View style={styles.containerView}>
+                    <Text style={styles.heading}>Productive</Text>
+                    <Text style={{color: Theme.black}}>
+                      {data.monthProductive + data.todayProductive}/100
+                    </Text>
+                  </View>
+                </View>
               </View>
-              <View style={styles.containerView}>
-                <Text style={styles.heading}>Productive</Text>
-                <Text style={{color: Theme.black}}>
-                  {data.monthProductive + data.todayProductive}/100
-                </Text>
+              {/* Daily Record*/}
+              <View style={styles.dateView}>
+                <View style={styles.dateSelectedView}>
+                  <Text style={styles.date}>Daily</Text>
+                  <Text
+                    style={
+                      styles.date
+                    }>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Text>
+                </View>
+                <View style={styles.mainView}>
+                  <View style={styles.containerView}>
+                    <Text style={styles.heading}>Intercepts</Text>
+                    <Text style={{color: Theme.black}}>
+                      {data.todayIntercepts}/100
+                    </Text>
+                  </View>
+                  <View style={styles.containerView}>
+                    <Text style={styles.heading}>Productive</Text>
+                    <Text style={{color: Theme.black}}>
+                      {data.todayProductive}/100
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          {/* Daily Record*/}
-          <View style={styles.dateView}>
-            <View style={styles.dateSelectedView}>
-              <Text style={styles.date}>Daily</Text>
-              <Text
-                style={
-                  styles.date
-                }>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Text>
-            </View>
-            <View style={styles.mainView}>
-              <View style={styles.containerView}>
-                <Text style={styles.heading}>Intercepts</Text>
-                <Text style={{color: Theme.black}}>
-                  {data.todayIntercepts}/100
-                </Text>
-              </View>
-              <View style={styles.containerView}>
-                <Text style={styles.heading}>Productive</Text>
-                <Text style={{color: Theme.black}}>
-                  {data.todayProductive}/100
-                </Text>
-              </View>
-            </View>
-          </View>
+            </>
+          )}
         </View>
       </ScrollView>
     </View>

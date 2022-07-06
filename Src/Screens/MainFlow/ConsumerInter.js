@@ -161,29 +161,30 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <TextComponent
                   Title={'CNIC'}
-                  placeholder="Enter your cnic"
+                  placeholder="Enter your CNIC"
                   value={Vendor.CNIC}
                   keyboardType={'numeric'}
                   onChangeText={text => {
-                    if (text.length > Vendor.CNIC.length) {
-                      if (text.length < 5) {
-                        setVendor({...Vendor, CNIC: text});
-                      } else if (text.length == 5) {
-                        setVendor({...Vendor, CNIC: text + '-'});
-                      } else if (text.length > 6 && text.length < 13) {
-                        setVendor({...Vendor, CNIC: text});
-                      } else if (text.length == 13) {
-                        setVendor({...Vendor, CNIC: text + '-'});
-                      } else if (text.length == 15) {
-                        setVendor({...Vendor, CNIC: text});
-                      } else if (text.length >= 16) {
-                        ToastAndroid.show(
-                          'NIC cannot be greater than 13 digits',
-                          ToastAndroid.SHORT,
-                        );
-                      }
+                    if (text.includes('.')) {
                     } else {
-                      setVendor({...Vendor, CNIC: text});
+                      if (text.length > Vendor.CNIC.length) {
+                        if (text.length < 5) {
+                          setVendor({...Vendor, CNIC: text});
+                        } else if (text.length == 5) {
+                          setVendor({...Vendor, CNIC: text + '-'});
+                        } else if (text.length > 6 && text.length < 13) {
+                          setVendor({...Vendor, CNIC: text});
+                        } else if (text.length == 13) {
+                          setVendor({...Vendor, CNIC: text + '-'});
+                        } else if (text.length == 15) {
+                          setVendor({...Vendor, CNIC: text});
+                        } else if (text.length >= 16) {
+                          // Toast.show('NIC cannot be greater than 13 digits');
+                          null;
+                        }
+                      } else {
+                        setVendor({...Vendor, CNIC: text});
+                      }
                     }
                   }}
                 />
@@ -195,22 +196,22 @@ const ConsumerInter = props => {
                   value={Vendor.cellNo}
                   keyboardType={'numeric'}
                   onChangeText={text => {
-                    if (text.length > Vendor.cellNo.length) {
-                      if (text.length < 6) {
-                        setVendor({...Vendor, cellNo: text});
-                      } else if (text.length == 6) {
-                        setVendor({...Vendor, cellNo: text + '-'});
-                      } else if (text.length > 7 && text.length < 15) {
-                        setVendor({...Vendor, cellNo: text});
-                      } else if (text.length >= 15) {
-                        ToastAndroid.show(
-                          'NIC cannot be greater than 13 digits',
-                          ToastAndroid.SHORT,
-                        );
-                      }
+                    if (text.includes('.')) {
                     } else {
-                      if (text.length > 2) {
-                        setVendor({...Vendor, cellNo: text});
+                      if (text.length > Vendor.cellNo.length) {
+                        if (text.length < 6) {
+                          setVendor({...Vendor, cellNo: text});
+                        } else if (text.length == 6) {
+                          setVendor({...Vendor, cellNo: text + '-'});
+                        } else if (text.length > 7 && text.length < 15) {
+                          setVendor({...Vendor, cellNo: text});
+                        } else if (text.length >= 15) {
+                          null;
+                        }
+                      } else {
+                        if (text.length > 2) {
+                          setVendor({...Vendor, cellNo: text});
+                        }
                       }
                     }
                   }}
@@ -296,17 +297,13 @@ const styles = StyleSheet.create({
   },
   consumerTextStyle: {},
   inputView: {
-    // marginTop: Theme.screenHeight / 40,
     justifyContent: 'center',
-    // paddingHorizontal:Theme.screenHeight/80,
   },
   passwordView: {
     justifyContent: 'center',
-    // padding: 15,
   },
   dropdownStyle: {
     width: Theme.screenWidth / 1.5,
-    // borderColor:Theme.blue,
     elevation: 8,
   },
 });

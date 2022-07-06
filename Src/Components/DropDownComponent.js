@@ -1,5 +1,12 @@
 import React, {Component, useState, useRef} from 'react';
-import {View, Text, TextInput, Image, TouchableOpacity, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import Theme from '../Utils/Theme';
 import {Icon} from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,9 +15,14 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import ModalDropdown from 'react-native-modal-dropdown';
 const DropDownComponent = props => {
   const dropdown = useRef(null);
+  const itemHeight = Theme.screenHeight / 18;
   return (
     <View
-      style={{borderBottomWidth: 0.3, paddingBottom: Theme.screenHeight / 80}}>
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: Theme.grey,
+        paddingBottom: Theme.screenHeight / 80,
+      }}>
       <Text
         style={{
           color: Theme.black,
@@ -20,7 +32,8 @@ const DropDownComponent = props => {
         }}>
         {props.Title}
       </Text>
-      <Pressable onPress={() => dropdown.current.show()}
+      <Pressable
+        onPress={() => dropdown.current.show()}
         style={{
           backgroundColor: '#fff',
           flexDirection: 'row',
@@ -35,7 +48,14 @@ const DropDownComponent = props => {
           options={props.options}
           defaultValue={props.defaultValue}
           defaultTextStyle={{color: 'grey'}}
-          dropdownStyle={props.dropdownStyle}
+          dropdownStyle={[
+            props.dropdownStyle,
+            {
+              maxHeight: itemHeight * props.options.length,
+              borderBottomColor: Theme.white,
+            },
+          ]}
+          renderSeparator={() => null}
           style={props.dropDownContainerStyle}
           textStyle={{color: Theme.black, fontSize: Theme.screenHeight / 60}}
           dropdownTextStyle={{
