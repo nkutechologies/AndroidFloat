@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Float} from '../Api/FirebaseCalls';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
+import {postData} from '../Database/ApiCalls';
 
 // create a component
 const Cleanliness = props => {
@@ -125,28 +126,16 @@ const Cleanliness = props => {
     });
     formData.append('date', d.substring(0, 10));
     formData.append('floatId', userData?.FloatId);
-    // formData.append('PreviewUrl', `['']`);
-    // formData.append('DownloadUrl', `['']`);
     formData.append('Status', checked == 'first' ? 'Ok' : 'Not Ok');
-    console.log(formData);
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    axios
-      .post(
-        'http://goldcup.pk:8078/api/CleanlinessFileUpload/Post',
-        formData,
-        headers,
-      )
+    axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    postData
+      .floatCleanliness(formData)
       .then(function (response) {
+        axios.defaults.headers['Content-Type'] = 'application/json';
         console.log('response :', response);
-        Toast.show('Data Updated!');
       })
       .catch(function (error) {
         console.log('error from image :', error);
-        Toast.show('Cleanliness Update Error!');
       })
       .finally(() => setLoading2(false));
   };
@@ -158,12 +147,9 @@ const Cleanliness = props => {
       ProfileImage2 != '' &&
       ProfileImage3 != ''
     ) {
-      if (checked == '') {
-        Toast.show('Please Mark Cleanliness Status First!');
-      } else {
-        UploadData();
-        props.navigation.navigate('Home');
-      }
+      UploadData();
+      props.navigation.navigate('Home');
+      Toast.show('Data Updated!');
     } else {
       Toast.show('Please Add All Images');
     }
@@ -192,7 +178,7 @@ const Cleanliness = props => {
               <RadioButton
                 color={Theme.blue}
                 value="first"
-                status={checked == 'first' ? 'checked' : 'unchecked'}
+                status={checked === 'first' ? 'checked' : 'unchecked'}
                 onPress={() => setChecked('first')}
               />
               <View style={{width: Theme.screenWidth / 2}}>
@@ -203,7 +189,7 @@ const Cleanliness = props => {
               <RadioButton
                 color={Theme.blue}
                 value="second"
-                status={checked == 'second' ? 'checked' : 'unchecked'}
+                status={checked === 'second' ? 'checked' : 'unchecked'}
                 onPress={() => setChecked('second')}
               />
               <View style={{width: Theme.screenWidth / 2}}>

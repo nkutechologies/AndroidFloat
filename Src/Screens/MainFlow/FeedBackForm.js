@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import {Float} from '../Api/FirebaseCalls';
 import axios from 'axios';
+import {postData} from '../Database/ApiCalls';
 // create a component
 const FeedBackForm = props => {
   const [ProfileImage, setProfileImage] = useState('');
@@ -55,15 +56,12 @@ const FeedBackForm = props => {
     });
     formData.append('date', d.substring(0, 10));
     formData.append('floatId', userData?.FloatId);
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    axios
-      .post('http://goldcup.pk:8078/api/FeedBack/Post', formData, headers)
+    axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    postData
+      .feedBackForm(formData)
       .then(function (response) {
-        console.log('response :', response);
+        console.log('suces posting feedback form', response);
+        axios.defaults.headers['Content-Type'] = 'application/json';
       })
       .catch(function (error) {
         console.log('error from image :', error);

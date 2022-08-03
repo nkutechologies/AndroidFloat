@@ -17,9 +17,10 @@ import {Users} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import axios from 'axios';
+import {postData} from '../Database/ApiCalls';
 
 const SelectImage = props => {
-  const [ProfileImage, setProfileImage] = useState();
+  const [ProfileImage, setProfileImage] = useState('');
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -35,6 +36,14 @@ const SelectImage = props => {
     setUser(JSON.parse(data));
   };
 
+  const markAttendance = async () => {
+    const d = {date: data.date};
+    await AsyncStorage.setItem('Attendance', JSON.stringify(d));
+    setLoading2(true);
+    UploadFile();
+    props.navigation.navigate('Home');
+    Toast.show('Attendance Marked Successfully');
+  };
   const UploadFile = () => {
     if (ProfileImage != '') {
       const formData = new FormData();
@@ -42,27 +51,22 @@ const SelectImage = props => {
       formData.append('date', data.date);
       formData.append('longitude', data.longitude);
       formData.append('latitude', data.latitude);
-      formData.append('CreatedDate', data.date);
+      formData.append('CreatedDate', new Date());
       formData.append('image', {
         uri: ProfileImage.uri,
         type: ProfileImage.type,
         name: ProfileImage.fileName,
       });
       console.log('ye aya form data', formData);
-      const headers = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-      axios
-        .post('http://goldcup.pk:8078/api/Attendence/Post', formData, headers)
+      axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+      postData
+        .postAttendance(formData)
         .then(function (response) {
           console.log('response :', response);
-          Toast.show('Attendance Marked Successfully');
+          axios.defaults.headers['Content-Type'] = 'application/json';
         })
         .catch(function (error) {
           console.log('error from image :', error);
-          Toast.show('Attendance Was Not Marked');
         })
         .finally(() => setLoading2(false));
     } else {
@@ -135,17 +139,7 @@ const SelectImage = props => {
             </View>
           )}
           <View style={{position: 'absolute', bottom: 30, alignSelf: 'center'}}>
-            <ButtonComponent
-              text="Submit"
-              onPress={() => {
-                if (ProfileImage != undefined) {
-                  UploadFile();
-                  props.navigation.navigate('Home');
-                } else {
-                  Toast.show('Please Select Image First');
-                }
-              }}
-            />
+            <ButtonComponent text="Submit" onPress={() => markAttendance()} />
           </View>
         </>
       )}

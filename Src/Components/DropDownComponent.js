@@ -9,9 +9,6 @@ import {
 } from 'react-native';
 import Theme from '../Utils/Theme';
 import {Icon} from 'react-native-elements';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useLinkProps} from '@react-navigation/native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import ModalDropdown from 'react-native-modal-dropdown';
 const DropDownComponent = props => {
   const dropdown = useRef(null);
@@ -47,7 +44,7 @@ const DropDownComponent = props => {
           ref={dropdown}
           options={props.options}
           defaultValue={props.defaultValue}
-          disabled={true}
+          disabled={props.disabled}
           defaultTextStyle={{color: 'grey'}}
           dropdownStyle={[
             props.dropdownStyle,

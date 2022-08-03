@@ -7,54 +7,25 @@ import {
   BackHandler,
   StyleSheet,
   ImageBackground,
-  FlatList,
   Image,
 } from 'react-native';
-import {Avatar, Button, Card, Title, Paragraph} from 'react-native-paper';
+import {Card} from 'react-native-paper';
 import {Images} from '../../Constants/Images';
 import Theme from '../../Utils/Theme';
 import {useFocusEffect} from '@react-navigation/native';
 import Header from '../../Components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
-import {Attendance, newConsumerData} from '../Api/FirebaseCalls';
-import firestore from '@react-native-firebase/firestore';
-
-const data = [
-  {
-    id: 0,
-    name: 'Attendance',
-    quant: '10%',
-  },
-  {
-    id: 1,
-    name: 'Stock Load',
-    quant: '15%',
-  },
-  {
-    id: 2,
-    name: 'Float Cleanliness',
-    quant: '15%',
-  },
-  {
-    id: 4,
-    name: 'Feedback Form',
-  },
-  {
-    id: 3,
-    name: 'Consumer Inter',
-    quant: '25%',
-  },
-];
 
 // create a component
 const Home = props => {
   const [userData, setUserData] = useState();
-  const [attendanceCheck, setAttendanceCheck] = useState(false);
+  const [AttendanceCheck, setAttendanceCheck] = useState(false);
+
   useFocusEffect(
     React.useCallback(() => {
       getUser();
-      // ChangeDataStructureForConsumerInteception();
+
       const onBackPress = async () => {
         Alert.alert('Logout', 'Do you really want to exit the application?', [
           {
@@ -96,78 +67,26 @@ const Home = props => {
   };
 
   const getUser = async () => {
-    // const a = await AsyncStorage.getItem('AuthData');
-    // const b = JSON.parse(a);
-    // setUserData(b);
-    // getUserAttendance(b?.id);
-
-    // await firestore()
-    //   .collection('ConsumerDataForm')
-    //   .doc('ConsumerDataForm')
-    //   .get()
-    //   .then(data => {
-    //     const arr = data.data().dataArr.toString();
-    //     const length = new TextEncoder().encode(arr).length;
-    //     console.log(length/1024);
-    //   });
-
-    await firestore()
-      .collection('newStockLoad')
-      .where('newStockLoad', 'array-contains', '1234')
-      .get()
-      .then(res => {
-        console.log(res);
-      });
-    console.log('runs');
-
-    // .onSnapshot(snap => {
-    //   const data = snap.data().dataArr.filter(msg => msg.stockname == '567');
-    //   console.log('==>>', data);
-    //   snap.ref.update({
-    //     dataArr: firestore.FieldValue.arrayUnion({
-    //       ...data[0],
-    //       name: 'newname',
-    //     }),
-    //   });
-    // });
-  };
-  async function getUserAttendance(id) {
-    await Attendance.getUserAttendance(id)
-      .then(data => {
-        console.log('user attendacen is==>>', data);
-        if (data?._docs.length > 0) {
+    await AsyncStorage.multiGet(['AuthData', 'Attendance'], (err, items) => {
+      console.log('==>>', items);
+      setUserData(JSON.parse(items[0][1]));
+      const att = items[1][1];
+      if (att) {
+        const chk = JSON.parse(att);
+        const date = new Date();
+        const d = date.toISOString();
+        const c = d.substring(0, 10);
+        if (chk.date == c) {
           setAttendanceCheck(true);
         } else {
           setAttendanceCheck(false);
         }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+      } else {
+        setAttendanceCheck(false);
+      }
+    });
+  };
 
-  async function ChangeDataStructureForConsumerInteception() {
-    let obj = {dataArr: []};
-    await newConsumerData
-      .setPrevConsumerData()
-      .then(res => {
-        console.log('res', res);
-        obj = {dataArr: res?._docs};
-      })
-      .catch(err => {
-        console.log('==>> err', err);
-      });
-
-    console.log('==>>', obj);
-    await newConsumerData
-      .setConsumerData(obj)
-      .then(res => {
-        console.log('res', res);
-      })
-      .catch(err => {
-        console.log('=111=>> err', err);
-      });
-  }
   return (
     <View style={styles.container}>
       <Header
@@ -186,8 +105,7 @@ const Home = props => {
             {
               text: 'OK',
               onPress: async () => {
-                await AsyncStorage.removeItem('AuthData'),
-                  props.navigation.replace('Login');
+                await AsyncStorage.clear(), props.navigation.replace('Login');
               },
             },
           ])
@@ -199,7 +117,11 @@ const Home = props => {
             <Card
               elevation={5}
               style={styles.cardViewStyle}
-              onPress={() => props.navigation.navigate('MapScreen')}>
+              onPress={() =>
+                !AttendanceCheck
+                  ? props.navigation.navigate('MapScreen')
+                  : Toast.show('Attendance Already Marked')
+              }>
               <View style={styles.cardFirstView}>
                 <Image source={Images.dummy} style={styles.imageStyle} />
                 <View style={styles.textViewStyle}>
@@ -215,9 +137,8 @@ const Home = props => {
               style={styles.cardViewStyle}
               onPress={() => {
                 const userCheck = userData.role.includes('Supervisor');
-                x;
                 if (userCheck) {
-                  !attendanceCheck
+                  !AttendanceCheck
                     ? props.navigation.navigate('Stackload')
                     : Toast.show('Please Mark Attendance First');
                 } else {
@@ -238,7 +159,7 @@ const Home = props => {
               elevation={10}
               style={styles.cardViewStyle}
               onPress={() =>
-                attendanceCheck
+                AttendanceCheck
                   ? props.navigation.navigate('Cleanliness')
                   : Toast.show('Please Mark Attendance First')
               }>
@@ -258,7 +179,7 @@ const Home = props => {
               onPress={() => {
                 const userCheck = userData.role.includes('Supervisor');
                 if (userCheck) {
-                  attendanceCheck
+                  AttendanceCheck
                     ? props.navigation.navigate('FeedBackForm')
                     : Toast.show('Please Mark Attendance First');
                 } else {
@@ -279,7 +200,7 @@ const Home = props => {
               elevation={10}
               style={styles.cardViewStyle}
               onPress={() => {
-                attendanceCheck
+                AttendanceCheck
                   ? props.navigation.navigate('ConsumerInter')
                   : Toast.show('Please Mark Attendance First');
               }}>
@@ -299,7 +220,7 @@ const Home = props => {
               elevation={10}
               style={styles.cardViewStyle}
               onPress={() =>
-                !attendanceCheck
+                AttendanceCheck
                   ? props.navigation.navigate('Summary')
                   : Toast.show('Please Mark Attendance First')
               }>

@@ -7,6 +7,12 @@ import axios from 'axios';
 export const Users = {
   getSingleUser: async id =>
     await firestore().collection('user').doc(`${id}`).get(),
+  markAttendance: async data =>
+    await firestore()
+      .collection('Attendance')
+      .doc(`${data.id}`)
+      .collection(data.date)
+      .add({...data, createdAt: firestore.FieldValue.serverTimestamp()}),
 };
 //Flaots
 export const Float = {
@@ -84,50 +90,4 @@ export const ConsumerForm = {
       .collection('ConsumerDataForm')
       .where('currentBrand', '==', brandName)
       .get(),
-};
-const d = new Date();
-const today = d.toISOString().split('T')[0];
-console.log('today', today);
-export const Attendance = {
-  getUserAttendance: async id =>
-    await firestore()
-      .collection('Attendance')
-      .where('id', '==', id)
-      .where('date', '==', today)
-      .get(),
-};
-
-export const newConsumerData = {
-  setPrevConsumerData: async () =>
-    await firestore().collection('ConsumerDataForm').get(),
-
-  setConsumerData: async data =>
-    await firestore()
-      .collection('ConsumerDataForm')
-      .doc('ConsumerDataForm')
-      .set(data),
-
-  getConsumerData: async () =>
-    await firestore()
-      .collection('ConsumerDataForm')
-      .doc('ConsumerDataForm')
-      .get(),
-};
-
-export const newStockLoad = {
-  getPrevStockLoad: async () => await firestore().collection('StockLoad').get(),
-
-  setNewStockLoad: async data =>
-    await firestore().collection('StockLoad').doc('StockLoad').set(data),
-
-  getNewStockLoadData: async () =>
-    await firestore().collection('StockLoad').doc('StockLoad').get(),
-
-  updateStockData: async data =>
-    await firestore()
-      .collection('StockLoad')
-      .doc('StockLoad')
-      .update({
-        dataArr: firestore.FieldValue.arrayUnion(data),
-      }),
 };

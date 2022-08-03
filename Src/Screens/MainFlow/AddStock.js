@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import Header from '../../Components/Header';
 import Theme from '../../Utils/Theme';
-import {Brands, Float, newStockLoad} from '../Api/FirebaseCalls';
+import {StockLoad, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import firestore from '@react-native-firebase/firestore';
+import {postData} from '../Database/ApiCalls';
 // create a component
 const a = new Date();
 const b = a.toISOString();
@@ -54,7 +54,6 @@ const AddStock = props => {
       .catch(err => console.log('this is error getting user brand data', err))
       .finally(() => setLoading(false));
   };
-
   const setStockData = () => {
     if (stock == '') {
       Toast.show('Please Enter Stock Details First');
@@ -64,10 +63,9 @@ const AddStock = props => {
         stockLoad: stock,
         date: c,
         brand: userBrandData.name,
-        createdAt: new Date(),
       };
-      newStockLoad
-        .updateStockData(data)
+      postData
+        .addStock(data)
         .then(res => {
           console.log('response getting stock load', res);
           Toast.show('Stock Addedd Successfully!');

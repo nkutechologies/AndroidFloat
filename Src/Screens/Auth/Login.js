@@ -64,8 +64,9 @@ const Login = props => {
             Toast.show('Unknown Error');
           }
           console.log('error in signup', err.code);
+          setLoading(false);
         })
-        .finally(() => setLoading(false));
+        .finally(() => {});
     }
   };
 

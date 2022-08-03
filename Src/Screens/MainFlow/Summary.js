@@ -9,12 +9,13 @@ import {
   ScrollView,
 } from 'react-native';
 import Theme from '../../Utils/Theme';
-import {Brands, Float, newConsumerData} from '../Api/FirebaseCalls';
+import {ConsumerForm} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import DatePicker from 'react-native-date-picker';
 import {ActivityIndicator} from 'react-native-paper';
+import {getData} from '../Database/ApiCalls';
 
 // create a component
 const monthNames = [
@@ -41,12 +42,13 @@ const Summary = props => {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userBrand, setUserBrand] = useState();
+  const [error, setError] = useState(true);
 
   useEffect(() => {
     getUserData();
     return () => data;
-  }, []);
+  }, [date]);
+
   const getUserData = async () => {
     setLoading(true);
     setData({
@@ -57,34 +59,24 @@ const Summary = props => {
     });
     let a = await AsyncStorage.getItem('AuthData');
     const data = JSON.parse(a);
-    await Float.getUserFloat(data.FloatId).then(res => {
-      GetUserBrand(res?._data?.brandId);
-    });
-  };
-
-  const GetUserBrand = id => {
-    Brands.getOneBrand(id).then(res => {
-      console.log('this is result getting user brand', res);
-      setUserBrand(res?.data().name);
-      getSummaryData(res?.data().name);
-    });
-  };
-
-  const getSummaryData = async brandName => {
     const dt = date.toISOString();
     const today = dt.substring(0, 10);
-    setLoading(true);
-    newConsumerData
-      .getConsumerData()
+    const d = {
+      brandName: null,
+      userId: data.id,
+      dateFrom: null,
+      dateTo: null,
+    };
+    await getData
+      .getStockReport(d)
       .then(res => {
-        console.log('response getting  stock data', res);
-        if (res?._data?.dataArr.length > 0) {
-          const saleDetails = res?._data?.dataArr?.map(item => item._data);
-          const filter = saleDetails.filter(
-            item => item.currentBrand == brandName,
-          );
-
-          filter.map(item => {
+        console.log('res getting consumer data ', res);
+        const consumed = res?.data?.data;
+        if (consumed.length < 1) {
+          Toast.show('No record Found');
+          setError(true);
+        } else {
+          consumed.map(item => {
             if (item?.callStatus == 'Productive' && item?.date == today) {
               setData(prev => {
                 return {...prev, todayProductive: prev.todayProductive + 1};
@@ -102,19 +94,18 @@ const Summary = props => {
               });
             } else if (
               item?.callStatus == 'Intercept' &&
-              item?._data?.date.split('-')[1] == today.split('-')[1]
+              item?.date.split('-')[1] == today.split('-')[1]
             ) {
               setData(prev => {
                 return {...prev, monthIntercepts: prev.monthIntercepts + 1};
               });
             }
           });
-        } else {
-          Toast.show('No record Found');
         }
       })
       .catch(err => {
         console.log(err);
+        setError(true);
       })
       .finally(() => {
         setLoading(false);
@@ -140,71 +131,85 @@ const Summary = props => {
             onConfirm={nd => {
               setDate(nd);
               setOpen(false);
-              getSummaryData(userBrand);
+              //   getUserData();
             }}
             onCancel={() => {
               setOpen(false);
             }}
           />
-          <View style={styles.summaryText}>
-            <Text style={styles.heading}>Summary Of Consumer Interactions</Text>
-          </View>
-          {/* Monthly Record*/}
-          {loading ? (
-            <View
-              style={{
-                height: Theme.screenHeight / 2,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <ActivityIndicator color={Theme.blue} size={'small'} />
+          {error ? (
+            <View style={styles.summaryText}>
+              <Text style={[styles.heading, {color: Theme.black}]}>
+                No Data Found
+              </Text>
             </View>
           ) : (
             <>
-              <View style={styles.dateView}>
-                <View style={styles.dateSelectedView}>
-                  <Text style={styles.date}>Monthly</Text>
-                  <Text style={styles.date}>{monthNames[date.getMonth()]}</Text>
+              <View style={styles.summaryText}>
+                <Text style={styles.heading}>
+                  Summary Of Consumer Interactions
+                </Text>
+              </View>
+              {/* Monthly Record*/}
+              {loading ? (
+                <View
+                  style={{
+                    height: Theme.screenHeight / 2,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <ActivityIndicator color={Theme.blue} size={'small'} />
                 </View>
+              ) : (
+                <>
+                  <View style={styles.dateView}>
+                    <View style={styles.dateSelectedView}>
+                      <Text style={styles.date}>Monthly</Text>
+                      <Text style={styles.date}>
+                        {monthNames[date.getMonth()]}
+                      </Text>
+                    </View>
 
-                <View style={styles.mainView}>
-                  <View style={styles.containerView}>
-                    <Text style={styles.heading}>Intercepts</Text>
-                    <Text style={{color: Theme.black}}>
-                      {data.monthIntercepts + data.todayIntercepts}/100
-                    </Text>
+                    <View style={styles.mainView}>
+                      <View style={styles.containerView}>
+                        <Text style={styles.heading}>Intercepts</Text>
+                        <Text style={{color: Theme.black}}>
+                          {data.monthIntercepts + data.todayIntercepts}/100
+                        </Text>
+                      </View>
+                      <View style={styles.containerView}>
+                        <Text style={styles.heading}>Productive</Text>
+                        <Text style={{color: Theme.black}}>
+                          {data.monthProductive + data.todayProductive}/100
+                        </Text>
+                      </View>
+                    </View>
                   </View>
-                  <View style={styles.containerView}>
-                    <Text style={styles.heading}>Productive</Text>
-                    <Text style={{color: Theme.black}}>
-                      {data.monthProductive + data.todayProductive}/100
-                    </Text>
+                  {/* Daily Record*/}
+                  <View style={styles.dateView}>
+                    <View style={styles.dateSelectedView}>
+                      <Text style={styles.date}>Daily</Text>
+                      <Text style={styles.date}>{`${date.getDate()}/${
+                        date.getMonth() + 1
+                      }/${date.getFullYear()}`}</Text>
+                    </View>
+                    <View style={styles.mainView}>
+                      <View style={styles.containerView}>
+                        <Text style={styles.heading}>Intercepts</Text>
+                        <Text style={{color: Theme.black}}>
+                          {data.todayIntercepts}/100
+                        </Text>
+                      </View>
+                      <View style={styles.containerView}>
+                        <Text style={styles.heading}>Productive</Text>
+                        <Text style={{color: Theme.black}}>
+                          {data.todayProductive}/100
+                        </Text>
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
-              {/* Daily Record*/}
-              <View style={styles.dateView}>
-                <View style={styles.dateSelectedView}>
-                  <Text style={styles.date}>Daily</Text>
-                  <Text style={styles.date}>{`${date.getDate()}/${
-                    date.getMonth() + 1
-                  }/${date.getFullYear()}`}</Text>
-                </View>
-                <View style={styles.mainView}>
-                  <View style={styles.containerView}>
-                    <Text style={styles.heading}>Intercepts</Text>
-                    <Text style={{color: Theme.black}}>
-                      {data.todayIntercepts}/100
-                    </Text>
-                  </View>
-                  <View style={styles.containerView}>
-                    <Text style={styles.heading}>Productive</Text>
-                    <Text style={{color: Theme.black}}>
-                      {data.todayProductive}/100
-                    </Text>
-                  </View>
-                </View>
-              </View>
+                </>
+              )}
             </>
           )}
         </View>

@@ -2,19 +2,12 @@ import React, {Component, useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
-import {
-  StockLoad,
-  ConsumerForm,
-  Brands,
-  Float,
-  newConsumerData,
-  newStockLoad,
-} from '../Api/FirebaseCalls';
+import {StockLoad, ConsumerForm, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import {ActivityIndicator} from 'react-native-paper';
-
+import {getData} from '../Database/ApiCalls';
 const Stackload = props => {
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(true);
@@ -41,94 +34,80 @@ const Stackload = props => {
 
   const getUserData = async () => {
     setLoading(true);
-    // setNewStock();
     let a = await AsyncStorage.getItem('AuthData');
     const b = JSON.parse(a);
     setUserData(b);
     userCheck = b.role.includes('Supervisor');
     setRoleCheck(userCheck);
     await Float.getUserFloat(b.FloatId).then(res => {
+      // console.log('this is response getting user float', res);
       GetUserBrand(res?._data?.brandId);
     });
   };
 
-  const setNewStock = async () => {
-    newStockLoad.getPrevStockLoad().then(res => {
-      console.log('previous stock', res);
-      const trimmed = res._docs.map(item => item._data);
-      console.log('--===', trimmed);
-      newStockLoad.setNewStockLoad({dataArr: trimmed}).then(res => {
-        console.log('chal gya data set ho gya');
-      });
-    });
-  };
   const GetUserBrand = id => {
     Brands.getOneBrand(id).then(res => {
       // console.log('this is result getting user brand', res);
       getBrandStock(res?._data?.name);
       getBrandConsumerData(res?._data?.name);
-      stockData = {
-        ...stockData,
-        brand: res?._data?.name,
-      };
     });
   };
 
-  const getBrandStock = userBrand => {
-    newStockLoad.getNewStockLoadData().then(res => {
-      console.log('response getting  stock data', res, userBrand);
-      const saleDetails = res?._data?.dataArr?.map(item => {
-        if (item.brand == userBrand) {
-          return item;
-        }
-      });
-      console.log('==>>', saleDetails);
+  const getBrandStock = brand => {
+    StockLoad.getBrandStock(brand).then(res => {
+      const saleDetails = res._docs.map(item => item._data);
       saleDetails.map(item => {
-        if (item != undefined) {
-          if (c == item?.date) {
-            stockData = {
-              ...stockData,
-              loadStock: stockData.loadStock + parseInt(item?.stockLoad),
-            };
-          } else if (c != item?.date) {
-            stockData = {
-              ...stockData,
-              prevStock: stockData.prevStock + parseInt(item?.stockLoad),
-            };
-          }
+        if (c == item.date) {
+          stockData = {
+            ...stockData,
+            brand: item.brand,
+            loadStock: stockData.loadStock + parseInt(item.stockLoad),
+          };
+        } else {
+          stockData = {
+            ...stockData,
+            brand: item.brand,
+            prevStock: stockData.prevStock + parseInt(item.stockLoad),
+          };
         }
       });
       console.log('this is result after calculating stock Loads', stockData);
     });
   };
 
-  const getBrandConsumerData = brandName => {
-    newConsumerData
-      .getConsumerData()
+  const getBrandConsumerData = async brandName => {
+    const data = {
+      brandName: brandName,
+      userId: null,
+      dateFrom: null,
+      dateTo: null,
+    };
+    await getData
+      .getStockReport(data)
       .then(res => {
         console.log('response getting consumer data', res);
-        const consumed = res?._data?.dataArr.map(item => {
-          if (item?._data?.currentBrand == brandName) {
-            return item._data;
-          }
-        });
-        consumed.map(item => {
-          if (item?.callStatus == 'Productive') {
-            if (item?.date == c) {
-              stockData = {
-                ...stockData,
-                sale: stockData.sale + 1,
-              };
-            } else {
-              stockData = {
-                ...stockData,
-                prevSale: stockData.prevSale + 1,
-              };
+        const consumed = res?.data?.data;
+        if (consumed.length > 0) {
+          consumed.map(item => {
+            if (item.callStatus == 'Productive') {
+              if (item.date == c) {
+                stockData = {
+                  ...stockData,
+                  sale: stockData.sale + 1,
+                };
+              } else {
+                stockData = {
+                  ...stockData,
+                  prevSale: stockData.prevSale + 1,
+                };
+              }
             }
-          }
-        });
-        console.log('after calculation brand consumer data', stockData);
-        setData([stockData]);
+          });
+          console.log('after calculation brand consumer data', stockData);
+          setData([stockData]);
+        } else {
+          Toast.show('No Data Found');
+        }
       })
       .catch(err => {
         console.log(err);
@@ -138,6 +117,38 @@ const Stackload = props => {
       });
   };
 
+  // let array = [
+  //   {name: 'Ahmed', cowEvening: 20, cowMorning: 10, buffEve: 10, buffMor: 20,},
+  //   {name: 'hamemed', cowEvening: 20, cowMorning: 10, buffEve: 10, buffMor: 20},
+  //   {
+  //     name: 'iftijahr',
+  //     cowEvening: 20,
+  //     cowMorning: 10,
+  //     buffEve: 10,
+  //     buffMor: 20,
+  //   },
+  // ];
+
+  // array.map(item => {
+  //   return {
+  //     ...item,
+  //     cowSum: item.cowEvening + item.cowEvening,
+  //     buffSum: item.buffEve + item.buffMor,
+  //   };
+  // });
+
+  // const total = {totalCowLitre: 0,totalBuffLitre:0};
+
+  // const alltotal = array.map(item => {
+  //   return {
+  //     total = {
+  //       ...total,
+  //       totalCowLitre: item.cowSum + total.totalCowLitre,
+  //       totalBuffLitre: item.buffSum + total.totalBuffLitre,
+  //     }
+  //   }
+
+  // });
   // const getStockData = async () => {
   //   await StockLoad.getStock()
   //     .then(res => {
@@ -267,7 +278,7 @@ const Stackload = props => {
           data={data}
           showsHorizontalScrollIndicator={false}
           //  numColumns={1}
-
+          onScrollBeginDrag={() => console.log('')}
           keyExtractor={item => item.id}
           renderItem={({item, index}) => (
             <View
@@ -283,12 +294,8 @@ const Stackload = props => {
               <Text style={[styles.data, {fontWeight: '700'}]}>
                 {item.brand}
               </Text>
-              <Text style={styles.data}>
-                {item.prevStock != NaN ? item.prevStock : '0'}
-              </Text>
-              <Text style={styles.data}>
-                {item.loadStock != NaN ? item.loadStock : '0'}
-              </Text>
+              <Text style={styles.data}>{item.prevStock}</Text>
+              <Text style={styles.data}>{item.loadStock}</Text>
               <Text style={styles.data}>{item.sale + item.prevSale}</Text>
               <ScrollView horizontal={true} style={{flexGrow: 0.55}}>
                 <Text style={styles.newData}>

@@ -21,6 +21,7 @@ import Header from '../../Components/Header';
 import Geolocation from 'react-native-geolocation-service';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
+import {postData} from '../Database/ApiCalls';
 
 // create a component
 const ConsumerInter = props => {
@@ -184,20 +185,12 @@ const ConsumerInter = props => {
       name: ProfileImage.fileName,
     });
     console.log('ye aya form data', formData);
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    axios
-      .post(
-        'http://goldcup.pk:8078/api/ConsumerDataForm/Post',
-        formData,
-        headers,
-      )
+    axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    postData
+      .postInterception(formData)
       .then(function (response) {
-        console.log('response :', response);
-        // Toast.show(response.data);
+        console.log('response from interveption', response);
+        axios.defaults.headers['Content-Type'] = 'application/json';
       })
       .catch(function (error) {
         console.log('error from image :', error.response);
