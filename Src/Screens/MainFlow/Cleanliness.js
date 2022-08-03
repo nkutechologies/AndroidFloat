@@ -24,7 +24,7 @@ import Toast from 'react-native-simple-toast';
 
 // create a component
 const Cleanliness = props => {
-  const [checked, setChecked] = useState('first');
+  const [checked, setChecked] = useState('');
   const [ProfileImage, setProfileImage] = useState('');
   const [ProfileImage1, setProfileImage1] = useState('');
   const [ProfileImage2, setProfileImage2] = useState('');
@@ -142,9 +142,11 @@ const Cleanliness = props => {
       )
       .then(function (response) {
         console.log('response :', response);
+        Toast.show('Data Updated!');
       })
       .catch(function (error) {
         console.log('error from image :', error);
+        Toast.show('Cleanliness Update Error!');
       })
       .finally(() => setLoading2(false));
   };
@@ -156,9 +158,12 @@ const Cleanliness = props => {
       ProfileImage2 != '' &&
       ProfileImage3 != ''
     ) {
-      UploadData();
-      props.navigation.navigate('Home');
-      Toast.show("Data Updated!")
+      if (checked == '') {
+        Toast.show('Please Mark Cleanliness Status First!');
+      } else {
+        UploadData();
+        props.navigation.navigate('Home');
+      }
     } else {
       Toast.show('Please Add All Images');
     }
@@ -187,7 +192,7 @@ const Cleanliness = props => {
               <RadioButton
                 color={Theme.blue}
                 value="first"
-                status={checked === 'first' ? 'checked' : 'unchecked'}
+                status={checked == 'first' ? 'checked' : 'unchecked'}
                 onPress={() => setChecked('first')}
               />
               <View style={{width: Theme.screenWidth / 2}}>
@@ -198,7 +203,7 @@ const Cleanliness = props => {
               <RadioButton
                 color={Theme.blue}
                 value="second"
-                status={checked === 'second' ? 'checked' : 'unchecked'}
+                status={checked == 'second' ? 'checked' : 'unchecked'}
                 onPress={() => setChecked('second')}
               />
               <View style={{width: Theme.screenWidth / 2}}>

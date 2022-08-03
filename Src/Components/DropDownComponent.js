@@ -47,6 +47,7 @@ const DropDownComponent = props => {
           ref={dropdown}
           options={props.options}
           defaultValue={props.defaultValue}
+          disabled={true}
           defaultTextStyle={{color: 'grey'}}
           dropdownStyle={[
             props.dropdownStyle,

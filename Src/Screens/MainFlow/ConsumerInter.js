@@ -1,6 +1,15 @@
 //import liraries
 import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, ToastAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Platform,
+  PermissionsAndroid,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import Theme from '../../Utils/Theme';
 import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
@@ -9,7 +18,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ConsumerForm, Territory, Brands} from '../Api/FirebaseCalls';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
-import firestore from '@react-native-firebase/firestore';
+import Geolocation from 'react-native-geolocation-service';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
 
 // create a component
 const ConsumerInter = props => {
@@ -20,10 +31,13 @@ const ConsumerInter = props => {
   const [userTown, setUserTown] = useState(['Loading Please Wait']);
   const [allTerritories, setAllTerritories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
+  const [userLocation, setuserLocation] = useState({lat: 0, lng: 0});
+  const [ProfileImage, setProfileImage] = useState();
 
   useEffect(() => {
     getUserData();
     getAllBrands();
+    mapView();
   }, []);
   const getUserData = async () => {
     let a = await AsyncStorage.getItem('AuthData');
@@ -83,25 +97,127 @@ const ConsumerInter = props => {
       Vendor.name &&
       Vendor.targetBrand &&
       Vendor.territoryName &&
-      Vendor.town
+      Vendor.town &&
+      Vendor.prizeGiven &&
+      ProfileImage != undefined
     ) {
-      setButtonLoading(true);
-      const a = new Date();
-      const d = a.toISOString();
-      ConsumerForm.setConsumerDetails({
-        ...Vendor,
-        userID: userData.id,
-        date: d.substring(0, 10),
-      })
-        .then(resp => {
-          console.log('Respoonse Form Submit ', resp);
-          props.navigation.navigate('Home');
-        })
-        .catch(err => console.log('this is error Form submit', err))
-        .finally(() => setButtonLoading(false));
+      if (userLocation.lat != 0 && userLocation.lng != 0) {
+        UploadFile();
+        props.navigation.navigate('Home');
+      } else {
+        Toast.show('Please Grant Location Permission First');
+      }
     } else {
       Toast.show('Please Fill All The Details');
     }
+  };
+
+  const hasLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const hasPermission = await hasPermissionIOS();
+      return hasPermission;
+    }
+
+    if (Platform.OS === 'android' && Platform.Version < 23) {
+      return true;
+    }
+
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    if (status === PermissionsAndroid.RESULTS.GRANTED) {
+      return true;
+    }
+    if (status === PermissionsAndroid.RESULTS.DENIED) {
+      console.log('Location permission denied by user.');
+    } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+      console.log('Location permission revoked by user.');
+    }
+    return false;
+  };
+
+  const mapView = async () => {
+    const hasPermission = await hasLocationPermission();
+    if (!hasPermission) {
+      return;
+    }
+    Geolocation.getCurrentPosition(position => {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      setuserLocation({lat: lat, lng: lng});
+    });
+  };
+
+  const UploadFile = () => {
+    const a = new Date();
+    const d = a.toISOString();
+    const formData = new FormData();
+    formData.append('CNIC', Vendor.CNIC);
+    formData.append('address', Vendor.address);
+    formData.append('age', Vendor.age);
+    formData.append('callStatus', Vendor.callStatus);
+    formData.append('cellNo', Vendor.cellNo);
+    formData.append('date', d.substring(0, 10));
+    formData.append('lat', userLocation.lat);
+    formData.append('lng', userLocation.lng);
+    formData.append('name', Vendor.name);
+    formData.append('prizeGiven', Vendor.prizeGiven);
+    formData.append('targetBrand', Vendor.targetBrand);
+    formData.append('territoryName', Vendor.territoryName);
+    formData.append('currentBrand', Vendor.currentBrand);
+    formData.append('town', Vendor.town);
+    formData.append('userID', userData.id);
+    formData.append('PreviewImageUrl', '');
+    formData.append('DownloadImageUrl', '');
+    formData.append('file', {
+      uri: ProfileImage.uri,
+      type: ProfileImage.type,
+      name: ProfileImage.fileName,
+    });
+    console.log('ye aya form data', formData);
+    const headers = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post(
+        'http://goldcup.pk:8078/api/ConsumerDataForm/Post',
+        formData,
+        headers,
+      )
+      .then(function (response) {
+        console.log('response :', response);
+        // Toast.show(response.data);
+      })
+      .catch(function (error) {
+        console.log('error from image :', error.response);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const pickImage = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+      async response => {
+        if (response.didCancel) {
+        } else {
+          setProfileImage(response.assets[0]);
+        }
+      },
+    );
   };
 
   return (
@@ -127,6 +243,7 @@ const ConsumerInter = props => {
                       ? allTerritories.sort()
                       : ['Loading Wait']
                   }
+                  disabled={allTerritories.length > 0 ? false : true}
                   defaultValue={Vendor.territoryName}
                   dropdownStyle={styles.dropdownStyle}
                   IconName={'angle-down'}
@@ -141,6 +258,7 @@ const ConsumerInter = props => {
                 <DropDownComponent
                   Title={'Town'}
                   options={userTown}
+                  disabled={userTown.length > 0 ? false : true}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
@@ -237,7 +355,10 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Current Brand'}
-                  options={allBrands}
+                  options={
+                    allBrands.length > 0 ? allBrands : ['Loading Please Wait']
+                  }
+                  disabled={allBrands?.length > 0 ? false : true}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
@@ -250,7 +371,13 @@ const ConsumerInter = props => {
               <View style={styles.passwordView}>
                 <DropDownComponent
                   Title={'Target Brand'}
-                  options={['Capstan', 'Morven', 'Gold Flake']}
+                  options={[
+                    'Capstan by Pall Mall',
+                    'Gold Flake By Rothmans',
+                    'Morven classic',
+                    'Morven by Chesterfield',
+                    'Red & white',
+                  ]}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
@@ -274,10 +401,43 @@ const ConsumerInter = props => {
                   }}
                 />
               </View>
+              <View style={styles.passwordView}>
+                <DropDownComponent
+                  Title={'Prize Given'}
+                  options={[
+                    'No Prize Given',
+                    'Headphones',
+                    'Key Chain',
+                    'Wallet',
+                    'GSI Pack',
+                  ]}
+                  defaultValue={'please Select'}
+                  IconName={'angle-down'}
+                  IconType={'font-awesome-5'}
+                  dropdownStyle={styles.dropdownStyle}
+                  onSelect={(index, value) => {
+                    setVendor({...Vendor, prizeGiven: value});
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => pickImage()}
+                style={styles.imageButton}>
+                <Image
+                  source={
+                    ProfileImage
+                      ? {uri: ProfileImage.uri}
+                      : require('../../Assets/Images/camera.png')
+                  }
+                  style={{width: 40, height: 40}}
+                />
+                <Text>Interaction Image</Text>
+              </TouchableOpacity>
               <ButtonComponent
                 text="Submit"
                 isLoading={buttonLoading}
                 onPress={() => submitDataForm()}
+                // onPress={() => UploadFile()}
               />
             </>
           )}
@@ -305,6 +465,17 @@ const styles = StyleSheet.create({
   dropdownStyle: {
     width: Theme.screenWidth / 1.5,
     elevation: 8,
+  },
+  imageButton: {
+    height: Theme.screenHeight / 15,
+    width: Theme.screenWidth / 2,
+    backgroundColor: '#BEBEBE',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Theme.screenWidth / 30,
+    marginTop: 20,
+    borderRadius: 5,
   },
 });
 

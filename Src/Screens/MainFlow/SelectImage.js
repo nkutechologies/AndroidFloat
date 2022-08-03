@@ -19,7 +19,7 @@ import Toast from 'react-native-simple-toast';
 import axios from 'axios';
 
 const SelectImage = props => {
-  const [ProfileImage, setProfileImage] = useState('');
+  const [ProfileImage, setProfileImage] = useState();
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -42,7 +42,7 @@ const SelectImage = props => {
       formData.append('date', data.date);
       formData.append('longitude', data.longitude);
       formData.append('latitude', data.latitude);
-      formData.append('CreatedDate', new Date());
+      formData.append('CreatedDate', data.date);
       formData.append('image', {
         uri: ProfileImage.uri,
         type: ProfileImage.type,
@@ -58,10 +58,11 @@ const SelectImage = props => {
         .post('http://goldcup.pk:8078/api/Attendence/Post', formData, headers)
         .then(function (response) {
           console.log('response :', response);
-          // Toast.show(response.data);
+          Toast.show('Attendance Marked Successfully');
         })
         .catch(function (error) {
           console.log('error from image :', error);
+          Toast.show('Attendance Was Not Marked');
         })
         .finally(() => setLoading2(false));
     } else {
@@ -137,9 +138,12 @@ const SelectImage = props => {
             <ButtonComponent
               text="Submit"
               onPress={() => {
-                UploadFile(),
-                  props.navigation.navigate('Home'),
-                  Toast.show('Attendance Marked Successfully');
+                if (ProfileImage != undefined) {
+                  UploadFile();
+                  props.navigation.navigate('Home');
+                } else {
+                  Toast.show('Please Select Image First');
+                }
               }}
             />
           </View>

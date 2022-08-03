@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Header from '../../Components/Header';
 import Theme from '../../Utils/Theme';
-import {StockLoad} from '../Api/FirebaseCalls';
+import {newStockLoad, StockLoad} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 const data2 = [{name: 'ali'}, {name: 'IFti'}, {name: 'IFti'}, {name: 'IFti'}];
@@ -23,17 +23,25 @@ export default function EditStock(props) {
   }, []);
 
   const getStockData = () => {
-    StockLoad.getSpecificStock(user?.id, date)
+    newStockLoad
+      .getNewStockLoadData()
       .then(resp => {
         console.log('Respoonse getting user specific data: ', resp);
-        setData(resp?._docs);
+        // const data = resp?._data?.dataArr?.map(item => {
+        //   if (item?.brand == brand.name) {
+        //     return item;
+        //   }
+        // });
+        // console.log('data getting', data);
+        setData(resp?._data?.dataArr);
       })
       .catch(err => console.log('this is error getting user float data', err))
       .finally(() => null);
   };
 
-  const updateEntry = (docId, item) => {
-    StockLoad.updateSpecificStock(docId, item._data)
+  const updateEntry = () => {
+    newStockLoad
+      .setNewStockLoad({dataArr: data})
       .then(resp => {
         console.log('Respoonse getting user specific data: ', resp);
         props.navigation.navigate('Stackload');
@@ -59,44 +67,48 @@ export default function EditStock(props) {
         refreshing={true}
         data={data}
         showsHorizontalScrollIndicator={false}
-        keyExtractor={item => item._data.createdAt}
+        keyExtractor={item => item?.createdAt}
         renderItem={({item, index}) => {
-          const date = item?._data?.createdAt.toDate();
-          return (
-            <View
-              style={
-                index % 2 == 0
-                  ? styles.mainView
-                  : [styles.mainView, {backgroundColor: Theme.lightPink}]
-              }>
-              <Text style={styles.itemNumber}>
-                {date.toLocaleTimeString('en-US')}
-              </Text>
-              <TextInput
-                placeholder={item?._data?.stockLoad}
-                onChangeText={text => {
-                  const a = data.map(d => {
-                    if (d._data == item._data) {
-                      return {...d, _data: {...d._data, stockLoad: text}};
-                    } else {
-                      return d;
-                    }
-                  });
-                  setData(a);
-                }}
-                value={item?._data?.stockLoad}
-                keyboardType={'decimal-pad'}
-                style={styles.textInput}
-                placeholderTextColor={Theme.black}
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  updateEntry(item._ref._documentPath._parts[1], item)
+          const date = item?.createdAt.toDate();
+          if (item.brand == brand.name) {
+            return (
+              <View
+                style={
+                  index % 2 == 0
+                    ? styles.mainView
+                    : [styles.mainView, {backgroundColor: Theme.lightPink}]
                 }>
-                <Text style={styles.button}>Update</Text>
-              </TouchableOpacity>
-            </View>
-          );
+                <Text style={styles.itemNumber}>
+                  {date.toLocaleTimeString('en-US')}
+                </Text>
+                <TextInput
+                  placeholder={item?.stockLoad}
+                  onChangeText={text => {
+                    // data[index].stockLoad = text;
+                    // console.log('===', data);
+
+                    const a = data.map(d => {
+                      if (d != undefined) {
+                        if (d?.createdAt == item.createdAt) {
+                          return {...d, stockLoad: text};
+                        } else {
+                          return d;
+                        }
+                      }
+                    });
+                    setData(a);
+                  }}
+                  value={item?.stockLoad}
+                  keyboardType={'decimal-pad'}
+                  style={styles.textInput}
+                  placeholderTextColor={Theme.black}
+                />
+                <TouchableOpacity onPress={() => updateEntry()}>
+                  <Text style={styles.button}>Update</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          }
         }}
       />
     </View>

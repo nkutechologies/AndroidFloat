@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Theme from '../../Utils/Theme';
-import {ConsumerForm} from '../Api/FirebaseCalls';
+import {Brands, Float, newConsumerData} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
@@ -41,12 +41,12 @@ const Summary = props => {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userBrand, setUserBrand] = useState();
 
   useEffect(() => {
     getUserData();
     return () => data;
-  }, [date]);
-
+  }, []);
   const getUserData = async () => {
     setLoading(true);
     setData({
@@ -57,39 +57,51 @@ const Summary = props => {
     });
     let a = await AsyncStorage.getItem('AuthData');
     const data = JSON.parse(a);
+    await Float.getUserFloat(data.FloatId).then(res => {
+      GetUserBrand(res?._data?.brandId);
+    });
+  };
+
+  const GetUserBrand = id => {
+    Brands.getOneBrand(id).then(res => {
+      console.log('this is result getting user brand', res);
+      setUserBrand(res?.data().name);
+      getSummaryData(res?.data().name);
+    });
+  };
+
+  const getSummaryData = async brandName => {
     const dt = date.toISOString();
     const today = dt.substring(0, 10);
-    console.log('called with date', dt);
-    ConsumerForm.getUserConsumerData(data.id)
+    setLoading(true);
+    newConsumerData
+      .getConsumerData()
       .then(res => {
-        console.log('res getting consumer data ', res);
-        if (res._docs.length < 1) {
-          Toast.show('No record Found');
-        } else {
-          res._docs.map(item => {
-            if (
-              item?._data?.callStatus == 'Productive' &&
-              item?._data?.date == today
-            ) {
+        console.log('response getting  stock data', res);
+        if (res?._data?.dataArr.length > 0) {
+          const saleDetails = res?._data?.dataArr?.map(item => item._data);
+          const filter = saleDetails.filter(
+            item => item.currentBrand == brandName,
+          );
+
+          filter.map(item => {
+            if (item?.callStatus == 'Productive' && item?.date == today) {
               setData(prev => {
                 return {...prev, todayProductive: prev.todayProductive + 1};
               });
-            } else if (
-              item?._data?.callStatus == 'Intercept' &&
-              item?._data?.date == today
-            ) {
+            } else if (item?.callStatus == 'Intercept' && item?.date == today) {
               setData(prev => {
                 return {...prev, todayIntercepts: prev.todayIntercepts + 1};
               });
             } else if (
-              item?._data?.callStatus == 'Productive' &&
-              item?._data?.date.split('-')[1] == today.split('-')[1]
+              item?.callStatus == 'Productive' &&
+              item?.date.split('-')[1] == today.split('-')[1]
             ) {
               setData(prev => {
                 return {...prev, monthProductive: prev.monthProductive + 1};
               });
             } else if (
-              item?._data?.callStatus == 'Intercept' &&
+              item?.callStatus == 'Intercept' &&
               item?._data?.date.split('-')[1] == today.split('-')[1]
             ) {
               setData(prev => {
@@ -97,9 +109,13 @@ const Summary = props => {
               });
             }
           });
+        } else {
+          Toast.show('No record Found');
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err);
+      })
       .finally(() => {
         setLoading(false);
       });
@@ -124,7 +140,7 @@ const Summary = props => {
             onConfirm={nd => {
               setDate(nd);
               setOpen(false);
-              //   getUserData();
+              getSummaryData(userBrand);
             }}
             onCancel={() => {
               setOpen(false);
@@ -170,10 +186,9 @@ const Summary = props => {
               <View style={styles.dateView}>
                 <View style={styles.dateSelectedView}>
                   <Text style={styles.date}>Daily</Text>
-                  <Text
-                    style={
-                      styles.date
-                    }>{`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`}</Text>
+                  <Text style={styles.date}>{`${date.getDate()}/${
+                    date.getMonth() + 1
+                  }/${date.getFullYear()}`}</Text>
                 </View>
                 <View style={styles.mainView}>
                   <View style={styles.containerView}>

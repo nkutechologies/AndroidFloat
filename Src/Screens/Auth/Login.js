@@ -22,8 +22,8 @@ import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
 // create a component
 const Login = props => {
-  const [username, setUserName] = useState('GSI1SP');
-  const [password, setPassword] = useState('GSI1SP');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
