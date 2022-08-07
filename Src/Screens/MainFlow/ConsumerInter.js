@@ -15,13 +15,18 @@ import TextComponent from '../../Components/TextComponent';
 import DropDownComponent from '../../Components/DropDownComponent';
 import ButtonComponent from '../../Components/ButtonComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ConsumerForm, Territory, Brands} from '../Api/FirebaseCalls';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import Geolocation from 'react-native-geolocation-service';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import {postData} from '../Database/ApiCalls';
+import {
+  ClassicTerritories,
+  Floats,
+  GSITerritory,
+  userbrands,
+} from '../../Constants/UserConstants';
 
 // create a component
 const ConsumerInter = props => {
@@ -37,7 +42,6 @@ const ConsumerInter = props => {
 
   useEffect(() => {
     getUserData();
-    getAllBrands();
     mapView();
   }, []);
   const getUserData = async () => {
@@ -45,46 +49,20 @@ const ConsumerInter = props => {
     const data = JSON.parse(a);
     console.log('Response of user data', data);
     setUserData(JSON.parse(a));
-    getUserAllTerritories(data.FloatId);
-  };
-
-  const getAllBrands = () => {
-    Brands.getAllBrands()
-      .then(resp => {
-        console.log('Respoonse all Brands: ', resp._docs);
-        const brands = resp._docs.map(item => item._data.name);
-        console.log(brands);
-        setAllBrands(brands);
-      })
-      .catch(err => console.log('this is error In All Brands', err))
-      .finally(() => null);
-  };
-
-  const getUserAllTerritories = async floatId => {
-    console.log(floatId);
-    Territory.getFloatAllTerritories(floatId)
-      .then(resp => {
-        console.log('Respoonse getting user terretories data: ', resp._docs);
-        const a = [];
-        resp._docs.map(item => {
-          a.push(item._data.TerritoryId);
-        });
-        setAllTerritories(a);
-      })
-      .catch(err => console.log('this is error getting user float data', err))
-      .finally(() => null);
-  };
-
-  const getUserTowns = id => {
-    Territory.getTerritory(id)
-      .then(resp => {
-        console.log('Respoonse getting user territory data: ', resp);
-        setUserTown(resp._data.arr);
-      })
-      .catch(err =>
-        console.log('this is error getting user territroy data', err),
-      )
-      .finally(() => setLoading(false));
+    const floatCheck = Floats.findIndex(item => item.id == b.floatId);
+    if (floatCheck != -1) {
+      const f = Floats[floatCheck].name.includes('GSI');
+      if (f) {
+        const userT = GSITerritory.map(item => item.name);
+        setAllTerritories(GSITerritory);
+      } else {
+        const userT = ClassicTerritories.map(item => item.name);
+        setAllTerritories(ClassicTerritories);
+      }
+    } else {
+      Toast.show('Error Loading');
+    }
+    setAllBrands(userbrands);
   };
 
   const submitDataForm = () => {
@@ -103,8 +81,8 @@ const ConsumerInter = props => {
       ProfileImage != undefined
     ) {
       if (userLocation.lat != 0 && userLocation.lng != 0) {
+        setButtonLoading(true);
         UploadFile();
-        props.navigation.navigate('Home');
       } else {
         Toast.show('Please Grant Location Permission First');
       }
@@ -162,23 +140,23 @@ const ConsumerInter = props => {
     const a = new Date();
     const d = a.toISOString();
     const formData = new FormData();
-    formData.append('CNIC', Vendor.CNIC);
     formData.append('address', Vendor.address);
+    formData.append('cNIC', Vendor.CNIC);
     formData.append('age', Vendor.age);
     formData.append('callStatus', Vendor.callStatus);
     formData.append('cellNo', Vendor.cellNo);
+    formData.append('currentBrand', Vendor.currentBrand);
     formData.append('date', d.substring(0, 10));
-    formData.append('lat', userLocation.lat);
-    formData.append('lng', userLocation.lng);
+    formData.append('lat', `${userLocation.lat}`);
+    formData.append('lng', `${userLocation.lng}`);
     formData.append('name', Vendor.name);
     formData.append('prizeGiven', Vendor.prizeGiven);
     formData.append('targetBrand', Vendor.targetBrand);
     formData.append('territoryName', Vendor.territoryName);
-    formData.append('currentBrand', Vendor.currentBrand);
     formData.append('town', Vendor.town);
-    formData.append('userID', userData.id);
-    formData.append('PreviewImageUrl', '');
-    formData.append('DownloadImageUrl', '');
+    formData.append('userID', `${userData.id}`);
+    formData.append('previewImageUrl', '');
+    formData.append('downloadImageUrl', '');
     formData.append('file', {
       uri: ProfileImage.uri,
       type: ProfileImage.type,
@@ -186,16 +164,20 @@ const ConsumerInter = props => {
     });
     console.log('ye aya form data', formData);
     axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+
     postData
       .postInterception(formData)
       .then(function (response) {
         console.log('response from interveption', response);
         axios.defaults.headers['Content-Type'] = 'application/json';
+        props.navigation.navigate('Home');
+        Toast.show('Interception Saved!');
       })
       .catch(function (error) {
         console.log('error from image :', error.response);
+        Toast.show('Interception Save Error!');
       })
-      .finally(() => setLoading(false));
+      .finally(() => setButtonLoading(false), setLoading(false));
   };
 
   const pickImage = () => {
@@ -233,17 +215,17 @@ const ConsumerInter = props => {
                   Title={'Territory'}
                   options={
                     allTerritories.length > 0
-                      ? allTerritories.sort()
+                      ? allTerritories.map(item => item.name).sort()
                       : ['Loading Wait']
                   }
-                  disabled={allTerritories.length > 0 ? false : true}
+                  // disabled={allTerritories.length > 0 ? false : true}
                   defaultValue={Vendor.territoryName}
                   dropdownStyle={styles.dropdownStyle}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
                   onSelect={(index, value) => {
                     setVendor({...Vendor, territoryName: value});
-                    getUserTowns(value);
+                    setUserTown(allTerritories[index].town);
                   }}
                 />
               </View>
@@ -351,7 +333,7 @@ const ConsumerInter = props => {
                   options={
                     allBrands.length > 0 ? allBrands : ['Loading Please Wait']
                   }
-                  disabled={allBrands?.length > 0 ? false : true}
+                  // disabled={allBrands?.length > 0 ? false : true}
                   defaultValue={'please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}

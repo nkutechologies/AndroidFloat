@@ -68,7 +68,7 @@ const Home = props => {
 
   const getUser = async () => {
     await AsyncStorage.multiGet(['AuthData', 'Attendance'], (err, items) => {
-      console.log('==>>', items);
+      console.log(' items form async ==>>', items);
       setUserData(JSON.parse(items[0][1]));
       const att = items[1][1];
       if (att) {
@@ -138,7 +138,7 @@ const Home = props => {
               onPress={() => {
                 const userCheck = userData.role.includes('Supervisor');
                 if (userCheck) {
-                  !AttendanceCheck
+                  AttendanceCheck
                     ? props.navigation.navigate('Stackload')
                     : Toast.show('Please Mark Attendance First');
                 } else {

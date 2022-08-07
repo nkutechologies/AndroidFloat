@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import Header from '../../Components/Header';
 import Theme from '../../Utils/Theme';
-import {StockLoad, Brands, Float} from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import {ActivityIndicator} from 'react-native-paper';
 import {postData} from '../Database/ApiCalls';
+import axios from 'axios';
+import {Floats, userbrands} from '../../Constants/UserConstants';
 // create a component
 const a = new Date();
 const b = a.toISOString();
@@ -21,49 +22,34 @@ const c = b.substring(0, 10);
 
 const AddStock = props => {
   const [stock, setstock] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [userBrandData, setUserBrandData] = useState();
   useEffect(() => {
     getUserData();
   }, []);
   const getUserData = async () => {
-    setLoading(true);
     let a = await AsyncStorage.getItem('AuthData');
     let b = JSON.parse(a);
     setUserData(b);
-    console.log(b);
-    getUserFloatData(b.FloatId);
-  };
-  const getUserFloatData = id => {
-    Float.getUserFloat(id)
-      .then(resp => {
-        console.log('Respoonse getting user floa data: ', resp);
-        getUserBrand(resp._data.brandId);
-      })
-      .catch(err => console.log('this is error getting user float data', err))
-      .finally(() => null);
+    const floatCheck = Floats.findIndex(item => item.id == b.floatId);
+    setUserBrandData(Floats[floatCheck].brand);
   };
 
-  const getUserBrand = id => {
-    Brands.getOneBrand(id)
-      .then(resp => {
-        console.log('Respoonse getting user brand data: ', resp);
-        setUserBrandData(resp._data);
-      })
-      .catch(err => console.log('this is error getting user brand data', err))
-      .finally(() => setLoading(false));
-  };
+  console.log(userData);
   const setStockData = () => {
     if (stock == '') {
       Toast.show('Please Enter Stock Details First');
     } else {
       const data = {
-        userId: userData.id,
-        stockLoad: stock,
+        brand: userBrandData,
+        CreatedAt: '2022-08-03T18:02:11.681Z',
         date: c,
-        brand: userBrandData.name,
+        stockLoad: stock,
+        UserId: `${userData.id}`,
       };
+      console.log('form data', data);
+      axios.defaults.headers['Content-Type'] = 'application/json';
       postData
         .addStock(data)
         .then(res => {
@@ -72,7 +58,7 @@ const AddStock = props => {
           props.navigation.navigate('Stackload');
         })
         .catch(err => console.log('error getting stock load', err))
-        .finally(() => null);
+        .finally(() => setLoading(false));
     }
   };
 
@@ -98,7 +84,7 @@ const AddStock = props => {
         </View>
       ) : (
         <View style={styles.mainView}>
-          <Text style={styles.brandName}>{userBrandData?.name}</Text>
+          <Text style={styles.brandName}>{userBrandData}</Text>
           <TextInput
             value={stock}
             keyboardType={'numeric'}

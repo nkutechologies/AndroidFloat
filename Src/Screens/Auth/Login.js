@@ -20,6 +20,7 @@ import Toast from 'react-native-simple-toast';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
+import {Auth} from '../Database/ApiCalls';
 // create a component
 const Login = props => {
   const [username, setUserName] = useState('');
@@ -32,85 +33,31 @@ const Login = props => {
       Toast.show('Please Enter Details First');
     } else {
       setLoading(true);
-      await auth()
-        .signInWithEmailAndPassword(
-          username.toLocaleUpperCase() + '@gmail.com',
-          password.toLocaleUpperCase(),
-        )
+      const body = {
+        email: username + '@gmail.com',
+        password: password + '@gmail.com',
+      };
+      await Auth.loginUser(body)
         .then(async res => {
           console.log('auth user response', res);
-          Users.getSingleUser(res.user.uid)
-            .then(async documentSnapshot => {
-              console.log('User data: ', documentSnapshot._data);
-              if (documentSnapshot.exists) {
-                await AsyncStorage.setItem(
-                  'AuthData',
-                  JSON.stringify(documentSnapshot._data),
-                );
-                props.navigation.navigate('Home');
-              } else {
-                Toast.show('Details Not Added yet');
-              }
-            })
-            .catch(err => console.log('this is error fetching data', err))
-            .finally(() => setLoading(false));
+          await AsyncStorage.setItem(
+            'AuthData',
+            JSON.stringify(res.data.data[0]),
+          );
+          props.navigation.navigate('Home');
         })
         .catch(err => {
-          if (err.code == 'auth/user-not-found') {
-            Toast.show('User Not Registered');
-          } else if (err.code == 'auth/wrong-password') {
-            Toast.show('Incorrect Username Or Password');
-          } else {
-            Toast.show('Unknown Error');
-          }
-          console.log('error in signup', err.code);
+          Toast.show('Error in Login');
+          console.log('error in signup', err.response);
           setLoading(false);
         })
         .finally(() => {});
     }
   };
 
-  const SignInas = async () => {
-    await firestore()
-      .collection('FloatTerritoryJunction')
-      .where('TerritoryId', '==', 'MCH')
-      .get()
-      .then(res => {
-        console.log(res);
-      });
-
-    // setLoading(true);
-    // let allTerr;
-    // await firestore()
-    //   .collection('Territory')
-    //   .get()
-    //   .then(res => {
-    //     allTerr = res._docs;
-    //   });
-    // console.log('all territories response', allTerr);
-    // await firestore()
-    //   .collection('Float')
-    //   .get()
-    //   .then(res => {
-    //     console.log(res);
-    //     res._docs.map(floats => {
-    //       allTerr.map(async terr => {
-    //         await firestore()
-    //           .collection('FloatTerritoryJunction')
-    //           .doc()
-    //           .set({TerritoryId: terr._data.name, floatId: floats._data.id})
-    //           .then(res => {
-    //             setLoading(false);
-    //           });
-    //       });
-    //     });
-    //   });
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <Image source={Images.loginlogo} style={styles.logo} /> */}
         <LottieView
           source={require('../../Components/loader/truck.json')}
           autoPlay
@@ -136,7 +83,7 @@ const Login = props => {
             <TextComponent
               Title={'User Code'}
               source="mail"
-              placeholder="BA-1"
+              placeholder="Username"
               value={username}
               onChangeText={username => setUserName(username)}
             />

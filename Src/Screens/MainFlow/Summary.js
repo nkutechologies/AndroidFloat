@@ -16,6 +16,7 @@ import Header from '../../Components/Header';
 import DatePicker from 'react-native-date-picker';
 import {ActivityIndicator} from 'react-native-paper';
 import {getData} from '../Database/ApiCalls';
+import axios from 'axios';
 
 // create a component
 const monthNames = [
@@ -42,31 +43,25 @@ const Summary = props => {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(false);
+  const [ApiData, setApiData] = useState([]);
 
   useEffect(() => {
-    getUserData();
+    getUserData(date);
     return () => data;
-  }, [date]);
+  }, []);
 
-  const getUserData = async () => {
+  const getUserData = async functionDate => {
     setLoading(true);
-    setData({
-      monthIntercepts: 0,
-      monthProductive: 0,
-      todayProductive: 0,
-      todayIntercepts: 0,
-    });
     let a = await AsyncStorage.getItem('AuthData');
     const data = JSON.parse(a);
-    const dt = date.toISOString();
-    const today = dt.substring(0, 10);
     const d = {
       brandName: null,
-      userId: data.id,
+      userId: `${data.id}`,
       dateFrom: null,
       dateTo: null,
     };
+    axios.defaults.headers['Content-Type'] = 'application/json';
     await getData
       .getStockReport(d)
       .then(res => {
@@ -76,31 +71,8 @@ const Summary = props => {
           Toast.show('No record Found');
           setError(true);
         } else {
-          consumed.map(item => {
-            if (item?.callStatus == 'Productive' && item?.date == today) {
-              setData(prev => {
-                return {...prev, todayProductive: prev.todayProductive + 1};
-              });
-            } else if (item?.callStatus == 'Intercept' && item?.date == today) {
-              setData(prev => {
-                return {...prev, todayIntercepts: prev.todayIntercepts + 1};
-              });
-            } else if (
-              item?.callStatus == 'Productive' &&
-              item?.date.split('-')[1] == today.split('-')[1]
-            ) {
-              setData(prev => {
-                return {...prev, monthProductive: prev.monthProductive + 1};
-              });
-            } else if (
-              item?.callStatus == 'Intercept' &&
-              item?.date.split('-')[1] == today.split('-')[1]
-            ) {
-              setData(prev => {
-                return {...prev, monthIntercepts: prev.monthIntercepts + 1};
-              });
-            }
-          });
+          setApiData(consumed);
+          calculate(consumed, functionDate);
         }
       })
       .catch(err => {
@@ -112,6 +84,45 @@ const Summary = props => {
       });
   };
 
+  const calculate = (consumed, functionDate) => {
+    setData({
+      monthIntercepts: 0,
+      monthProductive: 0,
+      todayProductive: 0,
+      todayIntercepts: 0,
+    });
+    const dt = functionDate.toISOString();
+    let a = {
+      monthIntercepts: 0,
+      monthProductive: 0,
+      todayProductive: 0,
+      todayIntercepts: 0,
+    };
+    consumed.map(item => {
+      if (
+        item?.callStatus == 'Productive' &&
+        item?.date.split('T')[0] == dt.split('T')[0]
+      ) {
+        a = {...a, todayProductive: a.todayProductive + 1};
+      } else if (
+        item?.callStatus == 'Intercept' &&
+        item?.date.split('T')[0] == dt.split('T')[0]
+      ) {
+        a = {...a, todayIntercepts: a.todayIntercepts + 1};
+      } else if (
+        item?.callStatus == 'Productive' &&
+        item?.date.split('-')[1] == dt.split('-')[1]
+      ) {
+        a = {...a, monthProductive: a.monthProductive + 1};
+      } else if (
+        item?.callStatus == 'Intercept' &&
+        item?.date.split('-')[1] == dt.split('-')[1]
+      ) {
+        a = {...a, monthProductive: a.monthProductive + 1};
+      }
+    });
+    setData(a);
+  };
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -131,7 +142,7 @@ const Summary = props => {
             onConfirm={nd => {
               setDate(nd);
               setOpen(false);
-              //   getUserData();
+              calculate(ApiData, nd);
             }}
             onCancel={() => {
               setOpen(false);
@@ -147,7 +158,7 @@ const Summary = props => {
             <>
               <View style={styles.summaryText}>
                 <Text style={styles.heading}>
-                  Summary Of Consumer Interactions
+                  Summary Of Consumer{'\n'}Interactions/Productive
                 </Text>
               </View>
               {/* Monthly Record*/}
@@ -174,13 +185,21 @@ const Summary = props => {
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Intercepts</Text>
                         <Text style={{color: Theme.black}}>
-                          {data.monthIntercepts + data.todayIntercepts}/100
+                          {data.monthIntercepts + data.todayIntercepts}/
+                          {data.monthIntercepts +
+                            data.todayIntercepts +
+                            data.monthProductive +
+                            data.todayProductive}
                         </Text>
                       </View>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Productive</Text>
                         <Text style={{color: Theme.black}}>
-                          {data.monthProductive + data.todayProductive}/100
+                          {data.monthProductive + data.todayProductive}/
+                          {data.monthIntercepts +
+                            data.todayIntercepts +
+                            data.monthProductive +
+                            data.todayProductive}
                         </Text>
                       </View>
                     </View>
@@ -197,13 +216,21 @@ const Summary = props => {
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Intercepts</Text>
                         <Text style={{color: Theme.black}}>
-                          {data.todayIntercepts}/100
+                          {data.todayIntercepts}/
+                          {data.monthIntercepts +
+                            data.todayIntercepts +
+                            data.monthProductive +
+                            data.todayProductive}
                         </Text>
                       </View>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Productive</Text>
                         <Text style={{color: Theme.black}}>
-                          {data.todayProductive}/100
+                          {data.todayProductive}/
+                          {data.monthIntercepts +
+                            data.todayIntercepts +
+                            data.monthProductive +
+                            data.todayProductive}
                         </Text>
                       </View>
                     </View>

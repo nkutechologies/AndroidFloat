@@ -2,12 +2,13 @@ import React, {Component, useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
-import {StockLoad, ConsumerForm, Brands, Float} from '../Api/FirebaseCalls';
+import {Floats} from '../../Constants/UserConstants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import {ActivityIndicator} from 'react-native-paper';
 import {getData} from '../Database/ApiCalls';
+import axios from 'axios';
 const Stackload = props => {
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(true);
@@ -18,15 +19,11 @@ const Stackload = props => {
 
   useEffect(() => {
     getUserData();
-    // getStockData();
-    // ConsumerData();
     return () => data;
   }, [isFocused]);
 
   let stockData = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
   let userCheck = false;
-  // let classic = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
-  // let GSI = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
 
   const a = new Date();
   const b = a.toISOString();
@@ -39,40 +36,48 @@ const Stackload = props => {
     setUserData(b);
     userCheck = b.role.includes('Supervisor');
     setRoleCheck(userCheck);
-    await Float.getUserFloat(b.FloatId).then(res => {
-      // console.log('this is response getting user float', res);
-      GetUserBrand(res?._data?.brandId);
-    });
+    getBrandStock(b?.id);
+    const floatCheck = Floats.findIndex(item => item.id == b.floatId);
+    if (floatCheck != -1) {
+      getBrandConsumerData(Floats[floatCheck].brand);
+      console.log('flaot', Floats[floatCheck]);
+    } else {
+      Toast.show('Error Loading');
+    }
   };
 
-  const GetUserBrand = id => {
-    Brands.getOneBrand(id).then(res => {
-      // console.log('this is result getting user brand', res);
-      getBrandStock(res?._data?.name);
-      getBrandConsumerData(res?._data?.name);
-    });
-  };
-
-  const getBrandStock = brand => {
-    StockLoad.getBrandStock(brand).then(res => {
-      const saleDetails = res._docs.map(item => item._data);
-      saleDetails.map(item => {
-        if (c == item.date) {
-          stockData = {
-            ...stockData,
-            brand: item.brand,
-            loadStock: stockData.loadStock + parseInt(item.stockLoad),
-          };
-        } else {
-          stockData = {
-            ...stockData,
-            brand: item.brand,
-            prevStock: stockData.prevStock + parseInt(item.stockLoad),
-          };
-        }
+  const getBrandStock = async id => {
+    console.log(id);
+    const data = {
+      date: c,
+      userId: null,
+    };
+    console.log('payload==>>', data);
+    axios.defaults.headers['Content-Type'] = 'application/json';
+    await getData
+      .getStock(data)
+      .then(res => {
+        console.log('sucess reponse ', res);
+        const saleDetails = res.data.data;
+        saleDetails.map(item => {
+          const d = item?.date?.split('T')[0];
+          if (c == d) {
+            stockData = {
+              ...stockData,
+              loadStock: stockData.loadStock + parseInt(item?.stockLoad),
+            };
+          } else {
+            stockData = {
+              ...stockData,
+              prevStock: stockData.prevStock + parseInt(item?.stockLoad),
+            };
+          }
+        });
+        console.log('this is result after calculating stock Loads', stockData);
+      })
+      .catch(err => {
+        console.log('error getting stock data', err);
       });
-      console.log('this is result after calculating stock Loads', stockData);
-    });
   };
 
   const getBrandConsumerData = async brandName => {
@@ -82,6 +87,7 @@ const Stackload = props => {
       dateFrom: null,
       dateTo: null,
     };
+    axios.defaults.headers['Content-Type'] = 'application/json';
     await getData
       .getStockReport(data)
       .then(res => {
@@ -89,15 +95,17 @@ const Stackload = props => {
         const consumed = res?.data?.data;
         if (consumed.length > 0) {
           consumed.map(item => {
-            if (item.callStatus == 'Productive') {
-              if (item.date == c) {
+            if (item?.callStatus == 'Productive') {
+              if (item?.date == c) {
                 stockData = {
                   ...stockData,
+                  brand: brandName,
                   sale: stockData.sale + 1,
                 };
               } else {
                 stockData = {
                   ...stockData,
+                  brand: brandName,
                   prevSale: stockData.prevSale + 1,
                 };
               }
@@ -116,121 +124,6 @@ const Stackload = props => {
         setLoading(false);
       });
   };
-
-  // let array = [
-  //   {name: 'Ahmed', cowEvening: 20, cowMorning: 10, buffEve: 10, buffMor: 20,},
-  //   {name: 'hamemed', cowEvening: 20, cowMorning: 10, buffEve: 10, buffMor: 20},
-  //   {
-  //     name: 'iftijahr',
-  //     cowEvening: 20,
-  //     cowMorning: 10,
-  //     buffEve: 10,
-  //     buffMor: 20,
-  //   },
-  // ];
-
-  // array.map(item => {
-  //   return {
-  //     ...item,
-  //     cowSum: item.cowEvening + item.cowEvening,
-  //     buffSum: item.buffEve + item.buffMor,
-  //   };
-  // });
-
-  // const total = {totalCowLitre: 0,totalBuffLitre:0};
-
-  // const alltotal = array.map(item => {
-  //   return {
-  //     total = {
-  //       ...total,
-  //       totalCowLitre: item.cowSum + total.totalCowLitre,
-  //       totalBuffLitre: item.buffSum + total.totalBuffLitre,
-  //     }
-  //   }
-
-  // });
-  // const getStockData = async () => {
-  //   await StockLoad.getStock()
-  //     .then(res => {
-  //       console.log('response getting stock load', res);
-  //       const saleDetails = res._docs.map(item => item._data);
-  //       saleDetails.map(item => {
-  //         // console.log('these are the two items', parseInt(item.loadStock),saleDetails);
-  //         if (item.brand == 'Classic') {
-  //           if (c == item.date) {
-  //             classic = {
-  //               ...classic,
-  //               brand: item.brand,
-  //               loadStock: classic.loadStock + parseInt(item.stockLoad),
-  //             };
-  //           } else {
-  //             classic = {
-  //               ...classic,
-  //               brand: item.brand,
-  //               prevStock: classic.prevStock + parseInt(item.stockLoad),
-  //             };
-  //           }
-  //         } else if (item.brand == 'GSI') {
-  //           if (c == item.date) {
-  //             GSI = {
-  //               ...GSI,
-  //               brand: item.brand,
-  //               loadStock: GSI.loadStock + parseInt(item.stockLoad),
-  //             };
-  //           } else {
-  //             GSI = {
-  //               ...GSI,
-  //               brand: item.brand,
-  //               prevStock: GSI.prevStock + parseInt(item.stockLoad),
-  //             };
-  //           }
-  //         }
-  //       });
-  //     })
-  //     .catch(err => console.log('error getting stock load', err))
-  //     .finally(() => null);
-  // };
-
-  // const ConsumerData = () => {
-  //   ConsumerForm.getConsumerData().then(res => {
-  //     const consumeDetail = res._docs.map(item => item._data);
-  //     console.log('response getting consume data', consumeDetail);
-  //     consumeDetail.map(item => {
-  //       if (item.callStatus == 'Productive') {
-  //         if (item.targetBrand == 'Classic') {
-  //           if (item.date == c) {
-  //             classic = {
-  //               ...classic,
-  //               brand: 'Classic',
-  //               sale: classic.sale + 1,
-  //             };
-  //           } else {
-  //             classic = {
-  //               ...classic,
-  //               brand: 'Classic',
-  //               prevSale: classic.prevSale + 1,
-  //             };
-  //           }
-  //         } else if (item.targetBrand == 'GSI') {
-  //           if (item.date == c) {
-  //             GSI = {
-  //               ...GSI,
-  //               brand: 'GSI',
-  //               sale: GSI.sale + 1,
-  //             };
-  //           } else {
-  //             GSI = {
-  //               ...GSI,
-  //               brand: 'GSI',
-  //               prevSale: GSI.prevSale + 1,
-  //             };
-  //           }
-  //         }
-  //       }
-  //       setData([GSI, classic]);
-  //     });
-  //   });
-  // };
 
   return (
     <View style={styles.container}>

@@ -76,15 +76,8 @@ const MapScreen = props => {
       longitude: lng,
       date: d.substring(0, 10),
     };
-
     console.log('called attendacne marker', data);
     props.navigation.navigate('SelectImage', {data});
-    // Attendance.markAttendance(data)
-    //   .then(async documentSnapshot => {
-    //     console.log('Respoonse making attendance data: ', documentSnapshot);
-    //   })
-    //   .catch(err => console.log('this is error fetching data', err))
-    //   .finally(() => setLoading(false));
   };
 
   return (
@@ -95,13 +88,10 @@ const MapScreen = props => {
         region={{
           latitude: lat,
           longitude: lng,
-          latitudeDelta: 0.0100,
-          longitudeDelta: 0.0100,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         }}>
-        <Marker
-          pinColor={'red'}
-          coordinate={{latitude: lat, longitude: lng}}
-        />
+        <Marker pinColor={'red'} coordinate={{latitude: lat, longitude: lng}} />
       </MapView>
       <Header
         backIcon={true}

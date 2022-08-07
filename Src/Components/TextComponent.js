@@ -19,32 +19,20 @@ const TextComponent = props => {
       </Text>
       <View
         style={{
-          // flex:1,
-          backgroundColor: '#fff',
           flexDirection: 'row',
-          // elevation: 5,
-          // justifyContent: 'space-between',
           alignItems: 'center',
           borderRadius: 10,
-          // paddingLeft: 4,
-          // backgroundColor:'pink'
         }}>
         <TextInput
           value={props.value}
           keyboardType={props.keyboardType}
           secureTextEntry={props.secureTextEntry}
           style={{
-            height: Theme.screenHeight / 18,
+            height: Theme.screenHeight / 17,
             width: Theme.screenWidth / 1,
-            // fontSize: Theme.screenHeight / 40,
-            // backgroundColor: '#383838',
-            // backgroundColor: 'pink',
-            // borderWidth: 1,
-            // paddingLeft: 50,
             fontSize: Theme.screenHeight / 50,
             color: Theme.black,
             borderRadius: 10,
-            //   fontFamily: Theme.fontFamily,
           }}
           placeholder={props.placeholder}
           placeholderTextColor={'grey'}

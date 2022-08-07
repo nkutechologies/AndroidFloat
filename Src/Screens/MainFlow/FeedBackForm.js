@@ -44,7 +44,7 @@ const FeedBackForm = props => {
       props.navigation.navigate('Home');
     }
   };
-
+  console.log(userData);
   const UploadFile = () => {
     const a = new Date();
     const d = a.toISOString();
@@ -54,9 +54,17 @@ const FeedBackForm = props => {
       type: ProfileImage.type,
       name: ProfileImage.fileName,
     });
-    formData.append('date', d.substring(0, 10));
-    formData.append('floatId', userData?.FloatId);
+    formData.append('Id', 0);
+    formData.append('floatId', userData?.floatId);
+    formData.append('fireStoreId', userData?.fireStoreId);
+    formData.append('PreviewImageUrl', '');
+    formData.append('DownloadImageUrl', '');
+    formData.append('createdBy', `${userData.id}`);
+    formData.append('updatedBy', `${userData.id}`);
+    formData.append('createdDate', '2022-08-03T18:02:11.681Z');
+    formData.append('updatedDate', '2022-08-03T18:02:11.681Z');
     axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    console.log('yeh aya form data', formData);
     postData
       .feedBackForm(formData)
       .then(function (response) {

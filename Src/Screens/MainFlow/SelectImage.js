@@ -37,41 +37,49 @@ const SelectImage = props => {
   };
 
   const markAttendance = async () => {
-    const d = {date: data.date};
-    await AsyncStorage.setItem('Attendance', JSON.stringify(d));
-    setLoading2(true);
-    UploadFile();
-    props.navigation.navigate('Home');
-    Toast.show('Attendance Marked Successfully');
-  };
-  const UploadFile = () => {
     if (ProfileImage != '') {
-      const formData = new FormData();
-      formData.append('id', user.id);
-      formData.append('date', data.date);
-      formData.append('longitude', data.longitude);
-      formData.append('latitude', data.latitude);
-      formData.append('CreatedDate', new Date());
-      formData.append('image', {
-        uri: ProfileImage.uri,
-        type: ProfileImage.type,
-        name: ProfileImage.fileName,
-      });
-      console.log('ye aya form data', formData);
-      axios.defaults.headers['Content-Type'] = 'multipart/form-data';
-      postData
-        .postAttendance(formData)
-        .then(function (response) {
-          console.log('response :', response);
-          axios.defaults.headers['Content-Type'] = 'application/json';
-        })
-        .catch(function (error) {
-          console.log('error from image :', error);
-        })
-        .finally(() => setLoading2(false));
+      const d = {date: data.date};
+      await AsyncStorage.setItem('Attendance', JSON.stringify(d));
+      setLoading2(true);
+      UploadFile();
+      props.navigation.navigate('Home');
+      Toast.show('Attendance Marked Successfully');
     } else {
       Toast.show('Please Add Image First');
     }
+  };
+  console.log(user);
+  const UploadFile = () => {
+    const d = new Date();
+    const formData = new FormData();
+    formData.append('id', 0);
+    formData.append('fireStoreId', user?.fireStoreId);
+    formData.append('date', data.date);
+    formData.append('createdDate', d.toISOString());
+    formData.append('longitude', `${data.longitude}`);
+    formData.append('latitude', `${data.latitude}`);
+    formData.append('previewImageUrl', '');
+    formData.append('downloadImageUrl', '');
+    formData.append('createdBy', `${user.id}`);
+    formData.append('updatedBy', `${user.id}`);
+    formData.append('updatedDate', '2022-08-03T18:02:11.681Z');
+    formData.append('file', {
+      uri: ProfileImage.uri,
+      type: ProfileImage.type,
+      name: ProfileImage.fileName,
+    });
+    console.log('ye aya form data', formData);
+    axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    postData
+      .postAttendance(formData)
+      .then(function (response) {
+        console.log('response :', response);
+        axios.defaults.headers['Content-Type'] = 'application/json';
+      })
+      .catch(function (error) {
+        console.log('error from image :', error);
+      })
+      .finally(() => setLoading2(false));
   };
   const pickImage = () => {
     launchCamera(

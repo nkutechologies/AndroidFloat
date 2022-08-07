@@ -1,3 +1,3 @@
 export const instance = {
-  baseURL: 'https://blazorwithfirestore-server.conveyor.cloud/api/',
+  baseURL: 'http://3.141.203.3:8010/api/',
 };

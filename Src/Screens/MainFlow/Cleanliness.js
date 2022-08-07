@@ -15,10 +15,9 @@ import {RadioButton} from 'react-native-paper';
 import {Images} from '../../Constants/Images';
 import Header from '../../Components/Header';
 import ButtonComponent from '../../Components/ButtonComponent';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Float} from '../Api/FirebaseCalls';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import {postData} from '../Database/ApiCalls';
@@ -31,7 +30,7 @@ const Cleanliness = props => {
   const [ProfileImage2, setProfileImage2] = useState('');
   const [ProfileImage3, setProfileImage3] = useState('');
   const [userData, setUserData] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
   useEffect(() => {
@@ -88,18 +87,9 @@ const Cleanliness = props => {
   const getUserData = async () => {
     let a = await AsyncStorage.getItem('AuthData');
     const data = JSON.parse(a);
-    setUserData(JSON.parse(a));
-    getUserFloat(data.FloatId);
+    setUserData(data);
   };
-  const getUserFloat = id => {
-    Float.getUserFloat(id)
-      .then(resp => {
-        console.log('Respoonse getting user floa data: ', resp);
-      })
-      .catch(err => console.log('this is error getting user float data', err))
-      .finally(() => setLoading(false));
-  };
-
+  console.log(userData);
   const UploadData = () => {
     const a = new Date();
     const d = a.toISOString();
@@ -124,10 +114,12 @@ const Cleanliness = props => {
       type: ProfileImage3.type,
       name: ProfileImage3.fileName,
     });
+    formData.append('userId', `${userData?.id}`);
+    formData.append('floatId', `${userData?.floatId}`);
     formData.append('date', d.substring(0, 10));
-    formData.append('floatId', userData?.FloatId);
     formData.append('Status', checked == 'first' ? 'Ok' : 'Not Ok');
     axios.defaults.headers['Content-Type'] = 'multipart/form-data';
+    console.log('thisis form data', formData);
     postData
       .floatCleanliness(formData)
       .then(function (response) {
@@ -145,13 +137,14 @@ const Cleanliness = props => {
       ProfileImage3 != '' &&
       ProfileImage1 != '' &&
       ProfileImage2 != '' &&
-      ProfileImage3 != ''
+      ProfileImage3 != '' &&
+      checked != ''
     ) {
       UploadData();
       props.navigation.navigate('Home');
       Toast.show('Data Updated!');
     } else {
-      Toast.show('Please Add All Images');
+      Toast.show('Please Fill All The Data');
     }
   };
   return (

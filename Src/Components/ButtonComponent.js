@@ -12,7 +12,10 @@ import Theme from '../Utils/Theme';
 
 const ButtonComponent = ({onPress, text, isGreen, font, isLoading}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={{alignItems: 'center'}}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{alignItems: 'center'}}
+      disabled={isLoading}>
       <View
         style={
           isGreen ? {...styles.btn, backgroundColor: Theme.primary} : styles.btn

@@ -13,6 +13,7 @@ import {StockLoad} from '../Api/FirebaseCalls';
 import {getData, postData} from '../Database/ApiCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+import axios from 'axios';
 
 export default function EditStock(props) {
   const [data, setData] = useState();
@@ -23,22 +24,27 @@ export default function EditStock(props) {
   }, []);
 
   const getStockData = () => {
-    const data = {id: user?.id, data: date};
+    const data = {
+      date: date,
+      userId: `${user?.id}`,
+    };
+    axios.defaults.headers['Content-Type'] = 'application/json';
     getData
-      .getStockReport(data)
+      .getStock(data)
       .then(resp => {
         console.log('Respoonse getting user specific data: ', resp);
-        setData(resp?._docs);
+        setData(resp?.data?.data);
       })
       .catch(err => console.log('this is error getting user float data', err))
       .finally(() => null);
   };
 
-  const updateEntry = (docId, item) => {
+  const updateEntry = item => {
     const data = {
-      id: 123,
-      newVal: '10',
+      id: item.id,
+      stockLoad: item.stockLoad,
     };
+    axios.defaults.headers['Content-Type'] = 'application/json';
     postData
       .editStock(data)
       .then(resp => {
@@ -66,9 +72,9 @@ export default function EditStock(props) {
         refreshing={true}
         data={data}
         showsHorizontalScrollIndicator={false}
-        keyExtractor={item => item._data.createdAt}
+        keyExtractor={item => item.createdAt}
         renderItem={({item, index}) => {
-          const date = item?._data?.createdAt.toDate();
+          const date = item?.createdAt.split('T')[0];
           return (
             <View
               style={
@@ -76,30 +82,25 @@ export default function EditStock(props) {
                   ? styles.mainView
                   : [styles.mainView, {backgroundColor: Theme.lightPink}]
               }>
-              <Text style={styles.itemNumber}>
-                {date.toLocaleTimeString('en-US')}
-              </Text>
+              <Text style={styles.itemNumber}>{date}</Text>
               <TextInput
-                placeholder={item?._data?.stockLoad}
+                placeholder={item?.stockLoad}
                 onChangeText={text => {
                   const a = data.map(d => {
-                    if (d._data == item._data) {
-                      return {...d, _data: {...d._data, stockLoad: text}};
+                    if (d.id == item.id) {
+                      return {...d, stockLoad: text};
                     } else {
                       return d;
                     }
                   });
                   setData(a);
                 }}
-                value={item?._data?.stockLoad}
+                value={item?.stockLoad}
                 keyboardType={'decimal-pad'}
                 style={styles.textInput}
                 placeholderTextColor={Theme.black}
               />
-              <TouchableOpacity
-                onPress={() =>
-                  updateEntry(item._ref._documentPath._parts[1], item)
-                }>
+              <TouchableOpacity onPress={() => updateEntry(item)}>
                 <Text style={styles.button}>Update</Text>
               </TouchableOpacity>
             </View>
