@@ -63,7 +63,7 @@ const DropDownComponent = props => {
           dropdownTextHighlightStyle={{color: Theme.blue}}
           animated={true}
           showsVerticalScrollIndicator={false}
-          onSelect={(index, value) => props.onSelect(index, value)}
+          onSelect={(index, value) => props.onSelect(index, value,dropdown)}
         />
         <TouchableOpacity onPress={() => dropdown.current.show()}>
           <Icon name={'chevron-down'} type={'feather'} />

@@ -1,13 +1,13 @@
-import React, {Component, useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
+import React, { Component, useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import Theme from '../../Utils/Theme';
 import Header from '../../Components/Header';
-import {Floats} from '../../Constants/UserConstants';
+import { Floats } from '../../Constants/UserConstants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import {getData} from '../Database/ApiCalls';
+import { ActivityIndicator } from 'react-native-paper';
+import { getData } from '../Database/ApiCalls';
 import axios from 'axios';
 const Stackload = props => {
   const isFocused = useIsFocused();
@@ -22,7 +22,7 @@ const Stackload = props => {
     return () => data;
   }, [isFocused]);
 
-  let stockData = {prevStock: 0, loadStock: 0, sale: 0, prevSale: 0};
+  let stockData = { prevStock: 0, loadStock: 0, sale: 0, prevSale: 0 };
   let userCheck = false;
 
   const a = new Date();
@@ -136,7 +136,7 @@ const Stackload = props => {
         type={'antdesign'}
         rightIconPress={() => props.navigation.navigate('AddStock')}
       />
-      <View style={{marginTop: Theme.screenHeight / 50}}>
+      <View style={{ marginTop: Theme.screenHeight / 50 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -162,7 +162,7 @@ const Stackload = props => {
       </View>
 
       {loading ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator color={Theme.blue} size={'small'} />
         </View>
       ) : (
@@ -173,28 +173,29 @@ const Stackload = props => {
           //  numColumns={1}
           onScrollBeginDrag={() => console.log('')}
           keyExtractor={item => item.id}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <View
               style={
                 index % 2 == 0
-                  ? {flexDirection: 'row', justifyContent: 'space-around'}
+                  ? { flexDirection: 'row', justifyContent: 'space-around' }
                   : {
-                      flexDirection: 'row',
-                      justifyContent: 'space-around',
-                      backgroundColor: Theme.lightPink,
-                    }
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    backgroundColor: Theme.lightPink,
+                  }
               }>
-              <Text style={[styles.data, {fontWeight: '700'}]}>
+              <Text style={[styles.data, { fontWeight: '700' }]}>
                 {item.brand}
               </Text>
               <Text style={styles.data}>{item.prevStock}</Text>
               <Text style={styles.data}>{item.loadStock}</Text>
               <Text style={styles.data}>{item.sale + item.prevSale}</Text>
-              <ScrollView horizontal={true} style={{flexGrow: 0.55}}>
+              <ScrollView horizontal={true} style={{ flexGrow: 0.55 }}>
                 <Text style={styles.newData}>
                   {item.loadStock +
+                    item.prevStock > 0 ? item.loadStock +
                     item.prevStock -
-                    (item.sale + item.prevSale)}
+                  (item.sale + item.prevSale) : 0}
                 </Text>
               </ScrollView>
             </View>
