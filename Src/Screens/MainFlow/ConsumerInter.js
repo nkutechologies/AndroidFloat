@@ -1,5 +1,5 @@
 //import liraries
-import React, { Component, useState, useEffect } from 'react';
+import React, {Component, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -18,9 +18,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import Geolocation from 'react-native-geolocation-service';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
-import { postData } from '../Database/ApiCalls';
+import {postData} from '../Database/ApiCalls';
 import {
   ClassicTerritories,
   Floats,
@@ -30,14 +30,14 @@ import {
 
 // create a component
 const ConsumerInter = props => {
-  const [Vendor, setVendor] = useState({ address: '', CNIC: '', cellNo: '+92' });
+  const [Vendor, setVendor] = useState({address: '', CNIC: '', cellNo: '+92'});
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
   const [userTown, setUserTown] = useState(['Please Select Territory']);
   const [allTerritories, setAllTerritories] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
-  const [userLocation, setuserLocation] = useState({ lat: 0, lng: 0 });
+  const [userLocation, setuserLocation] = useState({lat: 0, lng: 0});
   const [ProfileImage, setProfileImage] = useState();
   const [dropdownRef, setdropdownRef] = useState();
 
@@ -72,7 +72,7 @@ const ConsumerInter = props => {
       // Vendor.address &&
       Vendor.age &&
       Vendor.callStatus &&
-      Vendor.cellNo &&
+      Vendor.cellNo != '+92' &&
       Vendor.currentBrand &&
       Vendor.name &&
       Vendor.targetBrand &&
@@ -133,7 +133,7 @@ const ConsumerInter = props => {
     Geolocation.getCurrentPosition(position => {
       var lat = position.coords.latitude;
       var lng = position.coords.longitude;
-      setuserLocation({ lat: lat, lng: lng });
+      setuserLocation({lat: lat, lng: lng});
     });
   };
 
@@ -225,11 +225,13 @@ const ConsumerInter = props => {
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
                   onSelect={(index, value) => {
-                    setVendor({ ...Vendor, territoryName: value });
-                    const a = allTerritories.findIndex(item => item.name == value)
+                    setVendor({...Vendor, territoryName: value});
+                    const a = allTerritories.findIndex(
+                      item => item.name == value,
+                    );
                     setUserTown(allTerritories[a].town);
                     if (dropdownRef) {
-                      dropdownRef.current.select(-1)
+                      dropdownRef.current.select(-1);
                     }
                   }}
                 />
@@ -244,8 +246,8 @@ const ConsumerInter = props => {
                   IconType={'font-awesome-5'}
                   dropdownStyle={styles.dropdownStyle}
                   onSelect={(index, value, ref) => {
-                    setVendor({ ...Vendor, town: value });
-                    setdropdownRef(ref)
+                    setVendor({...Vendor, town: value});
+                    setdropdownRef(ref);
                   }}
                 />
               </View>
@@ -254,7 +256,7 @@ const ConsumerInter = props => {
                   Title={'Name'}
                   placeholder="Enter Your Name"
                   value={Vendor.name}
-                  onChangeText={text => setVendor({ ...Vendor, name: text })}
+                  onChangeText={text => setVendor({...Vendor, name: text})}
                 />
               </View>
               <View style={styles.passwordView}>
@@ -268,21 +270,21 @@ const ConsumerInter = props => {
                     } else {
                       if (text.length > Vendor.CNIC.length) {
                         if (text.length < 5) {
-                          setVendor({ ...Vendor, CNIC: text });
+                          setVendor({...Vendor, CNIC: text});
                         } else if (text.length == 5) {
-                          setVendor({ ...Vendor, CNIC: text + '-' });
+                          setVendor({...Vendor, CNIC: text + '-'});
                         } else if (text.length > 6 && text.length < 13) {
-                          setVendor({ ...Vendor, CNIC: text });
+                          setVendor({...Vendor, CNIC: text});
                         } else if (text.length == 13) {
-                          setVendor({ ...Vendor, CNIC: text + '-' });
+                          setVendor({...Vendor, CNIC: text + '-'});
                         } else if (text.length == 15) {
-                          setVendor({ ...Vendor, CNIC: text });
+                          setVendor({...Vendor, CNIC: text});
                         } else if (text.length >= 16) {
                           // Toast.show('NIC cannot be greater than 13 digits');
                           null;
                         }
                       } else {
-                        setVendor({ ...Vendor, CNIC: text });
+                        setVendor({...Vendor, CNIC: text});
                       }
                     }
                   }}
@@ -299,17 +301,17 @@ const ConsumerInter = props => {
                     } else {
                       if (text.length > Vendor.cellNo.length) {
                         if (text.length < 6) {
-                          setVendor({ ...Vendor, cellNo: text });
+                          setVendor({...Vendor, cellNo: text});
                         } else if (text.length == 6) {
-                          setVendor({ ...Vendor, cellNo: text + '-' });
+                          setVendor({...Vendor, cellNo: text + '-'});
                         } else if (text.length > 7 && text.length < 15) {
-                          setVendor({ ...Vendor, cellNo: text });
+                          setVendor({...Vendor, cellNo: text});
                         } else if (text.length >= 15) {
                           null;
                         }
                       } else {
                         if (text.length > 2) {
-                          setVendor({ ...Vendor, cellNo: text });
+                          setVendor({...Vendor, cellNo: text});
                         }
                       }
                     }
@@ -324,12 +326,11 @@ const ConsumerInter = props => {
                   keyboardType={'numeric'}
                   onChangeText={text => {
                     if (text.length > 2) {
-                      setVendor({ ...Vendor, age: Vendor.age })
+                      setVendor({...Vendor, age: Vendor.age});
                     } else {
-                      setVendor({ ...Vendor, age: text })
+                      setVendor({...Vendor, age: text});
                     }
-                  }
-                  }
+                  }}
                 />
               </View>
               <View style={styles.textView}>
@@ -337,7 +338,11 @@ const ConsumerInter = props => {
                   Title={'Address'}
                   placeholder="Enter your address"
                   value={Vendor.address}
-                  onChangeText={text => setVendor({ ...Vendor, address: text })}
+                  multiline={true}
+                  style={{
+                    height: Theme.screenHeight / 15,
+                  }}
+                  onChangeText={text => setVendor({...Vendor, address: text})}
                 />
               </View>
               <View style={styles.passwordView}>
@@ -352,7 +357,7 @@ const ConsumerInter = props => {
                   IconType={'font-awesome-5'}
                   dropdownStyle={styles.dropdownStyle}
                   onSelect={(index, value) => {
-                    setVendor({ ...Vendor, currentBrand: value });
+                    setVendor({...Vendor, currentBrand: value});
                   }}
                 />
               </View>
@@ -372,7 +377,7 @@ const ConsumerInter = props => {
                   dropdownStyle={styles.dropdownStyle}
                   onSelect={(index, value) => {
                     // getUserStockData(value);
-                    setVendor({ ...Vendor, targetBrand: value });
+                    setVendor({...Vendor, targetBrand: value});
                   }}
                 />
               </View>
@@ -385,7 +390,7 @@ const ConsumerInter = props => {
                   IconType={'feather'}
                   dropdownStyle={styles.dropdownStyle}
                   onSelect={(index, value) => {
-                    setVendor({ ...Vendor, callStatus: value });
+                    setVendor({...Vendor, callStatus: value});
                   }}
                 />
               </View>
@@ -404,7 +409,7 @@ const ConsumerInter = props => {
                   IconType={'font-awesome-5'}
                   dropdownStyle={styles.dropdownStyle}
                   onSelect={(index, value) => {
-                    setVendor({ ...Vendor, prizeGiven: value });
+                    setVendor({...Vendor, prizeGiven: value});
                   }}
                 />
               </View>
@@ -414,10 +419,10 @@ const ConsumerInter = props => {
                 <Image
                   source={
                     ProfileImage
-                      ? { uri: ProfileImage.uri }
+                      ? {uri: ProfileImage.uri}
                       : require('../../Assets/Images/camera.png')
                   }
-                  style={{ width: 40, height: 40 }}
+                  style={{width: 40, height: 40}}
                 />
                 <Text>Interaction Image</Text>
               </TouchableOpacity>
@@ -425,7 +430,7 @@ const ConsumerInter = props => {
                 text="Submit"
                 isLoading={buttonLoading}
                 onPress={() => submitDataForm()}
-              // onPress={() => UploadFile()}
+                // onPress={() => UploadFile()}
               />
             </>
           )}

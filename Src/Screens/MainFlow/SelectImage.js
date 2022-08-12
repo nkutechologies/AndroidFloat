@@ -26,7 +26,7 @@ const SelectImage = props => {
   const [loading2, setLoading2] = useState(false);
   // console.log('ye aya user', user);
   const {data} = props.route.params;
-  // console.log('ye aya data', data);
+  console.log('ye aya data ====>>>', data);
   useEffect(() => {
     getUserDetails();
   }, []);

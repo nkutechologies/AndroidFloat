@@ -26,14 +26,18 @@ const TextComponent = props => {
         <TextInput
           value={props.value}
           keyboardType={props.keyboardType}
+          multiline={props.multiline}
           secureTextEntry={props.secureTextEntry}
-          style={{
-            height: Theme.screenHeight / 17,
-            width: Theme.screenWidth / 1,
-            fontSize: Theme.screenHeight / 50,
-            color: Theme.black,
-            borderRadius: 10,
-          }}
+          style={[
+            {
+              height: Theme.screenHeight / 17,
+              width: Theme.screenWidth / 1.1,
+              fontSize: Theme.screenHeight / 50,
+              color: Theme.black,
+              borderRadius: 10,
+            },
+            props.style,
+          ]}
           placeholder={props.placeholder}
           placeholderTextColor={'grey'}
           onChangeText={props.onChangeText}
