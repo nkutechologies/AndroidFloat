@@ -31,4 +31,5 @@ export const Auth = {
 export const getData = {
   getStockReport: data => requests.post('ConsumerDataForm/Get', data),
   getStock: body => requests.post('StockLoad/Get', body),
+  getStockDetails: body => requests.post('StockLoad/GetStockLoadsList', body),
 };

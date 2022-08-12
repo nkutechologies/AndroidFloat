@@ -23,8 +23,8 @@ import LottieView from 'lottie-react-native';
 import {Auth} from '../Database/ApiCalls';
 // create a component
 const Login = props => {
-  const [username, setUserName] = useState('GSI1ABA1');
-  const [password, setPassword] = useState('GSI1ABA1');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
@@ -93,7 +93,7 @@ const Login = props => {
               Title={'Password'}
               iconPress={() => setSee(!see)}
               // source={see ? "ios-eye-off-sharp" : "eye"}
-              placeholder="Enter your password"
+              placeholder="Enter Your Password"
               value={password}
               secureTextEntry={see ? true : false}
               onChangeText={password => setPassword(password)}
