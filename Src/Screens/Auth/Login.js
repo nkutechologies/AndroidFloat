@@ -23,8 +23,8 @@ import LottieView from 'lottie-react-native';
 import {Auth} from '../Database/ApiCalls';
 // create a component
 const Login = props => {
-  const [username, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUserName] = useState('GSI1ABA1');
+  const [password, setPassword] = useState('GSI1ABA1');
   const [loading, setLoading] = useState(false);
   const [see, setSee] = useState(true);
 
