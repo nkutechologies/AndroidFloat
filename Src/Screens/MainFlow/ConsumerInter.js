@@ -232,6 +232,7 @@ const ConsumerInter = props => {
                     setUserTown(allTerritories[a].town);
                     if (dropdownRef) {
                       dropdownRef.current.select(-1);
+                      // setVendor({...Vendor, town: undefined});
                     }
                   }}
                 />

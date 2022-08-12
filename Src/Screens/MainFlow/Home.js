@@ -142,7 +142,7 @@ const Home = props => {
                     ? props.navigation.navigate('Stackload')
                     : Toast.show('Please Mark Attendance First');
                 } else {
-                  Toast.show('Not Allowed');
+                  Toast.show('You Are Not Allowed To Perform This Action');
                 }
               }}>
               <View style={styles.cardFirstView}>
@@ -183,7 +183,7 @@ const Home = props => {
                     ? props.navigation.navigate('FeedBackForm')
                     : Toast.show('Please Mark Attendance First');
                 } else {
-                  Toast.show('Not Allowed');
+                  Toast.show('You Are Not Allowed To Perform This Action');
                 }
               }}>
               <View style={styles.cardFirstView}>
