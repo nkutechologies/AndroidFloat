@@ -41,6 +41,7 @@ const FeedBackForm = props => {
       Toast.show('Please Add Image First');
     } else {
       UploadFile();
+      Toast.show('Data Saved!');
       props.navigation.navigate('Home');
     }
   };

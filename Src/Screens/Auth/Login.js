@@ -109,6 +109,15 @@ const Login = props => {
             isLoading={loading}
           />
         </View>
+        <Text
+          style={{
+            position: 'absolute',
+            alignSelf: 'center',
+            bottom: 10,
+            fontSize: 12,
+          }}>
+          Version: 1.0.1
+        </Text>
         {/* <View style={styles.lastTextView}>
                     <Text style={{ fontSize: Theme.screenHeight / 55 }}>Don't have an account?</Text>
                     <TouchableOpacity onPress={() => props.navigation.navigate('Signup')}>

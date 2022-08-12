@@ -353,7 +353,7 @@ const ConsumerInter = props => {
                     allBrands.length > 0 ? allBrands : ['Loading Please Wait']
                   }
                   // disabled={allBrands?.length > 0 ? false : true}
-                  defaultValue={'please Select'}
+                  defaultValue={'Please Select'}
                   IconName={'angle-down'}
                   IconType={'font-awesome-5'}
                   dropdownStyle={styles.dropdownStyle}
