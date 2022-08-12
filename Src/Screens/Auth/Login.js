@@ -81,7 +81,7 @@ const Login = props => {
           </View>
           <View style={styles.inputView}>
             <TextComponent
-              Title={'User Code'}
+              Title={'User Name'}
               source="mail"
               placeholder="Username"
               value={username}

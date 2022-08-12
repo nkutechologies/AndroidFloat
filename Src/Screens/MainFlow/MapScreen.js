@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,12 +6,12 @@ import {
   PermissionsAndroid,
   hasPermissionIOS,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import ButtonComponent from '../../Components/ButtonComponent';
 import Theme from '../../Utils/Theme';
 import Geolocation from 'react-native-geolocation-service';
 import Header from '../../Components/Header';
-import Toast from 'react-native-simple-toast';
+
 const MapScreen = props => {
   const [lat, setlat] = useState(0);
   const [lng, setlng] = useState(0);
@@ -69,19 +69,15 @@ const MapScreen = props => {
   };
 
   const markAttendance = () => {
-    if (lat == 0 || lng == 0) {
-      Toast.show('Please Grant Location Permision First!');
-    } else {
-      const date = new Date();
-      const d = date.toISOString();
-      const data = {
-        latitude: lat,
-        longitude: lng,
-        date: d.substring(0, 10),
-      };
-      console.log('called attendacne marker', data);
-      props.navigation.navigate('SelectImage', {data});
-    }
+    const date = new Date();
+    const d = date.toISOString();
+    const data = {
+      latitude: lat,
+      longitude: lng,
+      date: d.substring(0, 10),
+    };
+    console.log('called attendacne marker', data);
+    props.navigation.navigate('SelectImage', {data});
   };
 
   return (
@@ -95,7 +91,7 @@ const MapScreen = props => {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}>
-        <Marker pinColor={'red'} coordinate={{latitude: lat, longitude: lng}} />
+        <Marker pinColor={'red'} coordinate={{ latitude: lat, longitude: lng }} />
       </MapView>
       <Header
         backIcon={true}
@@ -103,7 +99,7 @@ const MapScreen = props => {
         backIconPress={() => props.navigation.goBack()}
       />
 
-      <View style={{position: 'absolute', bottom: 20, alignSelf: 'center'}}>
+      <View style={{ position: 'absolute', bottom: 20, alignSelf: 'center' }}>
         <ButtonComponent text="Continue" onPress={() => markAttendance()} />
       </View>
     </View>

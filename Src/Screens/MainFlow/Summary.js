@@ -1,5 +1,5 @@
 //import liraries
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,13 @@ import {
   ScrollView,
 } from 'react-native';
 import Theme from '../../Utils/Theme';
-import {ConsumerForm} from '../Api/FirebaseCalls';
+import { ConsumerForm } from '../Api/FirebaseCalls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import Header from '../../Components/Header';
 import DatePicker from 'react-native-date-picker';
-import {ActivityIndicator} from 'react-native-paper';
-import {getData} from '../Database/ApiCalls';
+import { ActivityIndicator } from 'react-native-paper';
+import { getData } from '../Database/ApiCalls';
 import axios from 'axios';
 
 // create a component
@@ -103,22 +103,22 @@ const Summary = props => {
         item?.callStatus == 'Productive' &&
         item?.date.split('T')[0] == dt.split('T')[0]
       ) {
-        a = {...a, todayProductive: a.todayProductive + 1};
+        a = { ...a, todayProductive: a.todayProductive + 1 };
       } else if (
         item?.callStatus == 'Intercept' &&
         item?.date.split('T')[0] == dt.split('T')[0]
       ) {
-        a = {...a, todayIntercepts: a.todayIntercepts + 1};
+        a = { ...a, todayIntercepts: a.todayIntercepts + 1 };
       } else if (
         item?.callStatus == 'Productive' &&
         item?.date.split('-')[1] == dt.split('-')[1]
       ) {
-        a = {...a, monthProductive: a.monthProductive + 1};
+        a = { ...a, monthProductive: a.monthProductive + 1 };
       } else if (
         item?.callStatus == 'Intercept' &&
         item?.date.split('-')[1] == dt.split('-')[1]
       ) {
-        a = {...a, monthProductive: a.monthProductive + 1};
+        a = { ...a, monthProductive: a.monthProductive + 1 };
       }
     });
     setData(a);
@@ -150,7 +150,7 @@ const Summary = props => {
           />
           {error ? (
             <View style={styles.summaryText}>
-              <Text style={[styles.heading, {color: Theme.black}]}>
+              <Text style={[styles.heading, { color: Theme.black }]}>
                 No Data Found
               </Text>
             </View>
@@ -184,7 +184,7 @@ const Summary = props => {
                     <View style={styles.mainView}>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Intercepts</Text>
-                        <Text style={{color: Theme.black}}>
+                        <Text style={{ color: Theme.black }}>
                           {data.monthIntercepts + data.todayIntercepts}/
                           {data.monthIntercepts +
                             data.todayIntercepts +
@@ -194,7 +194,7 @@ const Summary = props => {
                       </View>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Productive</Text>
-                        <Text style={{color: Theme.black}}>
+                        <Text style={{ color: Theme.black }}>
                           {data.monthProductive + data.todayProductive}/
                           {data.monthIntercepts +
                             data.todayIntercepts +
@@ -208,14 +208,13 @@ const Summary = props => {
                   <View style={styles.dateView}>
                     <View style={styles.dateSelectedView}>
                       <Text style={styles.date}>Daily</Text>
-                      <Text style={styles.date}>{`${date.getDate()}/${
-                        date.getMonth() + 1
-                      }/${date.getFullYear()}`}</Text>
+                      <Text style={styles.date}>{`${date.getDate()}/${date.getMonth() + 1
+                        }/${date.getFullYear()}`}</Text>
                     </View>
                     <View style={styles.mainView}>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Intercepts</Text>
-                        <Text style={{color: Theme.black}}>
+                        <Text style={{ color: Theme.black }}>
                           {data.todayIntercepts}/
                           {data.monthIntercepts +
                             data.todayIntercepts +
@@ -225,11 +224,9 @@ const Summary = props => {
                       </View>
                       <View style={styles.containerView}>
                         <Text style={styles.heading}>Productive</Text>
-                        <Text style={{color: Theme.black}}>
+                        <Text style={{ color: Theme.black }}>
                           {data.todayProductive}/
-                          {data.monthIntercepts +
-                            data.todayIntercepts +
-                            data.monthProductive +
+                          {data.todayIntercepts +
                             data.todayProductive}
                         </Text>
                       </View>
@@ -285,8 +282,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'center',
   },
-  heading: {fontSize: 20, fontWeight: 'bold', color: Theme.blue},
-  date: {fontSize: 20, fontWeight: 'bold', color: Theme.black, marginTop: 10},
+  heading: { fontSize: 20, fontWeight: 'bold', color: Theme.blue },
+  date: { fontSize: 20, fontWeight: 'bold', color: Theme.black, marginTop: 10 },
 });
 
 //make this component available to the app
