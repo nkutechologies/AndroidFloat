@@ -38,12 +38,8 @@ const SelectImage = props => {
 
   const markAttendance = async () => {
     if (ProfileImage != '') {
-      const d = {date: data.date};
-      await AsyncStorage.setItem('Attendance', JSON.stringify(d));
-      setLoading2(true);
       UploadFile();
-      props.navigation.navigate('Home');
-      Toast.show('Attendance Marked Successfully');
+      setLoading(true);
     } else {
       Toast.show('Please Add Image First');
     }
@@ -72,14 +68,19 @@ const SelectImage = props => {
     axios.defaults.headers['Content-Type'] = 'multipart/form-data';
     postData
       .postAttendance(formData)
-      .then(function (response) {
+      .then(async function (response) {
         console.log('response :', response);
         axios.defaults.headers['Content-Type'] = 'application/json';
+        const d = {date: data.date};
+        await AsyncStorage.setItem('Attendance', JSON.stringify(d));
+        Toast.show('Attendance Marked Successfully');
+        props.navigation.navigate('Home');
       })
-      .catch(function (error) {
+      .catch(async function (error) {
         console.log('error from image :', error);
+        Toast.show('Attendance Was Not Marked');
       })
-      .finally(() => setLoading2(false));
+      .finally(() => setLoading(false));
   };
   const pickImage = () => {
     launchCamera(
@@ -147,7 +148,11 @@ const SelectImage = props => {
             </View>
           )}
           <View style={{position: 'absolute', bottom: 30, alignSelf: 'center'}}>
-            <ButtonComponent text="Submit" onPress={() => markAttendance()} />
+            <ButtonComponent
+              text="Submit"
+              onPress={() => markAttendance()}
+              isLoading={loading}
+            />
           </View>
         </>
       )}

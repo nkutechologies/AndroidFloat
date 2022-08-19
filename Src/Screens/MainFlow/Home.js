@@ -27,7 +27,7 @@ const Home = props => {
       getUser();
 
       const onBackPress = async () => {
-        Alert.alert('Logout', 'Do you really want to exit the application?', [
+        Alert.alert('Exit App', 'Do you really want to exit the application?', [
           {
             text: 'Cancel',
             onPress: () => console.log('Cancel Pressed'),

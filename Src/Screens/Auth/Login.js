@@ -117,7 +117,7 @@ const Login = props => {
                     </TouchableOpacity>
                 </View> */}
       </ScrollView>
-      <Text style={styles.bottomText}>Version: 1.0.1</Text>
+      {/* <Text style={styles.bottomText}>Version: 1.0.1</Text> */}
     </View>
   );
 };

@@ -41,8 +41,7 @@ const FeedBackForm = props => {
       Toast.show('Please Add Image First');
     } else {
       UploadFile();
-      Toast.show('Data Saved!');
-      props.navigation.navigate('Home');
+      setLoading(true);
     }
   };
   console.log(userData);
@@ -71,11 +70,14 @@ const FeedBackForm = props => {
       .then(function (response) {
         console.log('suces posting feedback form', response);
         axios.defaults.headers['Content-Type'] = 'application/json';
+        props.navigation.navigate('Home');
+        Toast.show('FeedBack Posted!');
       })
       .catch(function (error) {
         console.log('error from image :', error);
+        Toast.show('FeedBack Not Posted!');
       })
-      .finally(() => setLoading2(false));
+      .finally(() => setLoading(false));
   };
 
   const pickImage = () => {
@@ -87,6 +89,7 @@ const FeedBackForm = props => {
       async response => {
         if (response.didCancel) {
         } else {
+          console.log('==>>', response);
           setProfileImage(response.assets[0]);
         }
       },

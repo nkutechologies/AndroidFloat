@@ -30,7 +30,6 @@ const Cleanliness = props => {
   const [ProfileImage2, setProfileImage2] = useState('');
   const [ProfileImage3, setProfileImage3] = useState('');
   const [userData, setUserData] = useState();
-  const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
   useEffect(() => {
@@ -125,6 +124,8 @@ const Cleanliness = props => {
       .then(function (response) {
         axios.defaults.headers['Content-Type'] = 'application/json';
         console.log('response :', response);
+        props.navigation.navigate('Home');
+        Toast.show('Data Updated!');
       })
       .catch(function (error) {
         console.log('error from image :', error);
@@ -141,8 +142,7 @@ const Cleanliness = props => {
       checked != ''
     ) {
       UploadData();
-      props.navigation.navigate('Home');
-      Toast.show('Data Updated!');
+      setLoading2(true);
     } else {
       Toast.show('Please Fill All The Data');
     }
@@ -155,155 +155,145 @@ const Cleanliness = props => {
         backIconPress={() => props.navigation.goBack()}
         title="Float Cleaniless"
       />
-      {loading ? (
-        <View
-          style={{
-            height: Theme.screenHeight / 1.2,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <ActivityIndicator size={'small'} color={Theme.blue} />
-        </View>
-      ) : (
-        <>
-          <View style={{marginTop: Theme.screenHeight / 20}}>
-            <View style={styles.radiobuttonView}>
-              <RadioButton
-                color={Theme.blue}
-                value="first"
-                status={checked === 'first' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('first')}
-              />
-              <View style={{width: Theme.screenWidth / 2}}>
-                <Text style={styles.okTextStyle}>OK</Text>
-              </View>
+
+      <>
+        <View style={{marginTop: Theme.screenHeight / 20}}>
+          <View style={styles.radiobuttonView}>
+            <RadioButton
+              color={Theme.blue}
+              value="first"
+              status={checked === 'first' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('first')}
+            />
+            <View style={{width: Theme.screenWidth / 2}}>
+              <Text style={styles.okTextStyle}>OK</Text>
             </View>
-            <View style={styles.radiobuttonView}>
-              <RadioButton
-                color={Theme.blue}
-                value="second"
-                status={checked === 'second' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('second')}
-              />
-              <View style={{width: Theme.screenWidth / 2}}>
-                <Text style={styles.okTextStyle}>Not OK</Text>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'space-evenly',
-                marginTop: Theme.screenHeight / 20,
-              }}>
-              {ProfileImage && ProfileImage != '' ? (
-                <View>
-                  <ImageBackground
-                    source={{uri: ProfileImage.uri}}
-                    resizeMode="cover"
-                    style={styles.bgimageStyle}>
-                    <TouchableOpacity style={styles.crossViewStyle}>
-                      <AntDesign
-                        name="close"
-                        onPress={() => setProfileImage('')}
-                        size={Theme.screenHeight / 40}
-                        color={Theme.white}
-                      />
-                    </TouchableOpacity>
-                  </ImageBackground>
-                </View>
-              ) : (
-                <View style={{justifyContent: 'center'}}>
-                  <TouchableOpacity onPress={() => pickImage()}>
-                    <Image source={Images.camera} style={styles.imageStyle} />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {ProfileImage1 && ProfileImage1 != '' ? (
-                <View>
-                  <ImageBackground
-                    source={{uri: ProfileImage1.uri}}
-                    resizeMode="cover"
-                    style={styles.bgimageStyle}>
-                    <TouchableOpacity style={styles.crossViewStyle}>
-                      <AntDesign
-                        name="close"
-                        onPress={() => setProfileImage1('')}
-                        size={Theme.screenHeight / 40}
-                        color={Theme.white}
-                      />
-                    </TouchableOpacity>
-                  </ImageBackground>
-                </View>
-              ) : (
-                <View style={{justifyContent: 'center'}}>
-                  <TouchableOpacity onPress={() => pickImage1()}>
-                    <Image source={Images.camera} style={styles.imageStyle} />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {ProfileImage2 && ProfileImage2 != '' ? (
-                <View>
-                  <ImageBackground
-                    source={{uri: ProfileImage2.uri}}
-                    resizeMode="cover"
-                    style={styles.bgimageStyle}>
-                    <TouchableOpacity style={styles.crossViewStyle}>
-                      <AntDesign
-                        name="close"
-                        onPress={() => setProfileImage2('')}
-                        size={Theme.screenHeight / 40}
-                        color={Theme.white}
-                      />
-                    </TouchableOpacity>
-                  </ImageBackground>
-                </View>
-              ) : (
-                <View style={{justifyContent: 'center'}}>
-                  <TouchableOpacity onPress={() => pickImage2()}>
-                    <Image source={Images.camera} style={styles.imageStyle} />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {ProfileImage3 && ProfileImage3 != '' ? (
-                <View>
-                  <ImageBackground
-                    source={{uri: ProfileImage3.uri}}
-                    resizeMode="cover"
-                    style={styles.bgimageStyle}>
-                    <TouchableOpacity style={styles.crossViewStyle}>
-                      <AntDesign
-                        name="close"
-                        onPress={() => setProfileImage3('')}
-                        size={Theme.screenHeight / 40}
-                        color={Theme.white}
-                      />
-                    </TouchableOpacity>
-                  </ImageBackground>
-                </View>
-              ) : (
-                <View style={{justifyContent: 'center'}}>
-                  <TouchableOpacity onPress={() => pickImage3()}>
-                    <Image source={Images.camera} style={styles.imageStyle} />
-                  </TouchableOpacity>
-                </View>
-              )}
+          </View>
+          <View style={styles.radiobuttonView}>
+            <RadioButton
+              color={Theme.blue}
+              value="second"
+              status={checked === 'second' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('second')}
+            />
+            <View style={{width: Theme.screenWidth / 2}}>
+              <Text style={styles.okTextStyle}>Not OK</Text>
             </View>
           </View>
           <View
             style={{
-              position: 'absolute',
-              alignSelf: 'center',
-              bottom: Theme.screenHeight / 20,
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'space-evenly',
+              marginTop: Theme.screenHeight / 20,
             }}>
-            <ButtonComponent
-              text="Submit"
-              isLoading={loading2}
-              onPress={() => SetFloatData()}
-            />
+            {ProfileImage && ProfileImage != '' ? (
+              <View>
+                <ImageBackground
+                  source={{uri: ProfileImage.uri}}
+                  resizeMode="cover"
+                  style={styles.bgimageStyle}>
+                  <TouchableOpacity style={styles.crossViewStyle}>
+                    <AntDesign
+                      name="close"
+                      onPress={() => setProfileImage('')}
+                      size={Theme.screenHeight / 40}
+                      color={Theme.white}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
+            ) : (
+              <View style={{justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => pickImage()}>
+                  <Image source={Images.camera} style={styles.imageStyle} />
+                </TouchableOpacity>
+              </View>
+            )}
+            {ProfileImage1 && ProfileImage1 != '' ? (
+              <View>
+                <ImageBackground
+                  source={{uri: ProfileImage1.uri}}
+                  resizeMode="cover"
+                  style={styles.bgimageStyle}>
+                  <TouchableOpacity style={styles.crossViewStyle}>
+                    <AntDesign
+                      name="close"
+                      onPress={() => setProfileImage1('')}
+                      size={Theme.screenHeight / 40}
+                      color={Theme.white}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
+            ) : (
+              <View style={{justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => pickImage1()}>
+                  <Image source={Images.camera} style={styles.imageStyle} />
+                </TouchableOpacity>
+              </View>
+            )}
+            {ProfileImage2 && ProfileImage2 != '' ? (
+              <View>
+                <ImageBackground
+                  source={{uri: ProfileImage2.uri}}
+                  resizeMode="cover"
+                  style={styles.bgimageStyle}>
+                  <TouchableOpacity style={styles.crossViewStyle}>
+                    <AntDesign
+                      name="close"
+                      onPress={() => setProfileImage2('')}
+                      size={Theme.screenHeight / 40}
+                      color={Theme.white}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
+            ) : (
+              <View style={{justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => pickImage2()}>
+                  <Image source={Images.camera} style={styles.imageStyle} />
+                </TouchableOpacity>
+              </View>
+            )}
+            {ProfileImage3 && ProfileImage3 != '' ? (
+              <View>
+                <ImageBackground
+                  source={{uri: ProfileImage3.uri}}
+                  resizeMode="cover"
+                  style={styles.bgimageStyle}>
+                  <TouchableOpacity style={styles.crossViewStyle}>
+                    <AntDesign
+                      name="close"
+                      onPress={() => setProfileImage3('')}
+                      size={Theme.screenHeight / 40}
+                      color={Theme.white}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
+            ) : (
+              <View style={{justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => pickImage3()}>
+                  <Image source={Images.camera} style={styles.imageStyle} />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
-        </>
-      )}
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            alignSelf: 'center',
+            bottom: Theme.screenHeight / 20,
+          }}>
+          <ButtonComponent
+            text="Submit"
+            isLoading={loading2}
+            onPress={() => SetFloatData()}
+          />
+        </View>
+      </>
     </View>
   );
 };
