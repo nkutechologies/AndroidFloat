@@ -62,7 +62,7 @@ const DropDownComponent = props => {
           }}
           dropdownTextHighlightStyle={{color: Theme.blue}}
           animated={true}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
           onSelect={(index, value) => props.onSelect(index, value,dropdown)}
         />
         <TouchableOpacity onPress={() => dropdown.current.show()}>
