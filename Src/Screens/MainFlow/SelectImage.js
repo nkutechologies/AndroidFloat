@@ -25,8 +25,8 @@ const SelectImage = props => {
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   // console.log('ye aya user', user);
-  const {data} = props.route.params;
-  console.log('ye aya data ====>>>', data);
+  const {data, location} = props.route.params;
+  console.log('ye aya data ====>>>', data, location);
   useEffect(() => {
     getUserDetails();
   }, []);
@@ -73,7 +73,11 @@ const SelectImage = props => {
         axios.defaults.headers['Content-Type'] = 'application/json';
         const d = {date: data.date};
         await AsyncStorage.setItem('Attendance', JSON.stringify(d));
-        Toast.show('Attendance Marked Successfully');
+        if (location) {
+          Toast.show('Attendance Marked Successfully');
+        } else {
+          Toast.show('Attendance Marked Successfully With Invalid Location');
+        }
         props.navigation.navigate('Home');
       })
       .catch(async function (error) {

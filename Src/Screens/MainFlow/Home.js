@@ -26,7 +26,6 @@ const Home = props => {
   useFocusEffect(
     React.useCallback(() => {
       getUser();
-
       const onBackPress = async () => {
         Alert.alert('Exit App', 'Do you really want to exit the application?', [
           {
@@ -67,27 +66,6 @@ const Home = props => {
     return true;
   };
 
-  const hasLocationPermission = async () => {
-    const hasPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    );
-    if (hasPermission) {
-      !AttendanceCheck
-        ? props.navigation.navigate('MapScreen')
-        : Toast.show('Attendance Already Marked');
-    } else {
-      const status = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      if (status === PermissionsAndroid.RESULTS.GRANTED) {
-        !AttendanceCheck
-          ? props.navigation.navigate('MapScreen')
-          : Toast.show('Attendance Already Marked');
-      } else {
-        Toast.show('Please Grant Location Permission First');
-      }
-    }
-  };
   const getUser = async () => {
     await AsyncStorage.multiGet(['AuthData', 'Attendance'], (err, items) => {
       console.log(' items form async ==>>', items);
@@ -109,6 +87,50 @@ const Home = props => {
     });
   };
 
+  const hasLocationPermission = async () => {
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    if (hasPermission) {
+      !AttendanceCheck
+        ? props.navigation.navigate('MapScreen', {location: true})
+        : Toast.show('Attendance Already Marked');
+    } else {
+      const status = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
+        !AttendanceCheck
+          ? props.navigation.navigate('MapScreen', {location: true})
+          : Toast.show('Attendance Already Marked');
+      } else if (status === PermissionsAndroid.RESULTS.DENIED) {
+        Alert.alert(
+          'Please Grant Location Permission',
+          'To mark the attendance accurately you must go to settings and allow location permissions or give permission on next popup',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => hasLocationPermission(),
+              style: 'cancel',
+            },
+            {
+              text: 'Ok',
+              onPress: () => hasLocationPermission(),
+              style: 'cancel',
+            },
+          ],
+          {
+            cancelable: true,
+            onDismiss: () => null,
+          },
+        );
+      } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        !AttendanceCheck
+          ? props.navigation.navigate('MapScreen', {location: false})
+          : Toast.show('Attendance Already Marked');
+      }
+    }
+  };
   return (
     <View style={styles.container}>
       <Header

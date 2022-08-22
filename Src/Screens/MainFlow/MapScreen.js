@@ -21,44 +21,7 @@ const MapScreen = props => {
     mapView();
   }, []);
 
-  const hasLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
-      const hasPermission = await hasPermissionIOS();
-      return hasPermission;
-    }
-
-    if (Platform.OS === 'android' && Platform.Version < 23) {
-      return true;
-    }
-
-    const hasPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    );
-
-    if (hasPermission) {
-      return true;
-    }
-
-    const status = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    );
-
-    if (status === PermissionsAndroid.RESULTS.GRANTED) {
-      return true;
-    }
-    if (status === PermissionsAndroid.RESULTS.DENIED) {
-      console.log('Location permission denied by user.');
-    } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-      console.log('Location permission revoked by user.');
-    }
-
-    return false;
-  };
   const mapView = async () => {
-    const hasPermission = await hasLocationPermission();
-    if (!hasPermission) {
-      return;
-    }
     Geolocation.getCurrentPosition(position => {
       // console.log("position",position);
       var lat = position.coords.latitude;
@@ -78,7 +41,10 @@ const MapScreen = props => {
       date: d.substring(0, 10),
     };
     console.log('called attendacne marker', data);
-    props.navigation.navigate('SelectImage', {data});
+    props.navigation.navigate('SelectImage', {
+      data,
+      location: props.route.params.location,
+    });
   };
 
   return (
