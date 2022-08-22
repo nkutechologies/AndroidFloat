@@ -70,20 +70,15 @@ const MapScreen = props => {
   };
 
   const markAttendance = async () => {
-    const hasPermission = await hasLocationPermission();
-    if (hasPermission) {
-      const date = new Date();
-      const d = date.toISOString();
-      const data = {
-        latitude: lat,
-        longitude: lng,
-        date: d.substring(0, 10),
-      };
-      console.log('called attendacne marker', data);
-      props.navigation.navigate('SelectImage', {data});
-    } else {
-      Toast.show('Please Grant Location Permission First');
-    }
+    const date = new Date();
+    const d = date.toISOString();
+    const data = {
+      latitude: lat,
+      longitude: lng,
+      date: d.substring(0, 10),
+    };
+    console.log('called attendacne marker', data);
+    props.navigation.navigate('SelectImage', {data});
   };
 
   return (

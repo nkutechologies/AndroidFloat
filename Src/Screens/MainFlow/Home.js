@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ImageBackground,
   Image,
+  PermissionsAndroid,
 } from 'react-native';
 import {Card} from 'react-native-paper';
 import {Images} from '../../Constants/Images';
@@ -66,6 +67,27 @@ const Home = props => {
     return true;
   };
 
+  const hasLocationPermission = async () => {
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    if (hasPermission) {
+      !AttendanceCheck
+        ? props.navigation.navigate('MapScreen')
+        : Toast.show('Attendance Already Marked');
+    } else {
+      const status = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (status === PermissionsAndroid.RESULTS.GRANTED) {
+        !AttendanceCheck
+          ? props.navigation.navigate('MapScreen')
+          : Toast.show('Attendance Already Marked');
+      } else {
+        Toast.show('Please Grant Location Permission First');
+      }
+    }
+  };
   const getUser = async () => {
     await AsyncStorage.multiGet(['AuthData', 'Attendance'], (err, items) => {
       console.log(' items form async ==>>', items);
@@ -117,11 +139,7 @@ const Home = props => {
             <Card
               elevation={5}
               style={styles.cardViewStyle}
-              onPress={() =>
-                !AttendanceCheck
-                  ? props.navigation.navigate('MapScreen')
-                  : Toast.show('Attendance Already Marked')
-              }>
+              onPress={() => hasLocationPermission()}>
               <View style={styles.cardFirstView}>
                 <Image source={Images.dummy} style={styles.imageStyle} />
                 <View style={styles.textViewStyle}>
