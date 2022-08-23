@@ -91,10 +91,12 @@ const SelectImage = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
+        quality: 0.1,
       },
       async response => {
         if (response.didCancel) {
         } else {
+          console.log(response.assets[0], response.assets[0].fileSize / 1024);
           setProfileImage(response.assets[0]);
         }
       },

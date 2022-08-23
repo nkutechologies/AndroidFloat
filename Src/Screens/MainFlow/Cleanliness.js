@@ -41,6 +41,7 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
+        quality: 0.1,
         // selectionLimit: 1,
       },
       async response => {
@@ -53,6 +54,7 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
+        quality: 0.1,
         // selectionLimit: 1,
       },
       async response => {
@@ -65,6 +67,7 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
+        quality: 0.1,
       },
       async response => {
         setProfileImage2(response.assets[0]);
@@ -76,6 +79,7 @@ const Cleanliness = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
+        quality: 0.1,
       },
       async response => {
         setProfileImage3(response.assets[0]);
