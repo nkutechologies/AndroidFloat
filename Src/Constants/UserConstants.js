@@ -94,7 +94,6 @@ export const GSITerritory = [
     town: [
       'Bahawalnagar',
       'Minchanabad',
-
       'Chistian',
       'MADRISSA',
       'DONGA BONGA',
@@ -104,6 +103,8 @@ export const GSITerritory = [
   {name: 'RYK', town: ['Liaqat Pur', 'Khan Pur', 'Khan Bela', 'ZAHIR PIR']},
   {name: 'VEH', town: ['Vehari', 'Machiwal', 'Burewala', 'GAGO MANDI']},
   {name: 'HSP', town: ['FORT ABBAS', 'Haroon Abad', 'Hasil Pur']},
+  {name: 'MZG', town: ['Ali Pur', 'Jatoi', 'Muzaffar Garh']},
+  {name: 'DGK', town: ['Dera Ghazi Khan', 'Kot Chuta']},
 ];
 
 export const ClassicTerritories = [

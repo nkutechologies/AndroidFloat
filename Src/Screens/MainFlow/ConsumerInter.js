@@ -186,7 +186,7 @@ const ConsumerInter = props => {
       {
         mediaType: 'photo',
         includeBase64: false,
-        quality: 0.1,
+        quality: 0.4,
       },
       async response => {
         if (response.didCancel) {
