@@ -30,11 +30,11 @@ Make sure you have the following tools installed on your machine:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/your-react-native-app.git
+   git clone https://github.com/nkutechologies/AndroidFloat
 2. Navigate to the project directory:
 
    ```bash
-   cd your-react-native-app
+   cd AndroidFloat
 3. Install dependencies:
 
    ```bash
